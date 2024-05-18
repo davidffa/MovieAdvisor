@@ -36,7 +36,7 @@ CREATE TABLE "User" (
 
 CREATE TABLE AudioVisualContent (
 	ID				INT IDENTITY(1, 1) NOT NULL,
-	Title			VARCHAR(32) NOT NULL,
+	Title			VARCHAR(64) NOT NULL,
 	Synopsis		VARCHAR(255),
 	Popularity		DECIMAL(3, 1) CHECK(Popularity >= 0 AND Popularity <= 10),
 	TrailerURL		VARCHAR(128),
