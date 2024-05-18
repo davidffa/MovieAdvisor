@@ -2,21 +2,21 @@ USE master;
 DROP DATABASE IF EXISTS MovieAdvisor;
 
 CREATE DATABASE MovieAdvisor;
-
-USE MovieAdvisor;
 GO
 
+USE MovieAdvisor;
+
 CREATE TABLE Genre (
-	ID   INT NOT NULL,
+	ID   INT IDENTITY(1, 1) NOT NULL,
 	Name VARCHAR(32) NOT NULL UNIQUE,
 
 	PRIMARY KEY (ID)
 );
 
 CREATE TABLE Person (
-	ID			INT NOT NULL,
+	ID			INT IDENTITY(1, 1) NOT NULL,
 	Name		VARCHAR(64) NOT NULL,
-	Biography	VARCHAR(255),
+	Biography	VARCHAR(1024),
 	BirthDate	DATE,
 	Photo		VARCHAR(32),
 
@@ -24,7 +24,7 @@ CREATE TABLE Person (
 );
 
 CREATE TABLE "User" (
-	ID			INT NOT NULL,
+	ID			INT IDENTITY(1, 1) NOT NULL,
 	Email		VARCHAR(32) NOT NULL UNIQUE,
 	Password	VARCHAR(128) NOT NULL,
 	BirthDate	DATE,
@@ -35,7 +35,7 @@ CREATE TABLE "User" (
 );
 
 CREATE TABLE AudioVisualContent (
-	ID				INT NOT NULL,
+	ID				INT IDENTITY(1, 1) NOT NULL,
 	Title			VARCHAR(32) NOT NULL,
 	Synopsis		VARCHAR(255),
 	Popularity		DECIMAL(3, 1) CHECK(Popularity >= 0 AND Popularity <= 10),
@@ -127,11 +127,11 @@ CREATE TABLE WatchlistAV (
 );
 
 CREATE TABLE Review (
-	ID			   INT NOT NULL,
+	ID			   INT IDENTITY(1, 1) NOT NULL,
 	UserID		   INT NOT NULL,
 	AVIdentifier   INT NOT NULL,
 	Title		   VARCHAR(32) NOT NULL,
-	Description    VARCHAR(255),
+	Description    VARCHAR(512),
 	Classification SMALLINT CHECK(Classification >= 0 AND Classification <= 10),
 	CreatedAt	   DATE DEFAULT (current_timestamp),
 
