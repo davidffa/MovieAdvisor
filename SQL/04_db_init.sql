@@ -84,8 +84,18 @@ INSERT INTO Person(Name, Biography, BirthDate, Photo) VALUES
 	('Marilyn Monroe', 'Norma Jeane Mortenson mais conhecida como Marilyn Monroe, foi uma atriz, modelo e cantora norte-americana. Como estrela de cinema de Hollywood, é um dos maiores símbolos sexuais do século XX, imortalizada pelos cabelos loiros e as suas formas voluptuosas.', '1926-06-01', ''),
 	('Jodie Foster', 'Alicia Christian "Jodie" Foster é uma atriz, diretora e produtora de cinema norte-americana. Ela já recebeu dois Oscars, três BAFTA Film Award, três Globos de Ouro e o Prêmio Cecil B. DeMille. Por seu trabalho como diretora, foi indicada ao Emmy Award.', '1962-11-19', ''),
 	('Susan Sarandon', 'Susan Abigail Tomalin Embaixador da boa vontade da FAO, mais conhecida como Susan Sarandon, é uma ativista e atriz norte-americana, que, por sua versatilidade, reconhecimento com prêmios como o Oscar e BAFTA, aclamação da critica e papeis em clássicos como Thelma & Louise, The Rocky Horror Picture Show e Dead Man Walking, é reconhecida como uma das melhores atrizes em atividade.','1946-10-04' , ''),
-	('Salma Hayek', 'Salma Hayek Pinault é uma atriz e produtora mexicana naturalizada norte-americana, indicada ao Oscar pelo filme "Frida". Ganhou reconhecimento internacional pela participação em "Um Drink no Inferno", filme de Robert Rodriguez que a consagrou como um dos símbolos sexuais da década de 1990.', '1966-09-02', '');
-
+	('Salma Hayek', 'Salma Hayek Pinault é uma atriz e produtora mexicana naturalizada norte-americana, indicada ao Oscar pelo filme "Frida". Ganhou reconhecimento internacional pela participação em "Um Drink no Inferno", filme de Robert Rodriguez que a consagrou como um dos símbolos sexuais da década de 1990.', '1966-09-02', ''),
+	('Omar Sy', 'Omar Sy é um ator, roteirista, dublador e humorista francês. Ganhou notoriedade ao formar, com Fred Testot, a dupla cômica Omar e Fred. ','1987-01-20', ''),
+	('Jon Favreau', 'Jonathan Kolia "Jon" Favreau é um ator, diretor, comediante e argumentista americano. Seus trabalhos mais notáveis são sua participação como ator e diretor nos filmes Iron Man, Iron Man 2 e Iron Man 3 como diretor dos dois primeiros filmes e na atuação como Happy Hogan, guarda-costas e motorista de Stark.', '1966-10-19', ''),
+	('Arnold Schwarzenegger', 'É um fisiculturista, ator, empresário e político austro-americano, tendo servido como 38º Governador do estado da Califórnia de 2004 a 2011.', '1947-07-30', ''),
+	('Chazz Palminteri', 'Calogero Lorenzo "Chazz" Palminteri é um ator e escritor americano, mais conhecido por seu trabalho em The Usual Suspects, A Bronx Tale, Mulholland Falls e por sua indicação ao Oscar de melhor ator coadjuvante por Bullets Over Broadway, indicação esta vencida por Martin Landau em Ed Wood. ', '1952-05-15', ''),
+	('Kate Walsh', 'Kathleen Erin Walsh é uma atriz norte-americana. Ficou conhecida por seu papel como a Dr.ª Addison Montgomery nas aclamadas séries Greys Anatomy e Private Practice, da rede de televisão ABC, ambas exibidas pela Sony no Brasil.', '1967-10-13', ''),
+	('Orlando Bloom', 'Orlando Jonathan Blanchard Bloom é um ator britânico. É principalmente conhecido por seu papel de Legolas nas trilogias de The Lord of the Rings e The Hobbit, Páris em Troy e pelo papel de Will Turner em Pirates of the Caribbean.', '1977-01-13', '' ),
+	('Emilia Clarke', 'Emilia Isobel Euphemia Rose Clarke MBE, é uma atriz inglesa. Ela é mais conhecida por sua interpretação de Daenerys Targaryen na série de fantasia da HBO Game of Thrones, pela qual recebeu indicações para quatro Primetime Emmy Awards. ', '1986-10-23', ''),
+	('Claire Foy', 'Claire Elizabeth Foy is a British actress, best known for playing Queen Elizabeth II of the United Kingdom in the Netflix television series The Crown, a role that earned her critical acclaim and international recognition.','1984-04-16',''),
+	('Aaron Paul', 'Aaron Paul is an American actor known for starring in the series Breaking Bad as Jesse Pinkman, for which he won numerous awards, having won three Primetime Emmy Awards for Best Supporting Actor in a Drama Series.','1979-08-27',''),
+	('Mckenna Grace', 'Mckenna Grace is an American teenage actress who began acting professionally at the age of 6. Her early roles include Jasmine Bernstein on the Disney XD sitcom Crash & Bernstein and Faith Newman on The Young and the Restless.','2006-06-25',''),
+	('Martin Freeman', 'Martin John Christopher Freeman is a British actor. He is mainly known for his roles as Watson in the BBC television series Sherlock, Bilbo Baggins in The Hobbit, Tim in The Office series and as Arthur Dent in the film adaptation of the book The Hitchhikers Guide to the Galaxy.','1971-09-08','');
 
 INSERT INTO "User"(Email, Password, BirthDate, CreatedAt, IsAdmin) VALUES
 	('ana.maria@gmail.com', 'guehmu4ug47er48rjd@oefjismc', '1982-12-02', '2024-04-28', 0),
@@ -111,7 +121,6 @@ INSERT INTO "User"(Email, Password, BirthDate, CreatedAt, IsAdmin) VALUES
 	('vasvo.vitor@sapo.pt', 'password', '2002-06-08', '2024-05-04', 1),
 	('xavierbastos@ua.pt', 'querty', '1999-01-01',  '2024-05-04', 0),
 	('zoelima@gmail.com', 'asdfgh', '1970-05-03',  '2024-05-04', 0);
-
 
 INSERT INTO AudioVisualContent (Title, Synopsis, Popularity, TrailerURL, Budget, Revenue, Photo, AgeRate, ReleaseDate) VALUES
 	('The Silence of the Lambs', 'A young F.B.I. cadet must receive the help of an incarcerated and manipulative cannibal killer to help catch another serial killer, a madman who skins his victims.', 8.6, 'https://www.youtube.com/watch?v=ZWCAf-xLV2s', 19000000, 272742922, 'silence_of_the_lambs.jpg', 18, '1991-02-14'),
@@ -142,9 +151,9 @@ INSERT INTO AudioVisualContent (Title, Synopsis, Popularity, TrailerURL, Budget,
 	('The Godfather: Part II', 'The early life and career of Vito Corleone in 1920s New York City is portrayed, while his son, Michael, expands and tightens his grip on the family crime syndicate.', 9.0, 'https://www.youtube.com/watch?v=qJr92K_hKl0', 13000000, 102600000, 'godfather_2.jpg', 18, '1974-12-20'),
 	('Star Wars', 'Luke Skywalker joins forces with a Jedi Knight, a cocky pilot, a Wookiee and two droids to save the galaxy from the Empire''s world-destroying battle station, while also attempting to rescue Princess Leia from the mysterious Darth Vader.', 8.6, 'https://www.youtube.com/watch?v=vZ734NWnAHA', 11000000, 775398007, 'star_wars.jpg', 0, '1977-05-25'),
 	('Star Wars: Episode VI - Return of the Jedi', 'After a daring mission to rescue Han Solo from Jabba the Hutt, the Rebels dispatch to Endor to destroy the second Death Star. Meanwhile, Luke struggles to help Darth Vader back from the dark side without falling into the Emperor''s trap.', 8.3, 'https://www.youtube.com/watch?v=5UfA_aKBGMc', 32500000, 475106177, 'return_of_the_jedi.jpg', 0, '1983-05-25'),
-	('The Lord of the Rings: The Fellowship of the Ring', 'A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring and save Middle-earth from the Dark Lord Sauron.', 8.8, 'https://www.youtube.com/watch?v=Pki6jbSbXIY', 93000000, 887210985, 'fellowship_of_the_ring.jpg', 12, '2001-12-19'),
-	('The Lord of the Rings: The Two Towers', 'While Frodo and Sam edge closer to Mordor with the help of the shifty Gollum, the divided fellowship makes a stand against Sauron''s new ally, Saruman, and his hordes of Isengard.', 8.7, 'https://www.youtube.com/watch?v=LbfMDwc4azU', 79000000, 951227416, 'two_towers.jpg', 12, '2002-12-18'),
-	('The Lord of the Rings: The Return of the King', 'Gandalf and Aragorn lead the World of Men against Sauron''s army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring.', 8.9, 'https://www.youtube.com/watch?v=r5X-hFf6Bwo', 94000000, 1146030912, 'return_of_the_king.jpg', 12, '2003-12-17'),
+	('Cast Away', 'A FedEx executive undergoes a physical and emotional transformation after crash landing on a deserted island.', 7.8, 'https://www.youtube.com/watch?v=erhxwuihfuiIEFMCW', 90000000, 429000000,'cast_away.jpg', 12, '2001-01-19'),
+	('Dark', 'A family saga with a supernatural twist, set in a German town where the disappearance of two young children exposes the relationships among four families.', 8.7, 'https://www.youtube.com/watch?v=hDNNmeeJs1Q', 1500000, 0, 'dark.jpg', 18, '2017-12-01' ),
+	('Breaking Bad', 'A chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine with a former student in order to secure his familys future.', 9.5,'https://www.youtube.com/watch?v=EI0ib1NErqg', 3000000, 0, 'breaking_bad.jpg' ,18,'2008-01-20'),
 	('Game of Thrones', 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.', 9.3, 'https://www.youtube.com/watch?v=EI0ib1NErqg', 10000000, 100000000, 'game_of_thrones.jpg', 18, '2011-04-17'),
 	('Friends', 'Follows the personal and professional lives of six twenty to thirty-something-year-old friends living in Manhattan.', 8.9, 'https://www.youtube.com/watch?v=hDNNmeeJs1Q', 5000000, 0, 'friends.jpg', 12, '1994-09-22'),
 	('The Office (US)', 'A mockumentary on a group of typical office workers, where the workday consists of ego clashes, inappropriate behavior, and tedium.', 8.9, 'https://www.youtube.com/watch?v=UtkGcwjmikI', 2500000, 0, 'the_office.jpg', 15, '2005-03-24'),
@@ -175,7 +184,6 @@ INSERT INTO AudioVisualContent (Title, Synopsis, Popularity, TrailerURL, Budget,
 	('The Expanse', 'A police detective in the asteroid belt, the first officer of an interplanetary ice freighter, and an earth-bound United Nations executive slowly discover a vast conspiracy that threatens the Earth''s rebellious colony on the asteroid belt.', 8.5, 'https://www.youtube.com/watch?v=TFdzpVt5rbk', 5000000, 0, 'the_expanse.jpg', 15, '2015-11-23'),
 	('The Umbrella Academy', 'A family of former child heroes, now grown apart, must reunite to continue to protect the world.', 8.0, 'https://www.youtube.com/watch?v=0DAmWHxeoKw', 8000000, 0, 'the_umbrella_academy.jpg', 15, '2019-02-15');
 
-
 INSERT INTO Movie (ID, Runtime) VALUES
 	(1, 118),
 	(2, 127),
@@ -205,8 +213,7 @@ INSERT INTO Movie (ID, Runtime) VALUES
 	(26, 146),
 	(27, 142),
 	(28, 202),
-	(29, 207);
-
+	(29, 143);
 
 INSERT INTO TVSeries ( ID, State, FinishDate) VALUES
 	(30, 'Finished', '2020-06-27'),
@@ -391,7 +398,6 @@ INSERT INTO Season (ID, Number, Photo, TrailerURL, ReleaseDate) VALUES
 	(60, 2, 'the_umbrella_academy.jpg', 'https://www.youtube.com/watch?v=0DAmWHxeoKw', '2020-07-31'),
 	(60, 3, 'the_umbrella_academy.jpg', 'https://www.youtube.com/watch?v=0DAmWHxeoKw', '2020-02-15');
 
-
 INSERT INTO Episode (Series_ID, Season_ID, Number, Runtime, Synopsis) VALUES
 	(30, 3, 8, 60, 'A family saga with a supernatural twist, set in a German town, where the disappearance of two young children exposes the relationships among four families.'),
 	(31, 5, 16, 45, 'A high school chemistry teacher turned methamphetamine manufacturer partners with a former student to create and sell the purest methamphetamine on the market.'),
@@ -424,7 +430,6 @@ INSERT INTO Episode (Series_ID, Season_ID, Number, Runtime, Synopsis) VALUES
 	(58, 4, 14, 60, 'A financial advisor drags his family from Chicago to the Missouri Ozarks, where he must launder money to appease a drug boss.'),
 	(59, 5, 6, 50, 'A police detective in the asteroid belt, the first officer of an interplanetary ice freighter, and an earth-bound United Nations executive slowly discover a vast conspiracy that threatens the Earth''s rebellious colony on the asteroid belt.'),
 	(60, 2, 10, 50, 'A family of former child heroes, now grown apart, must reunite to continue to protect the world.');
-
 
 INSERT INTO AVContentGenre (AVIdentifier, GenreID) VALUES
 	(1, 2),
@@ -656,3 +661,102 @@ INSERT INTO AVContentGenre (AVIdentifier, GenreID) VALUES
 	(60, 6),
 	(60, 11),
 	(60, 12);
+
+INSERT INTO AVContentPerson (AVIdentifier, PersonID, Role) VALUES
+	(1,51,'Actor'),
+	(2,11,'Actor'),
+	(2,26,'Actor'),
+	(3,16,'Actor'),
+	(4,22,'Actor'),
+	(4,1,'Actor'),
+	(6,41,'Actor'),
+	(6,46,'Actor'),
+	(7,54,'Actor'),
+	(8,55,'Director'),
+	(9,57,'Actor'),
+	(10,56,'Actor'),
+	(12,31,'Actor'),
+	(13,16,'Actor'),
+	(14,35,'Actor'),
+	(15,8,'Actor'),
+	(16,2,'Actor'),
+	(16,23,'Actor'),
+	(17,26,'Actor'),
+	(17,41,'Actor'),
+	(18,11,'Actor'),
+	(18,31,'Actor'),
+	(19,16,'Actor'),
+	(20,1,'Actor'),
+	(21,26,'Actor'),
+	(22,59,'Actor'),
+	(23,59,'Actor'),
+	(24,59,'Actor'),
+	(25,27,'Actor'),
+	(26,2,'Actor'),
+	(26,18,'Actor'),
+	(27,27,'Actor'),
+	(28,27,'Actor'),
+	(29,16,'Actor'),
+	(31,62,'Actor'),
+	(32,60,'Actor'),
+	(33,55,'Actor'),
+	(33,47,'Actor'),
+	(33,35,'Actor'),
+	(34,64,'Actor'),
+	(36,61,'Actor'),
+	(37,55,'Actor'),
+	(38,61,'Actor'),
+	(39,62,'Actor'),
+	(50,62,'Actor'),
+	(51,63,'Actor'),
+	(53,64,'Actor'),
+	(57,64,'Actor'),
+	(60,58,'Actor');
+	
+
+INSERT INTO Review(ID, UserID, AVIdentifier, Title, Description, Classification, CreatedAt) VALUES
+	(1, 1, 19, 'My favourite movie','The best movie ever done! I loved it!', 9.8,'2024-05-19'),
+	(2, 12, 19, 'Não gostei do filme, achei a história irrealista', 3.0, '2024-03-23'),
+	(3,1,12, 'Gstei do filme', 7.0, '2024-04-13');
+
+INSERT INTO ReviewLikes(ReviewID, UserID, IsLike) VALUES 
+	(1,2,1),
+	(1,3,1),
+	(1,4,1),
+	(1,5,1),
+	(1,6,1),
+	(1,7,1),
+	(1,8,1),
+	(1,9,1),
+	(2,12,1),
+	(2,22,1),
+	(2,13,1),
+	(2,14,1),
+	(2,15,1),
+	(2,16,1),
+	(2,17,1),
+	(2,18,1),
+	(2,19,1),
+	(2,20,1),
+	(2,21,1),
+	(2,24,1),
+	(2,11,1),
+	(3,1,2),
+	(3,2,1),
+	(3,3,1),
+	(3,4,1),
+	(3,5,1),
+	(3,6,1)
+	;
+
+INSERT INTO Watchlist (Title, UserID, Visibility) VALUES 
+	('Favoritos_Ana', 1, 1), 
+	('Carlos_Best', 2, 0);
+
+
+INSERT INTO WatchlistAV (WLTitle, UserID, AVIdentifier) VALUES
+	('Favoritos_Ana', 1, 1),
+	('Favoritos_Ana', 1, 2),
+	('Favoritos_Ana', 1, 3),
+	('Favoritos_Ana', 1, 4),
+	('Favoritos_Ana', 1, 5);
