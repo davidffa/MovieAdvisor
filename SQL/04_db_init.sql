@@ -714,10 +714,11 @@ INSERT INTO AVContentPerson (AVIdentifier, PersonID, Role) VALUES
 	(60,58,'Actor');
 	
 
-INSERT INTO Review(ID, UserID, AVIdentifier, Title, Description, Classification, CreatedAt) VALUES
-	(1, 1, 19, 'My favourite movie','The best movie ever done! I loved it!', 9.8,'2024-05-19'),
-	(2, 12, 19, 'Não gostei do filme, achei a história irrealista', 3.0, '2024-03-23'),
-	(3,1,12, 'Gstei do filme', 7.0, '2024-04-13');
+INSERT INTO Review(UserID, AVIdentifier, Title, Description, Classification, CreatedAt) VALUES
+	(1, 19, 'My favourite movie', 'The best movie ever done! I loved it!', 9.8, '2024-05-19'),
+	(12, 19, 'Não gostei', 'Não gostei do filme, achei a história irrealista', 3.0, '2024-03-23'),
+	(1,12, 'Gostei do filme', 'Filme muito bom', 7.0, '2024-04-13');
+
 
 INSERT INTO ReviewLikes(ReviewID, UserID, IsLike) VALUES 
 	(1,2,1),
@@ -739,15 +740,14 @@ INSERT INTO ReviewLikes(ReviewID, UserID, IsLike) VALUES
 	(2,19,1),
 	(2,20,1),
 	(2,21,1),
-	(2,24,1),
+	(2,23,1),
 	(2,11,1),
 	(3,1,2),
 	(3,2,1),
 	(3,3,1),
 	(3,4,1),
 	(3,5,1),
-	(3,6,1)
-	;
+	(3,6,1);
 
 INSERT INTO Watchlist (Title, UserID, Visibility) VALUES 
 	('Favoritos_Ana', 1, 1), 
