@@ -6,65 +6,53 @@ USE MovieAdvisor;
              Overall score = ((5+1) * 10 + 1 + 1) / 7
 */
 GO
-CREATE FUNCTION overallScore() RETURNS @table TABLE
-(
-    ID INT,
-    Title VARCHAR(64),
-    OverallScore DECIMAL(4, 2)
-)
+CREATE FUNCTION overallScoreByID(@ID INT) RETURNS DECIMAL(4, 2)
 AS
 BEGIN
-    DECLARE AVCursor CURSOR FAST_FORWARD
-    FOR SELECT ID, Title FROM AudioVisualContent;
-
-    OPEN AVCursor;
-
-    DECLARE @ID INT
-    DECLARE @Title VARCHAR(32)
-    DECLARE @OverallScore DECIMAL(4, 2)
+    DECLARE @OverallScore DECIMAL(4, 2);
+    DECLARE @ScoreSum INT;
     DECLARE @ReviewCount INT;
 
-    FETCH AVCursor INTO @ID, @Title;
+    SET @ScoreSum = 0;
+    SET @ReviewCount = 0;
+
+    DECLARE ReviewCursor CURSOR FAST_FORWARD
+    FOR SELECT ID, Classification FROM Review WHERE AVIdentifier = @ID;
+
+    OPEN ReviewCursor;
+
+    DECLARE @ReviewID INT;
+    DECLARE @Classification SMALLINT;
+
+    FETCH ReviewCursor INTO @ReviewID, @Classification;
+
+    DECLARE @LikeCount INT;
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
-        SET @ReviewCount = 0;
+        SELECT @LikeCount=COUNT(IsLike) FROM ReviewLikes WHERE ReviewID = @ReviewID;
 
-        DECLARE ReviewCursor CURSOR FAST_FORWARD
-        FOR SELECT ID, Classification FROM Review WHERE AVIdentifier = @ID;
-
-        OPEN ReviewCursor;
-
-        DECLARE @ReviewID INT;
-        DECLARE @Classification SMALLINT;
+        SET @ReviewCount = @ReviewCount + @LikeCount;
+        SET @ScoreSum = @ScoreSum + (@LikeCount + 1) * @Classification;
 
         FETCH ReviewCursor INTO @ReviewID, @Classification;
-
-        DECLARE @LikeCount INT;
-
-        WHILE @@FETCH_STATUS = 0
-        BEGIN
-            SELECT @LikeCount=COUNT(IsLike) FROM ReviewLikes WHERE ReviewID = @ReviewID;
-
-            SET @ReviewCount = @ReviewCount + @LikeCount;
-            SET @OverallScore = @OverallScore + (@LikeCount + 1) * @Classification;
-
-            FETCH ReviewCursor INTO @ReviewID, @Classification;
-        END
-
-        CLOSE ReviewCursor;
-        DEALLOCATE ReviewCursor;
-
-        FETCH AVCursor INTO @ID, @Title;
-
-        SET @OverallScore = @OverallScore / @ReviewCount;
-
-        INSERT INTO @table VALUES (@ID, @Title, @OverallScore);
     END
 
-    CLOSE AVCursor;
-    DEALLOCATE AVCursor;
-    
-    RETURN;
+    CLOSE ReviewCursor;
+    DEALLOCATE ReviewCursor;
+
+    IF @ReviewCount = 0
+    BEGIN
+        RETURN -1;
+    END
+
+    SET @OverallScore = CAST(@ScoreSum AS FLOAT) / @ReviewCount;
+
+    RETURN @OverallScore;
 END
+GO
+
+CREATE FUNCTION filterAVByGenre(@GenreId INT) RETURNS TABLE
+AS
+RETURN (SELECT * FROM AudioVisualContent JOIN AVContentGenre ON ID=AVIdentifier WHERE GenreID = @GenreId);
 GO

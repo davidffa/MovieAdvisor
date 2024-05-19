@@ -1,7 +1,27 @@
-﻿namespace MovieAdvisor
+﻿using System.Data.SqlClient;
+
+namespace MovieAdvisor
 {
     internal class AudiovisualContent
     {
+        public static AudiovisualContent FromReader(SqlDataReader reader)
+        {
+            AudiovisualContent m = new AudiovisualContent();
+
+            m.ID = reader["ID"].ToString();
+            m.Title = reader["Title"].ToString();
+            m.Synopsis = reader["Synopsis"].ToString();
+            m.Popularity = reader["Popularity"].ToString();
+            m.TrailerURL = reader["TrailerURL"].ToString();
+            m.Budget = reader["Budget"].ToString();
+            m.Revenue = reader["Revenue"].ToString();
+            m.Photo = reader["Photo"].ToString();
+            m.AgeRate = reader["AgeRate"].ToString();
+            m.ReleaseDate = reader["ReleaseDate"].ToString();
+
+            return m;
+        }
+
         private String _id;
         private String _title;
         private String _synopsis;
@@ -23,5 +43,10 @@
         public String Photo { get => _photo; set => _photo = value; }
         public String AgeRate { get => _ageRate; set => _ageRate = value; }
         public String ReleaseDate { get => _releaseDate; set => _releaseDate = value; }
+
+        public override string ToString()
+        {
+            return Title;
+        }
     }
 }

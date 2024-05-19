@@ -17,5 +17,10 @@
 		public String Description { get => _description; set => _description = value; }
 		public String Classification { get => _classification; set => _classification = value; }
 		public String CreatedAt { get => _createdAt; set => _createdAt = value; }
+
+        public override string ToString()
+        {
+            return Title;
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace MovieAdvisor
 {
-    internal class TVSeries
+    internal class TVSeries : AudiovisualContent
     {
         private String _id;
         private String _state;

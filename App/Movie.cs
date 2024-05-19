@@ -1,6 +1,6 @@
 ﻿namespace MovieAdvisor
 {
-    internal class Movie
+    internal class Movie : AudiovisualContent
     {
         private String _id;
         private String _runtime;
