@@ -38,7 +38,6 @@ CREATE TABLE AudioVisualContent (
 	ID				INT IDENTITY(1, 1) NOT NULL,
 	Title			VARCHAR(64) NOT NULL,
 	Synopsis		VARCHAR(255),
-	Popularity		DECIMAL(3, 1) CHECK(Popularity >= 0 AND Popularity <= 10),
 	TrailerURL		VARCHAR(128),
 	Budget			MONEY,
 	Revenue			MONEY,
@@ -60,7 +59,7 @@ CREATE TABLE Movie (
 CREATE TABLE TVSeries (
 	ID			INT NOT NULL,
 	State		VARCHAR(16) NOT NULL CHECK(State = 'Cancelled' OR State = 'Active' OR State = 'Finished'),
-	FinishDate	DATE CHECK(State = 'Cancelled' OR State = 'Finished'),
+	FinishDate	DATE,
 
 	PRIMARY KEY (ID),
 	FOREIGN KEY (ID) REFERENCES AudioVisualContent(ID) ON UPDATE CASCADE ON DELETE CASCADE
