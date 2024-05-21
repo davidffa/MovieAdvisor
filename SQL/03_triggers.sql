@@ -31,7 +31,7 @@ AS
 
     SELECT @Id=ID, @FinishDate=FinishDate, @State=State FROM inserted;
 
-    IF NOT (@State = 'Active')
+    IF (@State = 'Active')
     BEGIN
         RAISERROR('Cannot set a finish date on an unfinished serie. The serie state must be finished or cancelled', 16, 1);
         ROLLBACK;
