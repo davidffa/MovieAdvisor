@@ -56,3 +56,77 @@ CREATE FUNCTION filterAVByGenre(@GenreId INT) RETURNS TABLE
 AS
 RETURN (SELECT * FROM AudioVisualContent JOIN AVContentGenre ON ID=AVIdentifier WHERE GenreID = @GenreId);
 GO
+
+CREATE PROC CreateSerie(
+	@Title VARCHAR(64),
+	@Synopsis VARCHAR(255),
+	@Popularity DECIMAL(3, 1),
+	@TrailerURL VARCHAR(128),
+	@Budget	MONEY,
+	@Revenue MONEY,
+	@Photo VARCHAR(128),
+	@AgeRate SMALLINT,
+	@ReleaseDate DATE,
+
+	@State VARCHAR(16),
+	@FinishDate DATE,
+
+    @SeasonNumber INT,
+	@SeasonPhoto VARCHAR(128),
+	@SeasonTrailerURL VARCHAR(128),
+	@SeasonReleaseDate DATE,
+
+    @EpNumber INT,
+	@EpRuntime SMALLINT,
+	@EpSynopsis	VARCHAR(255)
+)
+AS
+    BEGIN TRAN;
+
+    INSERT INTO AudioVisualContent (Title, Synopsis, Popularity, TrailerURL, Budget, Revenue, Photo, AgeRate, ReleaseDate) VALUES
+        (@Title, @Synopsis, @Popularity, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate);
+
+    DECLARE @ID INT;
+
+    SET @ID = @@IDENTITY;
+
+    INSERT INTO TVSeries (ID, State, FinishDate) VALUES
+        (@ID, @State, @FinishDate);
+
+    INSERT INTO Season (ID, Number, Photo, TrailerURL, ReleaseDate) VALUES
+        (@ID, @SeasonNumber, @SeasonPhoto, @SeasonTrailerURL, @SeasonReleaseDate);
+
+    INSERT INTO Episode (Series_ID, Season_ID, Number, Runtime, Synopsis) VALUES
+        (@ID, @SeasonNumber, @EpNumber, @EpRuntime, @EpSynopsis);
+
+    COMMIT TRAN;
+GO
+
+CREATE PROC CreateMovie(
+	@Title VARCHAR(64),
+	@Synopsis VARCHAR(255),
+	@Popularity DECIMAL(3, 1),
+	@TrailerURL VARCHAR(128),
+	@Budget	MONEY,
+	@Revenue MONEY,
+	@Photo VARCHAR(128),
+	@AgeRate SMALLINT,
+	@ReleaseDate DATE,
+
+	@Runtime INT
+)
+AS
+    BEGIN TRAN;
+
+    INSERT INTO AudioVisualContent (Title, Synopsis, Popularity, TrailerURL, Budget, Revenue, Photo, AgeRate, ReleaseDate) VALUES
+        (@Title, @Synopsis, @Popularity, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate);
+
+    DECLARE @ID INT;
+
+    SET @ID = @@IDENTITY;
+
+    INSERT INTO Movie (ID, Runtime) VALUES
+        (@ID, @Runtime);
+
+    COMMIT TRAN;
+GO
