@@ -227,3 +227,13 @@ RETURN (
     GROUP BY R.ID, R.UserID, R.AVIdentifier, R.Title, R.Description, R.Classification, R.CreatedAt
 );
 GO
+
+CREATE FUNCTION getAVFromWatchlist(@Title VARCHAR(32), @UserID INT) RETURNS TABLE
+AS
+RETURN (
+    SELECT AudioVisualContent.* FROM WatchlistAV
+    JOIN (SELECT * FROM Watchlist WHERE Title=@Title AND UserID=@UserID) AS WL
+    ON (WatchlistAV.WLTitle = WL.Title AND WatchlistAV.UserID = WL.UserID)
+    JOIN AudioVisualContent ON AudioVisualContent.ID = WatchlistAV.AVIdentifier
+);
+GO
