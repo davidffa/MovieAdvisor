@@ -11,7 +11,6 @@ namespace MovieAdvisor
             m.ID = reader["ID"].ToString();
             m.Title = reader["Title"].ToString();
             m.Synopsis = reader["Synopsis"].ToString();
-            m.Popularity = reader["Popularity"].ToString();
             m.TrailerURL = reader["TrailerURL"].ToString();
             m.Budget = reader["Budget"].ToString();
             m.Revenue = reader["Revenue"].ToString();

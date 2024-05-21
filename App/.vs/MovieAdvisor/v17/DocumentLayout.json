@@ -1,18 +1,14 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\david\\Desktop\\MovieAdvisor\\",
+  "WorkspaceRootPath": "C:\\Users\\franc\\Desktop\\MovieAdvisor\\App\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4EEBF0BA-D61E-4DA8-9DF4-3E8ECF7E4A05}|MovieAdvisor.csproj|c:\\users\\david\\desktop\\movieadvisor\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{4EEBF0BA-D61E-4DA8-9DF4-3E8ECF7E4A05}|MovieAdvisor.csproj|c:\\users\\franc\\desktop\\movieadvisor\\app\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{4EEBF0BA-D61E-4DA8-9DF4-3E8ECF7E4A05}|MovieAdvisor.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4EEBF0BA-D61E-4DA8-9DF4-3E8ECF7E4A05}|MovieAdvisor.csproj|c:\\users\\david\\desktop\\movieadvisor\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4EEBF0BA-D61E-4DA8-9DF4-3E8ECF7E4A05}|MovieAdvisor.csproj|c:\\users\\franc\\desktop\\movieadvisor\\app\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4EEBF0BA-D61E-4DA8-9DF4-3E8ECF7E4A05}|MovieAdvisor.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4EEBF0BA-D61E-4DA8-9DF4-3E8ECF7E4A05}|MovieAdvisor.csproj|c:\\users\\david\\desktop\\movieadvisor\\audiovisualcontent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4EEBF0BA-D61E-4DA8-9DF4-3E8ECF7E4A05}|MovieAdvisor.csproj|solutionrelative:audiovisualcontent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,45 +18,32 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "AudiovisualContent.cs",
-              "DocumentMoniker": "C:\\Users\\david\\Desktop\\MovieAdvisor\\AudiovisualContent.cs",
-              "RelativeDocumentMoniker": "AudiovisualContent.cs",
-              "ToolTip": "C:\\Users\\david\\Desktop\\MovieAdvisor\\AudiovisualContent.cs",
-              "RelativeToolTip": "AudiovisualContent.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAqAAAA",
+              "DocumentIndex": 0,
+              "Title": "Form1.cs [Projeto]",
+              "DocumentMoniker": "C:\\Users\\franc\\Desktop\\MovieAdvisor\\App\\Form1.cs",
+              "RelativeDocumentMoniker": "Form1.cs",
+              "ToolTip": "C:\\Users\\franc\\Desktop\\MovieAdvisor\\App\\Form1.cs [Projeto]",
+              "RelativeToolTip": "Form1.cs [Projeto]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-19T18:01:46.837Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-05-21T17:44:08.353Z",
+              "EditorCaption": " [Projeto]"
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "Form1.cs",
-              "DocumentMoniker": "C:\\Users\\david\\Desktop\\MovieAdvisor\\Form1.cs",
+              "DocumentMoniker": "C:\\Users\\franc\\Desktop\\MovieAdvisor\\App\\Form1.cs",
               "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "C:\\Users\\david\\Desktop\\MovieAdvisor\\Form1.cs",
+              "ToolTip": "C:\\Users\\franc\\Desktop\\MovieAdvisor\\App\\Form1.cs",
               "RelativeToolTip": "Form1.cs",
-              "ViewState": "AQIAAJMAAAAAAAAAAAAIwF8AAABNAAAA",
+              "ViewState": "AQIAADcBAAAAAAAAAAAvwK8BAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-19T17:55:44.363Z",
+              "WhenOpened": "2024-05-21T10:41:57Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Form1.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\david\\Desktop\\MovieAdvisor\\Form1.cs",
-              "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "C:\\Users\\david\\Desktop\\MovieAdvisor\\Form1.cs [Design]",
-              "RelativeToolTip": "Form1.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-19T16:18:35.827Z",
-              "EditorCaption": " [Design]"
             }
           ]
         }
