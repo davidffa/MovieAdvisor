@@ -284,6 +284,16 @@ AS
 RETURN (SELECT * FROM AudioVisualContent JOIN AVContentGenre ON ID=AVIdentifier WHERE GenreID = @GenreId);
 GO
 
+CREATE FUNCTION filterMoviesByGenre(@GenreId INT) RETURNS TABLE
+AS
+RETURN (SELECT * FROM AllMovies JOIN AVContentGenre ON ID=AVIdentifier WHERE GenreID=@GenreId);
+GO
+
+CREATE FUNCTION filterSeriesByGenre(@GenreId INT) RETURNS TABLE
+AS
+RETURN (SELECT * FROM AllSeries JOIN AVContentGenre ON ID=AVIdentifier WHERE GenreID=@GenreId);
+GO
+
 CREATE FUNCTION getAllSeasonsOfSerie(@ID INT) RETURNS TABLE
 AS
 RETURN (SELECT * FROM Season WHERE Season.ID = @ID);
