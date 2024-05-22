@@ -316,9 +316,16 @@ GO
 CREATE FUNCTION getAVFromWatchlist(@Title VARCHAR(32), @UserID INT) RETURNS TABLE
 AS
 RETURN (
-    SELECT AudioVisualContent.* FROM WatchlistAV
-    JOIN (SELECT * FROM Watchlist WHERE Title=@Title AND UserID=@UserID) AS WL
-    ON (WatchlistAV.WLTitle = WL.Title AND WatchlistAV.UserID = WL.UserID)
-    JOIN AudioVisualContent ON AudioVisualContent.ID = WatchlistAV.AVIdentifier
+    SELECT AudioVisualContent.* FROM 
+    (SELECT * FROM WatchlistAV WHERE (WatchlistAV.WLTitle = @Title AND WatchlistAV.UserID = @UserID)) AS WL
+    JOIN AudioVisualContent ON AudioVisualContent.ID = WL.AVIdentifier
+);
+GO
+
+CREATE FUNCTION getAVContentGenres(@ID INT) RETURNS TABLE
+AS
+RETURN (
+    SELECT Name FROM Genre 
+    JOIN (SELECT GenreID From AVContentGenre WHERE AVIdentifier=@ID) AS GenreID ON Genre.ID = GenreID
 );
 GO
