@@ -30,6 +30,8 @@
         {
             tabControl1 = new TabControl();
             movies = new TabPage();
+            SeriesGroup = new GroupBox();
+            test = new Label();
             confirmButton = new Button();
             cancelButton = new Button();
             DeleteButton = new Button();
@@ -39,6 +41,11 @@
             movieRadioDetails = new RadioButton();
             seriesRadioDetails = new RadioButton();
             panel1 = new Panel();
+            RuntimeBox = new TextBox();
+            StateLabel = new Label();
+            StateComboBox = new ComboBox();
+            FinishDateLabel = new Label();
+            FinishDatePicker = new DateTimePicker();
             ReleaseLabel = new Label();
             ReleaseDatePicker = new DateTimePicker();
             PhotoBox = new TextBox();
@@ -77,6 +84,7 @@
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             tabControl1.SuspendLayout();
             movies.SuspendLayout();
+            SeriesGroup.SuspendLayout();
             groupBox1.SuspendLayout();
             avadd.SuspendLayout();
             panel1.SuspendLayout();
@@ -100,6 +108,7 @@
             // 
             // movies
             // 
+            movies.Controls.Add(SeriesGroup);
             movies.Controls.Add(confirmButton);
             movies.Controls.Add(cancelButton);
             movies.Controls.Add(DeleteButton);
@@ -123,6 +132,25 @@
             movies.TabIndex = 0;
             movies.Text = "Movies/Series";
             movies.UseVisualStyleBackColor = true;
+            // 
+            // SeriesGroup
+            // 
+            SeriesGroup.Controls.Add(test);
+            SeriesGroup.Location = new Point(759, 28);
+            SeriesGroup.Name = "SeriesGroup";
+            SeriesGroup.Size = new Size(335, 590);
+            SeriesGroup.TabIndex = 23;
+            SeriesGroup.TabStop = false;
+            SeriesGroup.Visible = false;
+            // 
+            // test
+            // 
+            test.AutoSize = true;
+            test.Location = new Point(21, 34);
+            test.Name = "test";
+            test.Size = new Size(120, 20);
+            test.TabIndex = 0;
+            test.Text = "JUST FOR SERIES";
             // 
             // confirmButton
             // 
@@ -201,6 +229,7 @@
             movieRadioDetails.TabStop = true;
             movieRadioDetails.Text = "Movies";
             movieRadioDetails.UseVisualStyleBackColor = true;
+            movieRadioDetails.CheckedChanged += movieRadioDetails_CheckedChanged;
             // 
             // seriesRadioDetails
             // 
@@ -211,9 +240,15 @@
             seriesRadioDetails.TabIndex = 9;
             seriesRadioDetails.Text = "Series";
             seriesRadioDetails.UseVisualStyleBackColor = true;
+            seriesRadioDetails.CheckedChanged += seriesRadioDetails_CheckedChanged;
             // 
             // panel1
             // 
+            panel1.Controls.Add(RuntimeBox);
+            panel1.Controls.Add(StateLabel);
+            panel1.Controls.Add(StateComboBox);
+            panel1.Controls.Add(FinishDateLabel);
+            panel1.Controls.Add(FinishDatePicker);
             panel1.Controls.Add(ReleaseLabel);
             panel1.Controls.Add(ReleaseDatePicker);
             panel1.Controls.Add(PhotoBox);
@@ -228,10 +263,56 @@
             panel1.Size = new Size(344, 448);
             panel1.TabIndex = 14;
             // 
+            // RuntimeBox
+            // 
+            RuntimeBox.Location = new Point(91, 356);
+            RuntimeBox.Name = "RuntimeBox";
+            RuntimeBox.PlaceholderText = "Runtime (em minutos)";
+            RuntimeBox.Size = new Size(163, 27);
+            RuntimeBox.TabIndex = 30;
+            RuntimeBox.TextAlign = HorizontalAlignment.Center;
+            // 
+            // StateLabel
+            // 
+            StateLabel.AutoSize = true;
+            StateLabel.Location = new Point(53, 343);
+            StateLabel.Name = "StateLabel";
+            StateLabel.Size = new Size(54, 20);
+            StateLabel.TabIndex = 29;
+            StateLabel.Text = "State : ";
+            // 
+            // StateComboBox
+            // 
+            StateComboBox.FormattingEnabled = true;
+            StateComboBox.Items.AddRange(new object[] { "Active", "Finished", "Cancelled" });
+            StateComboBox.Location = new Point(131, 340);
+            StateComboBox.Name = "StateComboBox";
+            StateComboBox.Size = new Size(182, 28);
+            StateComboBox.TabIndex = 28;
+            StateComboBox.SelectedIndexChanged += StateComboBox_SelectedIndexChanged;
+            // 
+            // FinishDateLabel
+            // 
+            FinishDateLabel.AutoSize = true;
+            FinishDateLabel.Location = new Point(14, 389);
+            FinishDateLabel.Name = "FinishDateLabel";
+            FinishDateLabel.Size = new Size(93, 20);
+            FinishDateLabel.TabIndex = 27;
+            FinishDateLabel.Text = "Finish Date : ";
+            // 
+            // FinishDatePicker
+            // 
+            FinishDatePicker.CustomFormat = "";
+            FinishDatePicker.Location = new Point(113, 389);
+            FinishDatePicker.Name = "FinishDatePicker";
+            FinishDatePicker.Size = new Size(221, 27);
+            FinishDatePicker.TabIndex = 26;
+            FinishDatePicker.Value = new DateTime(2024, 5, 26, 0, 0, 0, 0);
+            // 
             // ReleaseLabel
             // 
             ReleaseLabel.AutoSize = true;
-            ReleaseLabel.Location = new Point(3, 289);
+            ReleaseLabel.Location = new Point(0, 287);
             ReleaseLabel.Name = "ReleaseLabel";
             ReleaseLabel.Size = new Size(107, 20);
             ReleaseLabel.TabIndex = 25;
@@ -240,9 +321,9 @@
             // ReleaseDatePicker
             // 
             ReleaseDatePicker.CustomFormat = "";
-            ReleaseDatePicker.Location = new Point(116, 287);
+            ReleaseDatePicker.Location = new Point(131, 287);
             ReleaseDatePicker.Name = "ReleaseDatePicker";
-            ReleaseDatePicker.Size = new Size(221, 27);
+            ReleaseDatePicker.Size = new Size(206, 27);
             ReleaseDatePicker.TabIndex = 15;
             ReleaseDatePicker.Value = new DateTime(2024, 5, 26, 0, 0, 0, 0);
             // 
@@ -334,7 +415,6 @@
             ageRate2.TabIndex = 18;
             ageRate2.Text = "12";
             ageRate2.UseVisualStyleBackColor = true;
-            ageRate2.CheckedChanged += ageRate2_CheckedChanged;
             // 
             // NameBox
             // 
@@ -352,7 +432,6 @@
             SynopsisBox.PlaceholderText = "Add a synopsis";
             SynopsisBox.Size = new Size(334, 70);
             SynopsisBox.TabIndex = 15;
-            SynopsisBox.TextChanged += SynopsisBox_TextChanged;
             // 
             // typeBox
             // 
@@ -604,6 +683,8 @@
             tabControl1.ResumeLayout(false);
             movies.ResumeLayout(false);
             movies.PerformLayout();
+            SeriesGroup.ResumeLayout(false);
+            SeriesGroup.PerformLayout();
             groupBox1.ResumeLayout(false);
             avadd.ResumeLayout(false);
             avadd.PerformLayout();
@@ -667,5 +748,12 @@
         private TextBox PhotoBox;
         private DateTimePicker ReleaseDatePicker;
         private Label ReleaseLabel;
+        private Label FinishDateLabel;
+        private DateTimePicker FinishDatePicker;
+        private ComboBox StateComboBox;
+        private Label StateLabel;
+        private TextBox RuntimeBox;
+        private GroupBox SeriesGroup;
+        private Label test;
     }
 }
