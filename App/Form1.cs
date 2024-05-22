@@ -10,6 +10,10 @@ namespace MovieAdvisor
         private bool adding;
         private int currentAVContent;
 
+        private string avOrderBy = "";
+        private int typeSelector = 0; // 0 -> all 1 -> movies 2 -> series
+        private string selectedGenreID = null;
+
         public Form1()
         {
             InitializeComponent();
@@ -18,7 +22,7 @@ namespace MovieAdvisor
         private void Form1_Load(object sender, EventArgs e)
         {
             verifyDBConnection();
-            loadAVContents("Order By Title");
+            loadAVContents(true);
             loadGenres();
         }
 
@@ -61,81 +65,42 @@ namespace MovieAdvisor
             cn.Close();
         }
 
-        private void loadAVContents(String orderby)
+        private void loadAVContents(bool first=false)
         {
             if (!verifyDBConnection())
             {
                 return;
             }
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM AudioVisualContent "+orderby, cn);
+            string query = "SELECT * ";
+
+            if (selectedGenreID == null)
+            {
+                if (typeSelector == 0) query += "FROM AudioVisualContent ";
+                else if (typeSelector == 1) query += "FROM AllMovies ";
+                else if (typeSelector == 2) query += "FROM AllSeries ";
+                else throw new Exception("Unreachable");
+            } else
+            {
+                if (typeSelector == 0) query += "FROM filterAVByGenre(" + selectedGenreID + ")";
+                else if (typeSelector == 1) query += "FROM filterMoviesByGenre(" + selectedGenreID + ")";
+                else if (typeSelector == 2) query += "FROM filterSeriesByGenre(" + selectedGenreID + ")";
+                else throw new Exception("Unreachable");
+            }
+
+            SqlCommand cmd = new SqlCommand(query + avOrderBy, cn);
             SqlDataReader reader = cmd.ExecuteReader();
             avList.Items.Clear();
-            avList2.Items.Clear();
+
+            if (first)
+                avList2.Items.Clear();
 
             while (reader.Read())
             {
                 AudiovisualContent m = AudiovisualContent.FromReader(reader);
                 avList.Items.Add(m);
-                avList2.Items.Add(m);
-            }
 
-            cn.Close();
-        }
-
-        private void filterAVContentByGenre(Genre genre)
-        {
-            if (!verifyDBConnection())
-            {
-                return;
-            }
-
-            SqlCommand cmd = new SqlCommand("SELECT * FROM filterAVByGenre(" + genre.ID + ")", cn);
-            SqlDataReader reader = cmd.ExecuteReader();
-            avList.Items.Clear();
-
-            while (reader.Read())
-            {
-                AudiovisualContent m = AudiovisualContent.FromReader(reader);
-                avList.Items.Add(m);
-            }
-
-            cn.Close();
-        }
-
-        private void filterAVContentByType(string type)
-        {
-            if (!verifyDBConnection())
-            {
-                return;
-            }
-
-            SqlCommand cmd;
-
-            if (type.Equals("all"))
-            {
-                cmd = new SqlCommand("SELECT * FROM AudioVisualContent ORDER BY Title", cn);
-            }
-            else if (type.Equals("movies"))
-            {
-                cmd = new SqlCommand("SELECT * FROM Movie JOIN AudioVisualContent ON Movie.ID = AudioVisualContent.ID ORDER BY Title", cn);
-            }
-            else if (type.Equals("series"))
-            {
-                cmd = new SqlCommand("SELECT * FROM TVSeries JOIN AudioVisualContent ON TVSeries.ID = AudioVisualContent.ID ORDER BY Title", cn);
-            }
-            else
-            {
-                throw new Exception("Unreachable");
-            }
-
-            SqlDataReader reader = cmd.ExecuteReader();
-            avList.Items.Clear();
-
-            while (reader.Read())
-            {
-                AudiovisualContent m = AudiovisualContent.FromReader(reader);
-                avList.Items.Add(m);
+                if (first) avList2.Items.Add(m);
             }
 
             cn.Close();
@@ -153,6 +118,7 @@ namespace MovieAdvisor
             SqlCommand cmd = new SqlCommand("SELECT * FROM AudioVisualContent WHERE Title LIKE '%" + searchTerm + "%'", cn);
             SqlDataReader reader = cmd.ExecuteReader();
             avList.Items.Clear();
+            // TODO: Limpar filtragens / sort ( ou nao )
 
             while (reader.Read())
             {
@@ -223,27 +189,33 @@ namespace MovieAdvisor
         {
             if (genreComboBox.SelectedIndex == 0)
             {
-                loadAVContents("");
+                selectedGenreID = null;
+                loadAVContents();
                 return;
             }
 
             Genre selectedGenre = (Genre)genreComboBox.SelectedItem;
-            filterAVContentByGenre(selectedGenre);
+            selectedGenreID = selectedGenre.ID;
+            loadAVContents();
         }
 
         private void movieOrderBy_SelectedIndexChanged(object sender, EventArgs e)
         {
            if (movieOrderBy.SelectedIndex == 0)
             {
-                loadAVContents("Order by Title");
+                avOrderBy = "ORDER BY Title";
+                loadAVContents();
             } else if (movieOrderBy.SelectedIndex == 1) {
-                loadAVContents("Order by Title DESC");
+                avOrderBy = "ORDER BY Title DESC";
+                loadAVContents();
             } else if (movieOrderBy.SelectedIndex == 2)
             {
-                loadAVContents("ORDER BY ReleaseDate");
+                avOrderBy = "ORDER BY ReleaseDate";
+                loadAVContents();
             } else if (movieOrderBy.SelectedIndex == 3)
             {
-                loadAVContents("ORDER BY ReleaseDate DESC");
+                avOrderBy = "ORDER BY ReleaseDate DESC";
+                loadAVContents();
             }
         }
 
@@ -251,7 +223,8 @@ namespace MovieAdvisor
         {
             if (movieRadio.Checked)
             {
-                filterAVContentByType("movies");
+                typeSelector = 1;
+                loadAVContents();
             }
         }
 
@@ -259,7 +232,8 @@ namespace MovieAdvisor
         {
             if (seriesRadio.Checked)
             {
-                filterAVContentByType("series");
+                typeSelector = 2;
+                loadAVContents();
             }
         }
 
@@ -267,7 +241,8 @@ namespace MovieAdvisor
         {
             if (allRadio.Checked)
             {
-                filterAVContentByType("all");
+                typeSelector = 0;
+                loadAVContents();
             }
         }
 
