@@ -18,7 +18,7 @@ namespace MovieAdvisor
         private void Form1_Load(object sender, EventArgs e)
         {
             verifyDBConnection();
-            loadAVContents();
+            loadAVContents("Order By Title");
             loadGenres();
         }
 
@@ -61,14 +61,14 @@ namespace MovieAdvisor
             cn.Close();
         }
 
-        private void loadAVContents()
+        private void loadAVContents(String orderby)
         {
             if (!verifyDBConnection())
             {
                 return;
             }
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM AudioVisualContent ORDER BY Title", cn);
+            SqlCommand cmd = new SqlCommand("SELECT * FROM AudioVisualContent "+orderby, cn);
             SqlDataReader reader = cmd.ExecuteReader();
             avList.Items.Clear();
             avList2.Items.Clear();
@@ -223,7 +223,7 @@ namespace MovieAdvisor
         {
             if (genreComboBox.SelectedIndex == 0)
             {
-                loadAVContents();
+                loadAVContents("");
                 return;
             }
 
@@ -233,6 +233,18 @@ namespace MovieAdvisor
 
         private void movieOrderBy_SelectedIndexChanged(object sender, EventArgs e)
         {
+           if (movieOrderBy.SelectedIndex == 0)
+            {
+                loadAVContents("Order by Title");
+            } else if (movieOrderBy.SelectedIndex == 1) {
+                loadAVContents("Order by Title DESC");
+            } else if (movieOrderBy.SelectedIndex == 2)
+            {
+                loadAVContents("ORDER BY ReleaseDate");
+            } else if (movieOrderBy.SelectedIndex == 3)
+            {
+                loadAVContents("ORDER BY ReleaseDate DESC");
+            }
         }
 
         private void movieRadio_CheckedChanged(object sender, EventArgs e)
@@ -277,6 +289,8 @@ namespace MovieAdvisor
         {
             LockControls();
             AddButton.Visible = true;
+            EditButton.Visible = true;
+            DeleteButton.Visible = true;
             cancelButton.Visible = false;
             confirmButton.Visible = false;
         }
@@ -285,6 +299,8 @@ namespace MovieAdvisor
         {
             UnlockControls();
             AddButton.Visible = false;
+            EditButton.Visible = false;
+            DeleteButton.Visible = false;
             cancelButton.Visible = true;
             confirmButton.Visible = true;
 
@@ -294,6 +310,12 @@ namespace MovieAdvisor
         {
             NameBox.Text = "";
             SynopsisBox.Text = "";
+            TrailerBox.Text = "";
+            PhotoBox.Text = "";
+            BudgetBox.Text = "";
+            RevenueBox.Text = "";
+            ReleaseDatePicker.Text = "";
+            ageRate.Checked = true;
 
         }
 
@@ -374,23 +396,32 @@ namespace MovieAdvisor
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            adding = false;
+            if (adding == true) 
+            { 
             ClearFields();
+            }
             ShowButtons();
             avList.Enabled = true;
             groupBox1.Enabled = false;
             movieRadioDetails.Checked = true;
             ageRate.Checked = true;
-
+            adding = false;
         }
 
         private void confirmButton_Click(object sender, EventArgs e)
         {
-            adding = false;
-            ClearFields();
-            ShowButtons();
+            try
+            {
+                SaveAVContent();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             avList.Enabled = true;
-            groupBox1.Enabled = false;
+            int idx = avList.FindString(NameBox.Text);
+            avList.SelectedIndex = idx;
+            ShowButtons();
         }
 
         private void SynopsisBox_TextChanged(object sender, EventArgs e)
@@ -411,6 +442,81 @@ namespace MovieAdvisor
                 ShowAVContent();
             }
         }
+
+        private void SubmitAVContent(AudiovisualContent C)
+        {
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "INSERT AudiovisualContent (Title, Synopsis, TrailerURL, " + "Budget, Revenue, Photo, AgeRate, ReleaseDate) " + "VALUES(@Title, @Synopsis, @TrailerURL, " + "@Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate)  ";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@Title", C.Title);
+            cmd.Parameters.AddWithValue("@Synopsis", C.Synopsis);
+            cmd.Parameters.AddWithValue("@TrailerURL", C.TrailerURL);
+            cmd.Parameters.AddWithValue("@Budget", C.Budget);
+            cmd.Parameters.AddWithValue("@Revenue", C.Revenue);
+            cmd.Parameters.AddWithValue("@Photo", C.Photo);
+            cmd.Parameters.AddWithValue("@AgeRate", C.AgeRate);
+            cmd.Parameters.AddWithValue("@ReleaseDate", C.ReleaseDate);
+            cmd.Connection = cn;
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to update in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+
+
+        private void UpdateAVContent(AudiovisualContent C)
+        {
+            int rows = 0;
+
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "UPDATE AudioVisualContent " + "SET Title = @Title, " + "    Synopsis = @Synopsis, " + "    TrailerURL = @TrailerURL, " + "    Budget = @Budget, " + "    Revenue = @Revenue, " + "    Photo = @Photo, " + "    AgeRate = @AgeRate " + "    ReleaseDate = @ReleaseDate " + "WHERE ID = @ID";
+
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@ID", C.ID);
+            cmd.Parameters.AddWithValue("@Title", C.Title);
+            cmd.Parameters.AddWithValue("@Synopsis", C.Synopsis);
+            cmd.Parameters.AddWithValue("@TrailerURL", C.TrailerURL);
+            cmd.Parameters.AddWithValue("@Budget", C.Budget);
+            cmd.Parameters.AddWithValue("@Revenue", C.Revenue);
+            cmd.Parameters.AddWithValue("@Photo", C.Photo);
+            cmd.Parameters.AddWithValue("@AgeRate", C.AgeRate);
+            cmd.Parameters.AddWithValue("@ReleaseDate", C.ReleaseDate);
+            cmd.Connection = cn;
+
+
+            try
+            {
+                rows = cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to update contact in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                if (rows == 1)
+                    MessageBox.Show("Update OK");
+                else
+                    MessageBox.Show("Update NOT OK");
+
+                cn.Close();
+            }
+        }
         public void ShowAVContent()
         {
             if (avList.Items.Count == 0 | currentAVContent < 0)
@@ -418,17 +524,29 @@ namespace MovieAdvisor
 
             AudiovisualContent av = (AudiovisualContent)avList.SelectedItem;
 
-            /*
-        private String _popularity;
-        private String _trailerURL;
-        private String _budget;
-        private String _revenue;
-        private String _photo;
-        private String _ageRate;
-        private String _releaseDate;
-             */
             NameBox.Text = av.Title;
             SynopsisBox.Text = av.Synopsis;
+            TrailerBox.Text = av.TrailerURL;
+            PhotoBox.Text = av.Photo;
+            BudgetBox.Text = av.Budget;
+            RevenueBox.Text = av.Revenue;
+            ReleaseDatePicker.Text = av.ReleaseDate;
+            if (av.AgeRate.Equals("0"))
+            {
+                ageRate.Checked = true;
+            } else if (av.AgeRate.Equals("12"))
+            {
+                ageRate2.Checked = true;
+            }
+            else if (av.AgeRate.Equals("15"))
+            {
+                ageRate3.Checked = true;
+            }
+            else
+            {
+                ageRate4.Checked = true;
+            }
+
 
 
             if (!verifyDBConnection()) return;
@@ -438,9 +556,9 @@ namespace MovieAdvisor
 
             if (reader.Read())
             {
-                Movie m = Movie.FromReader(reader);
+                Movie m = Movie.FromAV(av);
                 movieRadioDetails.Checked = true;
-                // runtime
+                m.Runtime = reader["Runtime"].ToString();
             }
             else
             {
@@ -448,17 +566,68 @@ namespace MovieAdvisor
                 cmd = new SqlCommand("SELECT * FROM TVSeries WHERE ID = " + av.ID, cn);
                 reader = cmd.ExecuteReader();
 
-                reader.Read();
-                TVSeries m = TVSeries.FromReader(reader);
-                seriesRadioDetails.Checked = true;
-
-                // state & finish date
+                if (reader.Read())
+                {
+                    TVSeries m = TVSeries.FromAV(av);
+                    seriesRadioDetails.Checked = true;
+                    m.State = reader["State"].ToString();
+                    m.FinishDate = reader["FinishDate"].ToString();
+                } 
             }
 
             cn.Close();
 
         }
 
+        private bool SaveAVContent()
+        {
+            AudiovisualContent av = new AudiovisualContent();
+            try
+            {
+                av.Title = NameBox.Text;
+                av.Synopsis = SynopsisBox.Text;
+                av.TrailerURL = TrailerBox.Text;
+                av.Photo = PhotoBox.Text;
+                av.Budget = BudgetBox.Text;
+                av.Revenue = RevenueBox.Text;
+                ReleaseDatePicker.CustomFormat = "yyyy-mm-dd";
+                av.ReleaseDate = ReleaseDatePicker.Value.ToString();
+                if (ageRate.Checked)
+                {
+                    av.AgeRate = "0";
+                }
+                else if (ageRate4.Checked)
+                {
+                    av.AgeRate = "12";
+                }
+                else if (ageRate3.Checked)
+                {
+                    av.AgeRate = "15";
+                }
+                else
+                {
+                   av.AgeRate = "18";
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+            if (adding)
+            {
+                SubmitAVContent(av);
+                avList.Items.Add(av);
+            }
+            else
+            {
+                UpdateAVContent(av);
+                avList.Items[currentAVContent] = av;
+            }
+            return true;
+        }
 
     }
 }

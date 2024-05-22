@@ -30,15 +30,21 @@
         {
             tabControl1 = new TabControl();
             movies = new TabPage();
+            confirmButton = new Button();
+            cancelButton = new Button();
             DeleteButton = new Button();
             EditButton = new Button();
             groupBox1 = new GroupBox();
-            cancelButton = new Button();
-            confirmButton = new Button();
             avadd = new GroupBox();
             movieRadioDetails = new RadioButton();
             seriesRadioDetails = new RadioButton();
             panel1 = new Panel();
+            ReleaseLabel = new Label();
+            ReleaseDatePicker = new DateTimePicker();
+            PhotoBox = new TextBox();
+            TrailerBox = new TextBox();
+            RevenueBox = new TextBox();
+            BudgetBox = new TextBox();
             AgeRateBox = new GroupBox();
             ageRate = new RadioButton();
             ageRate4 = new RadioButton();
@@ -94,6 +100,8 @@
             // 
             // movies
             // 
+            movies.Controls.Add(confirmButton);
+            movies.Controls.Add(cancelButton);
             movies.Controls.Add(DeleteButton);
             movies.Controls.Add(EditButton);
             movies.Controls.Add(groupBox1);
@@ -116,9 +124,34 @@
             movies.Text = "Movies/Series";
             movies.UseVisualStyleBackColor = true;
             // 
+            // confirmButton
+            // 
+            confirmButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            confirmButton.Location = new Point(445, 69);
+            confirmButton.Name = "confirmButton";
+            confirmButton.Size = new Size(113, 29);
+            confirmButton.TabIndex = 21;
+            confirmButton.Text = "Confirm";
+            confirmButton.UseVisualStyleBackColor = true;
+            confirmButton.Visible = false;
+            confirmButton.Click += confirmButton_Click;
+            // 
+            // cancelButton
+            // 
+            cancelButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            cancelButton.BackColor = Color.Transparent;
+            cancelButton.Location = new Point(576, 69);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new Size(113, 29);
+            cancelButton.TabIndex = 22;
+            cancelButton.Text = "Cancel";
+            cancelButton.UseVisualStyleBackColor = false;
+            cancelButton.Visible = false;
+            cancelButton.Click += CancelButton_Click;
+            // 
             // DeleteButton
             // 
-            DeleteButton.Location = new Point(766, 40);
+            DeleteButton.Location = new Point(628, 69);
             DeleteButton.Name = "DeleteButton";
             DeleteButton.Size = new Size(117, 29);
             DeleteButton.TabIndex = 15;
@@ -128,7 +161,7 @@
             // 
             // EditButton
             // 
-            EditButton.Location = new Point(617, 40);
+            EditButton.Location = new Point(505, 69);
             EditButton.Name = "EditButton";
             EditButton.Size = new Size(117, 29);
             EditButton.TabIndex = 14;
@@ -138,48 +171,20 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(cancelButton);
-            groupBox1.Controls.Add(confirmButton);
             groupBox1.Controls.Add(avadd);
             groupBox1.Controls.Add(panel1);
             groupBox1.Enabled = false;
-            groupBox1.Location = new Point(455, 104);
+            groupBox1.Location = new Point(386, 104);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(434, 514);
+            groupBox1.Size = new Size(363, 514);
             groupBox1.TabIndex = 13;
             groupBox1.TabStop = false;
-            // 
-            // cancelButton
-            // 
-            cancelButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            cancelButton.BackColor = Color.Transparent;
-            cancelButton.Location = new Point(237, 467);
-            cancelButton.Name = "cancelButton";
-            cancelButton.Size = new Size(113, 29);
-            cancelButton.TabIndex = 22;
-            cancelButton.Text = "Cancel";
-            cancelButton.UseVisualStyleBackColor = false;
-            cancelButton.Visible = false;
-            cancelButton.Click += CancelButton_Click;
-            // 
-            // confirmButton
-            // 
-            confirmButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            confirmButton.Enabled = false;
-            confirmButton.Location = new Point(75, 467);
-            confirmButton.Name = "confirmButton";
-            confirmButton.Size = new Size(113, 29);
-            confirmButton.TabIndex = 21;
-            confirmButton.Text = "Confirm";
-            confirmButton.UseVisualStyleBackColor = true;
-            confirmButton.Visible = false;
-            confirmButton.Click += confirmButton_Click;
             // 
             // avadd
             // 
             avadd.Controls.Add(movieRadioDetails);
             avadd.Controls.Add(seriesRadioDetails);
-            avadd.Location = new Point(267, 0);
+            avadd.Location = new Point(196, 0);
             avadd.Name = "avadd";
             avadd.Size = new Size(167, 49);
             avadd.TabIndex = 14;
@@ -200,7 +205,7 @@
             // seriesRadioDetails
             // 
             seriesRadioDetails.AutoSize = true;
-            seriesRadioDetails.Location = new Point(96, 20);
+            seriesRadioDetails.Location = new Point(92, 21);
             seriesRadioDetails.Name = "seriesRadioDetails";
             seriesRadioDetails.Size = new Size(69, 24);
             seriesRadioDetails.TabIndex = 9;
@@ -209,13 +214,71 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(ReleaseLabel);
+            panel1.Controls.Add(ReleaseDatePicker);
+            panel1.Controls.Add(PhotoBox);
+            panel1.Controls.Add(TrailerBox);
+            panel1.Controls.Add(RevenueBox);
+            panel1.Controls.Add(BudgetBox);
             panel1.Controls.Add(AgeRateBox);
             panel1.Controls.Add(NameBox);
             panel1.Controls.Add(SynopsisBox);
             panel1.Location = new Point(6, 60);
             panel1.Name = "panel1";
-            panel1.Size = new Size(422, 388);
+            panel1.Size = new Size(344, 448);
             panel1.TabIndex = 14;
+            // 
+            // ReleaseLabel
+            // 
+            ReleaseLabel.AutoSize = true;
+            ReleaseLabel.Location = new Point(3, 289);
+            ReleaseLabel.Name = "ReleaseLabel";
+            ReleaseLabel.Size = new Size(107, 20);
+            ReleaseLabel.TabIndex = 25;
+            ReleaseLabel.Text = "Release Date : ";
+            // 
+            // ReleaseDatePicker
+            // 
+            ReleaseDatePicker.CustomFormat = "";
+            ReleaseDatePicker.Location = new Point(116, 287);
+            ReleaseDatePicker.Name = "ReleaseDatePicker";
+            ReleaseDatePicker.Size = new Size(221, 27);
+            ReleaseDatePicker.TabIndex = 15;
+            ReleaseDatePicker.Value = new DateTime(2024, 5, 26, 0, 0, 0, 0);
+            // 
+            // PhotoBox
+            // 
+            PhotoBox.Location = new Point(0, 254);
+            PhotoBox.Name = "PhotoBox";
+            PhotoBox.PlaceholderText = "Type the URL of the Photo";
+            PhotoBox.Size = new Size(337, 27);
+            PhotoBox.TabIndex = 24;
+            // 
+            // TrailerBox
+            // 
+            TrailerBox.Location = new Point(0, 221);
+            TrailerBox.Name = "TrailerBox";
+            TrailerBox.PlaceholderText = "Type the URL of the Trailer";
+            TrailerBox.Size = new Size(337, 27);
+            TrailerBox.TabIndex = 23;
+            // 
+            // RevenueBox
+            // 
+            RevenueBox.Location = new Point(177, 179);
+            RevenueBox.Name = "RevenueBox";
+            RevenueBox.PlaceholderText = "Revenue";
+            RevenueBox.Size = new Size(160, 27);
+            RevenueBox.TabIndex = 22;
+            RevenueBox.TextAlign = HorizontalAlignment.Center;
+            // 
+            // BudgetBox
+            // 
+            BudgetBox.Location = new Point(3, 179);
+            BudgetBox.Name = "BudgetBox";
+            BudgetBox.PlaceholderText = "Budget";
+            BudgetBox.Size = new Size(163, 27);
+            BudgetBox.TabIndex = 21;
+            BudgetBox.TextAlign = HorizontalAlignment.Center;
             // 
             // AgeRateBox
             // 
@@ -225,7 +288,7 @@
             AgeRateBox.Controls.Add(ageRate2);
             AgeRateBox.Location = new Point(3, 115);
             AgeRateBox.Name = "AgeRateBox";
-            AgeRateBox.Size = new Size(400, 69);
+            AgeRateBox.Size = new Size(334, 58);
             AgeRateBox.TabIndex = 20;
             AgeRateBox.TabStop = false;
             AgeRateBox.Text = "AgeRate";
@@ -234,7 +297,7 @@
             // 
             ageRate.AutoSize = true;
             ageRate.Checked = true;
-            ageRate.Location = new Point(40, 26);
+            ageRate.Location = new Point(13, 26);
             ageRate.Name = "ageRate";
             ageRate.Size = new Size(38, 24);
             ageRate.TabIndex = 16;
@@ -245,7 +308,7 @@
             // ageRate4
             // 
             ageRate4.AutoSize = true;
-            ageRate4.Location = new Point(320, 26);
+            ageRate4.Location = new Point(264, 26);
             ageRate4.Name = "ageRate4";
             ageRate4.Size = new Size(46, 24);
             ageRate4.TabIndex = 19;
@@ -255,7 +318,7 @@
             // ageRate3
             // 
             ageRate3.AutoSize = true;
-            ageRate3.Location = new Point(224, 26);
+            ageRate3.Location = new Point(181, 26);
             ageRate3.Name = "ageRate3";
             ageRate3.Size = new Size(46, 24);
             ageRate3.TabIndex = 17;
@@ -265,7 +328,7 @@
             // ageRate2
             // 
             ageRate2.AutoSize = true;
-            ageRate2.Location = new Point(123, 26);
+            ageRate2.Location = new Point(88, 26);
             ageRate2.Name = "ageRate2";
             ageRate2.Size = new Size(46, 24);
             ageRate2.TabIndex = 18;
@@ -275,10 +338,10 @@
             // 
             // NameBox
             // 
-            NameBox.Location = new Point(3, 10);
+            NameBox.Location = new Point(0, 0);
             NameBox.Name = "NameBox";
             NameBox.PlaceholderText = "Type the name";
-            NameBox.Size = new Size(400, 27);
+            NameBox.Size = new Size(337, 27);
             NameBox.TabIndex = 13;
             // 
             // SynopsisBox
@@ -287,7 +350,7 @@
             SynopsisBox.Multiline = true;
             SynopsisBox.Name = "SynopsisBox";
             SynopsisBox.PlaceholderText = "Add a synopsis";
-            SynopsisBox.Size = new Size(400, 70);
+            SynopsisBox.Size = new Size(334, 70);
             SynopsisBox.TabIndex = 15;
             SynopsisBox.TextChanged += SynopsisBox_TextChanged;
             // 
@@ -296,7 +359,7 @@
             typeBox.Controls.Add(allRadio);
             typeBox.Controls.Add(movieRadio);
             typeBox.Controls.Add(seriesRadio);
-            typeBox.Location = new Point(303, 83);
+            typeBox.Location = new Point(239, 83);
             typeBox.Name = "typeBox";
             typeBox.Size = new Size(99, 118);
             typeBox.TabIndex = 11;
@@ -340,7 +403,7 @@
             // AddButton
             // 
             AddButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            AddButton.Location = new Point(464, 38);
+            AddButton.Location = new Point(386, 69);
             AddButton.Name = "AddButton";
             AddButton.Size = new Size(113, 29);
             AddButton.TabIndex = 12;
@@ -355,7 +418,7 @@
             genreComboBox.Location = new Point(2, 107);
             genreComboBox.Margin = new Padding(2);
             genreComboBox.Name = "genreComboBox";
-            genreComboBox.Size = new Size(149, 28);
+            genreComboBox.Size = new Size(217, 28);
             genreComboBox.TabIndex = 7;
             genreComboBox.SelectedIndexChanged += genreComboBox_SelectedIndexChanged;
             // 
@@ -392,17 +455,17 @@
             // movieOrderBy
             // 
             movieOrderBy.FormattingEnabled = true;
-            movieOrderBy.Items.AddRange(new object[] { "Title", "Popularity", "Release Date" });
+            movieOrderBy.Items.AddRange(new object[] { "Title (A-Z)", "Title (Z-A)", "Release Date (Older to Newer)", "Release Date (Newer to Older)" });
             movieOrderBy.Location = new Point(2, 174);
             movieOrderBy.Margin = new Padding(2);
             movieOrderBy.Name = "movieOrderBy";
-            movieOrderBy.Size = new Size(149, 28);
+            movieOrderBy.Size = new Size(217, 28);
             movieOrderBy.TabIndex = 3;
             movieOrderBy.SelectedIndexChanged += movieOrderBy_SelectedIndexChanged;
             // 
             // searchMoviesBtn
             // 
-            searchMoviesBtn.Location = new Point(303, 38);
+            searchMoviesBtn.Location = new Point(242, 38);
             searchMoviesBtn.Margin = new Padding(2);
             searchMoviesBtn.Name = "searchMoviesBtn";
             searchMoviesBtn.Size = new Size(99, 29);
@@ -417,7 +480,7 @@
             movieSearchBox.Margin = new Padding(2);
             movieSearchBox.Name = "movieSearchBox";
             movieSearchBox.PlaceholderText = "Type a name of a movie/serie";
-            movieSearchBox.Size = new Size(275, 27);
+            movieSearchBox.Size = new Size(217, 27);
             movieSearchBox.TabIndex = 1;
             // 
             // avList
@@ -426,7 +489,7 @@
             avList.Location = new Point(2, 215);
             avList.Margin = new Padding(2);
             avList.Name = "avList";
-            avList.Size = new Size(400, 404);
+            avList.Size = new Size(339, 404);
             avList.TabIndex = 0;
             avList.SelectedIndexChanged += avList_SelectedIndexChanged;
             // 
@@ -598,5 +661,11 @@
         private Button cancelButton;
         private Button confirmButton;
         private Button DeleteButton;
+        private TextBox BudgetBox;
+        private TextBox TrailerBox;
+        private TextBox RevenueBox;
+        private TextBox PhotoBox;
+        private DateTimePicker ReleaseDatePicker;
+        private Label ReleaseLabel;
     }
 }

@@ -22,6 +22,23 @@ namespace MovieAdvisor
             return m;
         }
 
+        public static Movie FromAV(AudiovisualContent av)
+        {
+            Movie m = new Movie();
+
+            m.ID = av.ID;
+            m.Title = av.Title;
+            m.Synopsis = av.Synopsis;
+            m.TrailerURL = av.TrailerURL;
+            m.Budget = av.Budget;
+            m.Revenue = av.Revenue;
+            m.Photo = av.Photo;
+            m.AgeRate = av.AgeRate;
+            m.ReleaseDate = av.ReleaseDate;
+
+            return m;
+        }
+
         private String _id;
         private String _runtime;
 

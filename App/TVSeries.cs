@@ -23,6 +23,23 @@ namespace MovieAdvisor
             return m;
         }
 
+        public static TVSeries FromAV(AudiovisualContent av)
+        {
+            TVSeries m = new TVSeries();
+
+            m.ID = av.ID;
+            m.Title = av.Title;
+            m.Synopsis = av.Synopsis;
+            m.TrailerURL = av.TrailerURL;
+            m.Budget = av.Budget;
+            m.Revenue = av.Revenue;
+            m.Photo = av.Photo;
+            m.AgeRate = av.AgeRate;
+            m.ReleaseDate = av.ReleaseDate;
+
+            return m;
+        }
+
         private String _id;
         private String _state;
         private String _finishDate;
