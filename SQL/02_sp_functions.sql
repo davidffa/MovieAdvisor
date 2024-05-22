@@ -28,6 +28,18 @@ AS
         (@SerieID, @SeasonNumber, @EpNumber, @EpRuntime, @EpSynopsis);
 
 GO
+CREATE PROC UpdateEpisode(
+    @SerieID INT,
+    @SeasonNumber INT,
+    @EpNumber INT,
+	@EpRuntime SMALLINT,
+	@EpSynopsis	VARCHAR(255)
+)
+AS
+    UPDATE Episode SET Number=@EpNumber, Runtime=@EpRuntime, Synopsis=@EpSynopsis
+        WHERE (Series_ID=@SerieID AND Season_ID=@SeasonNumber AND Number=@EpNumber);
+
+GO
 CREATE PROC CreateSeason(
     @SerieID INT,
     @SeasonNumber INT,
@@ -48,6 +60,19 @@ AS
     EXEC CreateEpisode @SerieID, @SeasonNumber, @EpNumber, @EpRuntime, @EpSynopsis;
 
     COMMIT TRAN;
+
+GO
+CREATE PROC UpdateSeason(
+    @SerieID INT,
+    @SeasonNumber INT,
+	@SeasonPhoto VARCHAR(128),
+	@SeasonTrailerURL VARCHAR(128),
+	@SeasonReleaseDate DATE
+)
+AS
+    UPDATE Season SET Number=@SeasonNumber, Photo=@SeasonPhoto, TrailerURL=@SeasonTrailerURL, ReleaseDate=@SeasonReleaseDate
+        WHERE (ID=@SerieID AND Number=@SeasonNumber);
+
 
 GO
 CREATE PROC CreateSerie(
@@ -88,8 +113,34 @@ AS
     EXEC CreateSeason @ID, @SeasonNumber, @SeasonPhoto, @SeasonTrailerURL, @SeasonReleaseDate, @EpNumber, @EpRuntime, @EpSynopsis;
 
     COMMIT TRAN;
-GO
 
+GO
+CREATE PROC UpdateSerie(
+    @ID INT,
+	@Title VARCHAR(64),
+	@Synopsis VARCHAR(255),
+	@TrailerURL VARCHAR(128),
+	@Budget	MONEY,
+	@Revenue MONEY,
+	@Photo VARCHAR(128),
+	@AgeRate SMALLINT,
+	@ReleaseDate DATE,
+
+	@State VARCHAR(16),
+	@FinishDate DATE
+)
+AS
+    BEGIN TRAN;
+
+    UPDATE AudioVisualContent SET Title=@Title, Synopsis=@Synopsis, TrailerURL=@TrailerURL, Budget=@Budget, Revenue=@Revenue, Photo=@Photo, AgeRate=@AgeRate, ReleaseDate=@ReleaseDate
+        WHERE ID=@ID;
+
+    UPDATE TVSeries SET State=@State, FinishDate=@FinishDate
+        WHERE ID=@ID;
+
+    COMMIT TRAN;
+
+GO
 CREATE PROC CreateMovie(
 	@Title VARCHAR(64),
 	@Synopsis VARCHAR(255),
@@ -116,8 +167,32 @@ AS
         (@ID, @Runtime);
 
     COMMIT TRAN;
-GO
 
+GO
+CREATE PROC UpdateMovie(
+    @ID INT,
+	@Title VARCHAR(64),
+	@Synopsis VARCHAR(255),
+	@TrailerURL VARCHAR(128),
+	@Budget	MONEY,
+	@Revenue MONEY,
+	@Photo VARCHAR(128),
+	@AgeRate SMALLINT,
+	@ReleaseDate DATE,
+
+	@Runtime INT
+)
+AS
+    BEGIN TRAN;
+
+    UPDATE AudioVisualContent SET Title=@Title, Synopsis=@Synopsis, TrailerURL=@TrailerURL, Budget=@Budget, Revenue=@Revenue, Photo=@Photo, AgeRate=@AgeRate, ReleaseDate=@ReleaseDate
+        WHERE ID=@ID;
+
+    UPDATE Movie SET Runtime=@Runtime WHERE ID=@ID;
+
+    COMMIT TRAN;
+
+GO
 CREATE PROC AddReview(
 	@UserID INT,
 	@AVIdentifier INT,
