@@ -369,7 +369,7 @@ GO
 CREATE FUNCTION getAVContentGenres(@ID INT) RETURNS TABLE
 AS
 RETURN (
-    SELECT Name FROM Genre 
+    SELECT * FROM Genre 
     JOIN (SELECT GenreID From AVContentGenre WHERE AVIdentifier=@ID) AS GenreID ON Genre.ID = GenreID
 );
 GO
