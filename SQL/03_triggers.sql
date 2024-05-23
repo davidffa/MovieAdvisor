@@ -85,7 +85,7 @@ AS
 
     SELECT @SeasonID=Season_ID FROM deleted;
 
-    IF (NOT EXISTS(SELECT * FROM Episode WHERE Season_ID=@SeasonID))
+    IF (EXISTS(SELECT * FROM Season WHERE Number=@SeasonID) AND NOT EXISTS(SELECT * FROM Episode WHERE Season_ID=@SeasonID))
     BEGIN
         RAISERROR('Cannot delete episode because a season must have at least one episode, delete the season instead', 16, 1);
         ROLLBACK;
@@ -100,7 +100,7 @@ AS
 
     SELECT @SerieID=ID FROM deleted;
 
-    IF (NOT EXISTS(SELECT * FROM Season WHERE ID=@SerieID))
+    IF (EXISTS(SELECT * FROM TVSeries WHERE ID=@SerieID) AND NOT EXISTS(SELECT * FROM Season WHERE ID=@SerieID))
     BEGIN
         RAISERROR('Cannot delete season because a serie must have at least one season, delete the serie instead', 16, 1);
         ROLLBACK;
