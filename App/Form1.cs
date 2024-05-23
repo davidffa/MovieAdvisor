@@ -296,13 +296,20 @@ namespace MovieAdvisor
             GenresChecked.ClearSelected();
 
             SeasonBox.Items.Clear();
+            SeasonBox.Text = "Seasons";
             ReleaseDateSeasonLabel.Text = "";
             TrailerSeason.Text = "";
             PhotoSeason.Text = "";
 
             EpisodeBox.Items.Clear();
+            EpisodeBox.Text = "Episodes";
             SynopsisEpisode.Text = "";
             RuntimeEpisode.Text = "";
+
+            foreach (int idx in GenresChecked.CheckedIndices)
+            {
+                GenresChecked.SetItemChecked(idx, false);
+            }
 
 
         }
@@ -314,6 +321,7 @@ namespace MovieAdvisor
             ClearFields();
             HideButtons();
             avList.Enabled = false;
+            avadd.Enabled = true;
             groupBox1.Enabled = true;
             SeasonGroup.Enabled = true;
             EpisodeGroup.Enabled = true;
@@ -321,8 +329,14 @@ namespace MovieAdvisor
             DeleteEpisode.Visible = false;
             AddSeason.Visible = false;
             DeleteSeason.Visible = false;
+            SeasonBox.SelectedIndex = -1;
+            SeasonBox.Items.Clear();
+            EpisodeBox.Items.Clear();
 
-
+        }
+        private void AddSeason_Click(object sender, EventArgs e)
+        {
+            
         }
 
         private void EditButton_Click(object sender, EventArgs e)
@@ -336,10 +350,26 @@ namespace MovieAdvisor
             adding = false;
             HideButtons();
             avList.Enabled = false;
+            avadd.Enabled = false;
+            panel1.Enabled = true;
+            groupBox1.Enabled = true;
+            SeasonGroup.Enabled = true;
+            EpisodeGroup.Enabled = true;
+            AddEpisode.Visible = true;
+            DeleteEpisode.Visible = true;
+            AddSeason.Visible = true;
+            DeleteSeason.Visible = true;
+
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
+            currentAVContent = avList.SelectedIndex;
+            if (currentAVContent <= 0)
+            {
+                MessageBox.Show("Please select a movie or serie to delete!");
+                return;
+            }
             if (avList.SelectedIndex > -1)
             {
                 try
@@ -397,9 +427,14 @@ namespace MovieAdvisor
             ShowButtons();
             avList.Enabled = true;
             groupBox1.Enabled = false;
-            movieRadioDetails.Checked = true;
             ageRate.Checked = true;
             adding = false;
+            SeasonGroup.Enabled = false;
+            EpisodeGroup.Enabled = false;
+            AddEpisode.Visible = false;
+            DeleteEpisode.Visible = false;
+            AddSeason.Visible = false;
+            DeleteSeason.Visible = false;
         }
 
         private void confirmButton_Click(object sender, EventArgs e)
@@ -424,17 +459,37 @@ namespace MovieAdvisor
                 SeasonBox.Items.Clear();
                 EpisodeBox.Items.Clear();
                 currentAVContent = avList.SelectedIndex;
+                foreach (int idx in GenresChecked.CheckedIndices)
+                {
+                    GenresChecked.SetItemChecked(idx, false);
+                }
                 ShowAVContent();
             }
         }
 
-        private void CreateMovie(Movie m)
+        private void CreateMovie(Movie m, Genre[] genres)
         {
             if (!verifyDBConnection())
                 return;
             SqlCommand cmd = new SqlCommand();
 
-            cmd.CommandText = "EXEC CreateMovie @Title, @Synopsis, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate, @Runtime";
+            cmd.CommandText = "DECLARE @Genres GenreList;";
+
+            if (genres.Length > 0)
+            {
+                cmd.CommandText += "INSERT INTO @Genres VALUES ";
+
+                foreach (Genre g in genres)
+                {
+                    cmd.CommandText += "(" + g.ID + "),";
+                }
+
+                cmd.CommandText = cmd.CommandText.Substring(0, cmd.CommandText.Length - 1);
+
+                cmd.CommandText += ";";
+            }
+
+            cmd.CommandText += "EXEC CreateMovie @Title, @Synopsis, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate, @Runtime, @Genres";
             cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@Title", m.Title);
             cmd.Parameters.AddWithValue("@Synopsis", m.Synopsis);
@@ -461,7 +516,7 @@ namespace MovieAdvisor
             }
         }
 
-        private void UpdateMovie(Movie m)
+        private void UpdateMovie(Movie m, Genre[] genres)
         {
             int rows = 0;
 
@@ -469,7 +524,23 @@ namespace MovieAdvisor
                 return;
             SqlCommand cmd = new SqlCommand();
 
-            cmd.CommandText = "EXEC UpdateMovie @ID, @Title, @Synopsis, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate, @Runtime ";
+            cmd.CommandText = "DECLARE @Genres GenreList;";
+
+            if (genres.Length > 0)
+            {
+                cmd.CommandText += "INSERT INTO @Genres VALUES ";
+
+                foreach (Genre g in genres)
+                {
+                    cmd.CommandText += "(" + g.ID + "),";
+                }
+
+                cmd.CommandText = cmd.CommandText.Substring(0, cmd.CommandText.Length - 1);
+
+                cmd.CommandText += ";";
+            }
+
+            cmd.CommandText += "EXEC UpdateMovie @ID, @Title, @Synopsis, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate, @Runtime, @Genres";
 
             cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@ID", m.ID);
@@ -487,6 +558,7 @@ namespace MovieAdvisor
             try
             {
                 rows = cmd.ExecuteNonQuery();
+                MessageBox.Show("Update OK");
             }
             catch (Exception ex)
             {
@@ -494,22 +566,34 @@ namespace MovieAdvisor
             }
             finally
             {
-                if (rows == 1)
-                    MessageBox.Show("Update OK");
-                else
-                    MessageBox.Show("Update NOT OK");
-
                 cn.Close();
             }
         }
 
-        private void CreateSerie(TVSeries m, Season s, Episode e)
+        private void CreateSerie(TVSeries m, Genre[] genres, Season s, Episode e)
         {
             if (!verifyDBConnection())
                 return;
+
             SqlCommand cmd = new SqlCommand();
 
-            cmd.CommandText = "EXEC CreateSerie @Title, @Synopsis, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate, @State, @FinishDate, @SeasonNumber, @SeasonPhoto, @SeasonTrailerURL, @SeasonReleaseDate, @EpisodeNumber, @EpisodeRuntime, @EpisodeSynopsis";
+            cmd.CommandText = "DECLARE @Genres GenreList;";
+
+            if (genres.Length > 0)
+            {
+                cmd.CommandText += "INSERT INTO @Genres VALUES ";
+
+                foreach (Genre g in genres)
+                {
+                    cmd.CommandText += "(" + g.ID + "),";
+                }
+
+                cmd.CommandText = cmd.CommandText.Substring(0, cmd.CommandText.Length - 1);
+
+                cmd.CommandText += ";";
+            }
+
+            cmd.CommandText += "EXEC CreateSerie @Title, @Synopsis, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate, @State, @FinishDate,@Genres, @SeasonNumber, @SeasonPhoto, @SeasonTrailerURL, @SeasonReleaseDate, @EpisodeNumber, @EpisodeRuntime, @EpisodeSynopsis";
             cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@Title", m.Title);
             cmd.Parameters.AddWithValue("@Synopsis", m.Synopsis);
@@ -545,7 +629,7 @@ namespace MovieAdvisor
             }
         }
 
-        private void UpdateSerie(TVSeries m)
+        private void UpdateSerie(TVSeries m, Genre[] genres)
         {
             int rows = 0;
 
@@ -553,7 +637,23 @@ namespace MovieAdvisor
                 return;
             SqlCommand cmd = new SqlCommand();
 
-            cmd.CommandText = "EXEC UpdateSerie @ID, @Title, @Synopsis, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate, @State, @FinishDate ";
+            cmd.CommandText = "DECLARE @Genres GenreList;";
+
+            if (genres.Length > 0)
+            {
+                cmd.CommandText += "INSERT INTO @Genres VALUES ";
+
+                foreach (Genre g in genres)
+                {
+                    cmd.CommandText += "(" + g.ID + "),";
+                }
+
+                cmd.CommandText = cmd.CommandText.Substring(0, cmd.CommandText.Length - 1);
+
+                cmd.CommandText += ";";
+            }
+
+            cmd.CommandText += "EXEC UpdateSerie @ID, @Title, @Synopsis, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate, @State, @FinishDate, @Genres ";
 
             cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@ID", m.ID);
@@ -572,6 +672,7 @@ namespace MovieAdvisor
             try
             {
                 rows = cmd.ExecuteNonQuery();
+                MessageBox.Show("Update OK");
             }
             catch (Exception ex)
             {
@@ -579,11 +680,6 @@ namespace MovieAdvisor
             }
             finally
             {
-                if (rows == 1)
-                    MessageBox.Show("Update OK");
-                else
-                    MessageBox.Show("Update NOT OK");
-
                 cn.Close();
             }
         }
@@ -613,6 +709,98 @@ namespace MovieAdvisor
             catch (Exception ex)
             {
                 throw new Exception("Failed to create Season in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+
+        private void UpdateSeason(TVSeries m, Season s, Episode e)
+        {
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "EXEC UpdateSeason @SerieId, @SeasonNumber, @SeasonPhoto, @SeasonTrailerURL, @SeasonReleaseDate";
+
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@SerieId", m.ID);
+            cmd.Parameters.AddWithValue("@SeasonNumber", s.Number);
+            cmd.Parameters.AddWithValue("@SeasonPhoto", s.Photo);
+            cmd.Parameters.AddWithValue("@SeasonTrailerURL", s.TrailerURL);
+            cmd.Parameters.AddWithValue("@SeasonReleaseDate", s.ReleaseDate);
+            cmd.Connection = cn;
+
+            try
+            {
+                rows = cmd.ExecuteNonQuery();
+                MessageBox.Show("Update OK");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to update TVSeries in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+
+        private void CreateEpisode(TVSeries m, Season s, Episode e)
+        {
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "EXEC CreateEpisode @SerieId, @SeasonNumber, @EpisodeNumber, @EpisodeRuntime, @EpisodeSynopsis";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@SerieId", m.ID);
+            cmd.Parameters.AddWithValue("@SeasonNumber", s.Number);
+            cmd.Parameters.AddWithValue("@EpisodeNumber", e.Number);
+            cmd.Parameters.AddWithValue("@EpisodeRuntime", e.Runtime);
+            cmd.Parameters.AddWithValue("@EpisodeSynopsis", e.Synopsis);
+
+            cmd.Connection = cn;
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to create Season in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+
+        private void UpdateEpisode(TVSeries m, Season s, Episode e)
+        {
+            int rows = 0;
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "EXEC UpdateEpisode @SerieId, @SeasonNumber, @EpisodeNumber, @EpisodeRuntime, @EpisodeSynopsis";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@SerieId", m.ID);
+            cmd.Parameters.AddWithValue("@SeasonNumber", s.Number);
+            cmd.Parameters.AddWithValue("@EpisodeNumber", e.Number);
+            cmd.Parameters.AddWithValue("@EpisodeRuntime", e.Runtime);
+            cmd.Parameters.AddWithValue("@EpisodeSynopsis", e.Synopsis);
+            cmd.Connection = cn;
+
+            try
+            {
+                rows = cmd.ExecuteNonQuery();
+                MessageBox.Show("Update OK");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to update TVSeries in database. \n ERROR MESSAGE: \n" + ex.Message);
             }
             finally
             {
@@ -652,10 +840,25 @@ namespace MovieAdvisor
                 ageRate4.Checked = true;
             }
 
+
+
             if (!verifyDBConnection()) return;
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM Movie WHERE ID = " + av.ID, cn);
+            SqlCommand cmd = new SqlCommand("SELECT ID FROM getAVContentGenres (" + av.ID + ")", cn);
             SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                GenresChecked.SetItemChecked(int.Parse(reader["ID"].ToString()) - 1, true);
+            }
+
+
+
+            reader.Close();
+
+
+            cmd = new SqlCommand("SELECT * FROM Movie WHERE ID = " + av.ID, cn);
+            reader = cmd.ExecuteReader();
 
             if (reader.Read())
             {
@@ -669,6 +872,8 @@ namespace MovieAdvisor
 
                 m.Runtime = reader["Runtime"].ToString();
                 RuntimeBox.Text = m.Runtime;
+
+
             }
             else
             {
@@ -702,6 +907,7 @@ namespace MovieAdvisor
 
                     StateComboBox.SelectedItem = m.State;
                     FinishDatePicker.Text = m.FinishDate;
+
                 }
                 reader.Close();
 
@@ -761,22 +967,23 @@ namespace MovieAdvisor
             {
                 Movie m = Movie.FromAV(av);
                 m.Runtime = RuntimeBox.Text;
-
+                if (av.Title == "")
+                {
+                    MessageBox.Show("Invalid Title!");
+                    return false;
+                }
+                if (m.Runtime == "")
+                {
+                    MessageBox.Show("Invalid Runtime!");
+                    return false;
+                }
+                Genre[] genres = GenresChecked.CheckedItems.Cast<Genre>().ToArray();
                 if (adding)
                 {
                     try
                     {
-                        if (av.Title == "")
-                        {
-                            MessageBox.Show("Invalid Title!");
-                            return false;
-                        }
-                        if (m.Runtime == "")
-                        {
-                            MessageBox.Show("Invalid Runtime!");
-                            return false;
-                        }
-                        CreateMovie(m);
+
+                        CreateMovie(m, genres);
                         loadAVContents();
 
                     }
@@ -788,8 +995,9 @@ namespace MovieAdvisor
                 }
                 else
                 {
-                    avList.Items[currentAVContent] = av;
-                    UpdateMovie(m);
+                    m.ID = ((AudiovisualContent)avList.SelectedItem).ID;
+                    UpdateMovie(m, genres);
+                    loadAVContents();
                 }
 
             }
@@ -804,6 +1012,8 @@ namespace MovieAdvisor
                 m.State = StateComboBox.SelectedItem.ToString();
                 string finish = FinishDatePicker.Value.ToString("yyyy-MM-dd");
                 m.FinishDate = finish;
+
+                Genre[] genres = GenresChecked.CheckedItems.Cast<Genre>().ToArray();
 
                 Season s = new Season();
 
@@ -828,13 +1038,18 @@ namespace MovieAdvisor
                             MessageBox.Show("Invalid Title!");
                             return false;
                         }
+                        if (m.State == "")
+                        {
+                            MessageBox.Show("Invalid Title!");
+                            return false;
+                        }
 
                         if (e.Runtime == "")
                         {
                             MessageBox.Show("Invalid Runtime!");
                             return false;
                         }
-                        CreateSerie(m, s, e);
+                        CreateSerie(m, genres, s, e);
                         loadAVContents();
                     }
                     catch (Exception ex)
@@ -845,8 +1060,9 @@ namespace MovieAdvisor
                 }
                 else
                 {
-                    avList.Items[currentAVContent] = av;
-                    UpdateSerie(m);
+                    m.ID = ((AudiovisualContent)avList.SelectedItem).ID;
+                    UpdateSerie(m, genres);
+                    loadAVContents();
                 }
             }
 
@@ -858,10 +1074,12 @@ namespace MovieAdvisor
             StateLabel.Visible = true;
             StateComboBox.Visible = true;
             StateComboBox.SelectedIndex = -1;
-            FinishDateLabel.Visible = true;
-            FinishDatePicker.Visible = true;
+            FinishDateLabel.Visible = false;
+            FinishDatePicker.Visible = false;
             RuntimeBox.Visible = false;
             SeriesGroup.Visible = true;
+            SeasonBox.SelectedIndex = -1;
+            EpisodeBox.SelectedIndex = -1;
 
         }
 
@@ -903,5 +1121,6 @@ namespace MovieAdvisor
             }
 
         }
+
     }
 }

@@ -37,8 +37,8 @@ namespace MovieAdvisor
         public String Synopsis { get => _synopsis; set => _synopsis = value; }
         public String Popularity { get => _popularity; set => _popularity = value; }
         public String TrailerURL { get => _trailerURL; set => _trailerURL = value; }
-        public String Budget { get => _budget; set => _budget = value; }
-        public String Revenue { get => _revenue; set => _revenue = value; }
+        public String Budget { get => _budget; set => _budget = value.Split(",")[0]; }
+        public String Revenue { get => _revenue; set => _revenue = value.Split(",")[0]; }
         public String Photo { get => _photo; set => _photo = value; }
         public String AgeRate { get => _ageRate; set => _ageRate = value; }
         public String ReleaseDate { get => _releaseDate; set => _releaseDate = value; }

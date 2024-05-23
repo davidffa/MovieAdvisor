@@ -203,6 +203,7 @@
             AddEpisode.TabIndex = 40;
             AddEpisode.Text = "Add";
             AddEpisode.UseVisualStyleBackColor = true;
+            AddEpisode.Visible = false;
             // 
             // DeleteSeason
             // 
@@ -214,6 +215,7 @@
             DeleteSeason.TabIndex = 39;
             DeleteSeason.Text = "Delete";
             DeleteSeason.UseVisualStyleBackColor = false;
+            DeleteSeason.Visible = false;
             // 
             // AddSeason
             // 
@@ -224,6 +226,8 @@
             AddSeason.TabIndex = 38;
             AddSeason.Text = "Add";
             AddSeason.UseVisualStyleBackColor = true;
+            AddSeason.Visible = false;
+            AddSeason.Click += AddSeason_Click;
             // 
             // DeleteEpisode
             // 
@@ -235,6 +239,7 @@
             DeleteEpisode.TabIndex = 41;
             DeleteEpisode.Text = "Delete";
             DeleteEpisode.UseVisualStyleBackColor = false;
+            DeleteEpisode.Visible = false;
             // 
             // EpisodeGroup
             // 
