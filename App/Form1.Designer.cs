@@ -216,6 +216,7 @@
             DeleteSeason.Text = "Delete";
             DeleteSeason.UseVisualStyleBackColor = false;
             DeleteSeason.Visible = false;
+            DeleteSeason.Click += DeleteSeason_Click;
             // 
             // AddSeason
             // 

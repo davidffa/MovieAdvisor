@@ -13,5 +13,10 @@
         public String Number { get => _number; set => _number = value; }
         public String Runtime { get => _runtime; set => _runtime = value; }
         public String Synopsis { get => _synopsis; set => _synopsis = value; }
+
+        public override string ToString()
+        {
+            return "Episode " + Number;
+        }
     }
 }

@@ -330,14 +330,12 @@ namespace MovieAdvisor
             AddSeason.Visible = false;
             DeleteSeason.Visible = false;
             SeasonBox.SelectedIndex = -1;
+            EpisodeBox.SelectedIndex = -1;
             SeasonBox.Items.Clear();
             EpisodeBox.Items.Clear();
 
         }
-        private void AddSeason_Click(object sender, EventArgs e)
-        {
-            
-        }
+        
 
         private void EditButton_Click(object sender, EventArgs e)
         {
@@ -604,12 +602,19 @@ namespace MovieAdvisor
             cmd.Parameters.AddWithValue("@AgeRate", m.AgeRate);
             cmd.Parameters.AddWithValue("@ReleaseDate", m.ReleaseDate);
             cmd.Parameters.AddWithValue("@State", m.State);
-            cmd.Parameters.AddWithValue("@FinishDate", m.FinishDate);
-            cmd.Parameters.AddWithValue("@SeasonNumber", s.Number);
+            if (m.State == "Active")
+            {
+                cmd.Parameters.AddWithValue("@FinishDate", DBNull.Value);
+            }
+            else
+            {
+                cmd.Parameters.AddWithValue("@FinishDate", m.FinishDate);
+            }
+            cmd.Parameters.AddWithValue("@SeasonNumber", "1");
             cmd.Parameters.AddWithValue("@SeasonPhoto", s.Photo);
             cmd.Parameters.AddWithValue("@SeasonTrailerURL", s.TrailerURL);
             cmd.Parameters.AddWithValue("@SeasonReleaseDate", s.ReleaseDate);
-            cmd.Parameters.AddWithValue("@EpisodeNumber", e.Number);
+            cmd.Parameters.AddWithValue("@EpisodeNumber", "1");
             cmd.Parameters.AddWithValue("@EpisodeRuntime", e.Runtime);
             cmd.Parameters.AddWithValue("@EpisodeSynopsis", e.Synopsis);
 
@@ -666,7 +671,15 @@ namespace MovieAdvisor
             cmd.Parameters.AddWithValue("@AgeRate", m.AgeRate);
             cmd.Parameters.AddWithValue("@ReleaseDate", m.ReleaseDate);
             cmd.Parameters.AddWithValue("@State", m.State);
-            cmd.Parameters.AddWithValue("@FinishDate", m.FinishDate);
+            if (m.State == "Active")
+            {
+                cmd.Parameters.AddWithValue("@FinishDate", DBNull.Value);
+            }
+            else
+            {
+                cmd.Parameters.AddWithValue("@FinishDate", m.FinishDate);
+            }
+
             cmd.Connection = cn;
 
             try
@@ -718,6 +731,7 @@ namespace MovieAdvisor
 
         private void UpdateSeason(TVSeries m, Season s, Episode e)
         {
+            int rows = 0;
             if (!verifyDBConnection())
                 return;
             SqlCommand cmd = new SqlCommand();
@@ -929,6 +943,24 @@ namespace MovieAdvisor
                     ReleaseDateSeasonPicker.Text = s.ReleaseDate;
                 }
                 SeasonBox.SelectedIndex = 0;
+                reader.Close();
+                cmd = new SqlCommand("SELECT * FROM getAllEpisodesOfSeason(" + av.ID + "," + ((SeasonBox.SelectedIndex) + 1) + ") ", cn);
+                reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Episode s = new Episode();
+
+                    s.Number = reader["Number"].ToString();
+                    s.Runtime = reader["Runtime"].ToString();
+                    s.Synopsis = reader["Synopsis"].ToString();
+
+                    EpisodeBox.Items.Add(s);
+                    SynopsisEpisode.Text = s.Synopsis;
+                    RuntimeEpisode.Text = s.Runtime;
+                }
+                EpisodeBox.SelectedIndex = 0;
+                reader.Close();
             }
 
             cn.Close();
@@ -1017,14 +1049,14 @@ namespace MovieAdvisor
 
                 Season s = new Season();
 
-                s.Number = "1";
+                s.Number = ((SeasonBox.SelectedIndex) + 1).ToString();
                 s.Photo = PhotoSeason.Text;
                 s.TrailerURL = TrailerSeason.Text;
                 string release = ReleaseDateSeasonPicker.Value.ToString("yyyy-MM-dd");
                 s.ReleaseDate = release;
 
                 Episode e = new Episode();
-                e.Number = "1";
+                e.Number = ((EpisodeBox.SelectedIndex) + 1).ToString();
                 e.Synopsis = SynopsisEpisode.Text;
                 e.Runtime = RuntimeEpisode.Text;
 
@@ -1120,6 +1152,77 @@ namespace MovieAdvisor
                 PhotoSeason.Text = s.Photo;
             }
 
+        }
+
+        private void AddSeason_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void DeleteSeason_Click(object sender, EventArgs e)
+        {
+            if (SeasonBox.Items.Count == 1)
+            {
+                MessageBox.Show("It's not possible to remove this season because its the only one of the serie.");
+                return;
+            }
+            currentAVContent = avList.SelectedIndex;
+            if (SeasonBox.SelectedIndex <= 0)
+            {
+                MessageBox.Show("Please select a season to delete!");
+                return;
+            }
+            if (avList.SelectedIndex > -1)
+            {
+                try
+                {
+                    AudiovisualContent av = (AudiovisualContent)avList.SelectedItem;
+                   
+                    Season item = (Season)SeasonBox.SelectedItem;
+                    SeasonBox.Items.Remove(item);
+                    SeasonBox.SelectedIndex = -1;
+                    DELETESeason(av.ID, item.Number);
+                    TrailerSeason.Text = "";
+                    PhotoSeason.Text = "";
+                    EpisodeBox.Items.Clear();
+                    EpisodeBox.SelectedIndex = -1;
+                    SynopsisEpisode.Text = "";
+                    RuntimeEpisode.Text = "";
+                    MessageBox.Show("Item apagado com sucesso!");
+                    
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return;
+                }
+            }
+        }
+
+        private void DELETESeason(string ID, string Number)
+        {
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "DELETE SEASON WHERE ID=@ID AND Number = @Number";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@ID", ID);
+            cmd.Parameters.AddWithValue("@Number", Number);
+            cmd.Connection = cn;
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to delete season in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
+            }
         }
 
     }
