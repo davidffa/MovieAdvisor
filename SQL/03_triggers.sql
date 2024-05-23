@@ -77,7 +77,7 @@ AS
     DELETE FROM AudioVisualContent WHERE ID=@Id;
 GO
 
--- Trigger para nao deixar series sem seasons
+-- Trigger para nao deixar seasons sem eps
 CREATE TRIGGER DeleteEp ON Episode
 AFTER DELETE
 AS

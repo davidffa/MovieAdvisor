@@ -16,6 +16,10 @@ AS SELECT * FROM Watchlist WHERE Visibility = 1;
 
 --------------- SPs -------------------
 GO
+-- Type for adding multiple genres on movie / serie creation
+CREATE TYPE GenreList AS TABLE (ID INT);
+
+GO
 CREATE PROC CreateEpisode(
     @SerieID INT,
     @SeasonNumber INT,
@@ -73,6 +77,27 @@ AS
     UPDATE Season SET Number=@SeasonNumber, Photo=@SeasonPhoto, TrailerURL=@SeasonTrailerURL, ReleaseDate=@SeasonReleaseDate
         WHERE (ID=@SerieID AND Number=@SeasonNumber);
 
+GO
+CREATE PROC UpdateGenres(
+    @ID INT,
+    @GenreList GenreList READONLY
+)
+AS
+    BEGIN TRAN;
+
+    INSERT INTO AVContentGenre (AVIdentifier, GenreID)
+        SELECT @ID, ID FROM @GenreList LEFT JOIN (
+            SELECT GenreID FROM AVContentGenre WHERE AVIdentifier=@ID
+        ) AS C ON ID=C.GenreID WHERE C.GenreID IS NULL;
+    
+
+    DELETE FROM AVContentGenre WHERE AVIdentifier=@ID AND GenreID IN (
+        SELECT GenreID FROM @GenreList RIGHT JOIN (
+            SELECT GenreID FROM AVContentGenre WHERE AVIdentifier=@ID
+        ) AS C ON ID=C.GenreID WHERE ID IS NULL
+    );
+
+    COMMIT TRAN;
 
 GO
 CREATE PROC CreateSerie(
@@ -87,6 +112,8 @@ CREATE PROC CreateSerie(
 
 	@State VARCHAR(16),
 	@FinishDate DATE,
+
+    @GenreList GenreList READONLY,
 
     @SeasonNumber INT,
 	@SeasonPhoto VARCHAR(128),
@@ -110,6 +137,9 @@ AS
     INSERT INTO TVSeries (ID, State, FinishDate) VALUES
         (@ID, @State, @FinishDate);
 
+    INSERT INTO AVContentGenre (AVIdentifier, GenreID)
+        SELECT @ID, * FROM @GenreList;
+
     EXEC CreateSeason @ID, @SeasonNumber, @SeasonPhoto, @SeasonTrailerURL, @SeasonReleaseDate, @EpNumber, @EpRuntime, @EpSynopsis;
 
     COMMIT TRAN;
@@ -127,7 +157,9 @@ CREATE PROC UpdateSerie(
 	@ReleaseDate DATE,
 
 	@State VARCHAR(16),
-	@FinishDate DATE
+	@FinishDate DATE,
+
+    @GenreList GenreList READONLY
 )
 AS
     BEGIN TRAN;
@@ -137,6 +169,9 @@ AS
 
     UPDATE TVSeries SET State=@State, FinishDate=@FinishDate
         WHERE ID=@ID;
+
+
+    EXEC UpdateGenres @ID, @GenreList;
 
     COMMIT TRAN;
 
@@ -151,7 +186,9 @@ CREATE PROC CreateMovie(
 	@AgeRate SMALLINT,
 	@ReleaseDate DATE,
 
-	@Runtime INT
+	@Runtime INT,
+
+    @GenreList GenreList READONLY
 )
 AS
     BEGIN TRAN;
@@ -165,6 +202,9 @@ AS
 
     INSERT INTO Movie (ID, Runtime) VALUES
         (@ID, @Runtime);
+
+    INSERT INTO AVContentGenre (AVIdentifier, GenreID)
+        SELECT @ID, * FROM @GenreList;
 
     COMMIT TRAN;
 
@@ -180,7 +220,9 @@ CREATE PROC UpdateMovie(
 	@AgeRate SMALLINT,
 	@ReleaseDate DATE,
 
-	@Runtime INT
+	@Runtime INT,
+
+    @GenreList GenreList READONLY
 )
 AS
     BEGIN TRAN;
@@ -189,6 +231,8 @@ AS
         WHERE ID=@ID;
 
     UPDATE Movie SET Runtime=@Runtime WHERE ID=@ID;
+
+    EXEC UpdateGenres @ID, @GenreList;
 
     COMMIT TRAN;
 
