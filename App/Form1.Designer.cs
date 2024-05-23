@@ -31,7 +31,20 @@
             tabControl1 = new TabControl();
             movies = new TabPage();
             SeriesGroup = new GroupBox();
-            test = new Label();
+            EpisodeBox = new ComboBox();
+            SeasonBox = new ComboBox();
+            AddEpisode = new Button();
+            DeleteSeason = new Button();
+            AddSeason = new Button();
+            DeleteEpisode = new Button();
+            EpisodeGroup = new GroupBox();
+            SynopsisEpisode = new TextBox();
+            RuntimeEpisode = new TextBox();
+            SeasonGroup = new GroupBox();
+            ReleaseDateSeasonLabel = new Label();
+            ReleaseDateSeasonPicker = new DateTimePicker();
+            PhotoSeason = new TextBox();
+            TrailerSeason = new TextBox();
             confirmButton = new Button();
             cancelButton = new Button();
             DeleteButton = new Button();
@@ -41,6 +54,15 @@
             movieRadioDetails = new RadioButton();
             seriesRadioDetails = new RadioButton();
             panel1 = new Panel();
+            GenresLabel = new Label();
+            groupBox2 = new GroupBox();
+            label8 = new Label();
+            dateTimePicker2 = new DateTimePicker();
+            textBox4 = new TextBox();
+            textBox5 = new TextBox();
+            domainUpDown1 = new DomainUpDown();
+            domainUpDown2 = new DomainUpDown();
+            GenresChecked = new CheckedListBox();
             RuntimeBox = new TextBox();
             StateLabel = new Label();
             StateComboBox = new ComboBox();
@@ -85,9 +107,12 @@
             tabControl1.SuspendLayout();
             movies.SuspendLayout();
             SeriesGroup.SuspendLayout();
+            EpisodeGroup.SuspendLayout();
+            SeasonGroup.SuspendLayout();
             groupBox1.SuspendLayout();
             avadd.SuspendLayout();
             panel1.SuspendLayout();
+            groupBox2.SuspendLayout();
             AgeRateBox.SuspendLayout();
             typeBox.SuspendLayout();
             review.SuspendLayout();
@@ -135,27 +160,162 @@
             // 
             // SeriesGroup
             // 
-            SeriesGroup.Controls.Add(test);
-            SeriesGroup.Location = new Point(759, 28);
+            SeriesGroup.Controls.Add(EpisodeBox);
+            SeriesGroup.Controls.Add(SeasonBox);
+            SeriesGroup.Controls.Add(AddEpisode);
+            SeriesGroup.Controls.Add(DeleteSeason);
+            SeriesGroup.Controls.Add(AddSeason);
+            SeriesGroup.Controls.Add(DeleteEpisode);
+            SeriesGroup.Controls.Add(EpisodeGroup);
+            SeriesGroup.Controls.Add(SeasonGroup);
+            SeriesGroup.Location = new Point(764, 18);
             SeriesGroup.Name = "SeriesGroup";
-            SeriesGroup.Size = new Size(335, 590);
+            SeriesGroup.Size = new Size(335, 601);
             SeriesGroup.TabIndex = 23;
             SeriesGroup.TabStop = false;
             SeriesGroup.Visible = false;
             // 
-            // test
+            // EpisodeBox
             // 
-            test.AutoSize = true;
-            test.Location = new Point(21, 34);
-            test.Name = "test";
-            test.Size = new Size(120, 20);
-            test.TabIndex = 0;
-            test.Text = "JUST FOR SERIES";
+            EpisodeBox.FormattingEnabled = true;
+            EpisodeBox.Location = new Point(6, 312);
+            EpisodeBox.Name = "EpisodeBox";
+            EpisodeBox.Size = new Size(171, 28);
+            EpisodeBox.TabIndex = 45;
+            EpisodeBox.Text = "Episodes";
+            // 
+            // SeasonBox
+            // 
+            SeasonBox.FormattingEnabled = true;
+            SeasonBox.Location = new Point(6, 20);
+            SeasonBox.Name = "SeasonBox";
+            SeasonBox.Size = new Size(171, 28);
+            SeasonBox.TabIndex = 44;
+            SeasonBox.Text = "Seasons";
+            SeasonBox.SelectedIndexChanged += SeasonBox_SelectedIndexChanged;
+            // 
+            // AddEpisode
+            // 
+            AddEpisode.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            AddEpisode.Location = new Point(33, 549);
+            AddEpisode.Name = "AddEpisode";
+            AddEpisode.Size = new Size(113, 29);
+            AddEpisode.TabIndex = 40;
+            AddEpisode.Text = "Add";
+            AddEpisode.UseVisualStyleBackColor = true;
+            // 
+            // DeleteSeason
+            // 
+            DeleteSeason.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            DeleteSeason.BackColor = Color.Transparent;
+            DeleteSeason.Location = new Point(176, 253);
+            DeleteSeason.Name = "DeleteSeason";
+            DeleteSeason.Size = new Size(113, 29);
+            DeleteSeason.TabIndex = 39;
+            DeleteSeason.Text = "Delete";
+            DeleteSeason.UseVisualStyleBackColor = false;
+            // 
+            // AddSeason
+            // 
+            AddSeason.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            AddSeason.Location = new Point(33, 253);
+            AddSeason.Name = "AddSeason";
+            AddSeason.Size = new Size(113, 29);
+            AddSeason.TabIndex = 38;
+            AddSeason.Text = "Add";
+            AddSeason.UseVisualStyleBackColor = true;
+            // 
+            // DeleteEpisode
+            // 
+            DeleteEpisode.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            DeleteEpisode.BackColor = Color.Transparent;
+            DeleteEpisode.Location = new Point(176, 549);
+            DeleteEpisode.Name = "DeleteEpisode";
+            DeleteEpisode.Size = new Size(113, 29);
+            DeleteEpisode.TabIndex = 41;
+            DeleteEpisode.Text = "Delete";
+            DeleteEpisode.UseVisualStyleBackColor = false;
+            // 
+            // EpisodeGroup
+            // 
+            EpisodeGroup.Controls.Add(SynopsisEpisode);
+            EpisodeGroup.Controls.Add(RuntimeEpisode);
+            EpisodeGroup.Enabled = false;
+            EpisodeGroup.Location = new Point(6, 347);
+            EpisodeGroup.Name = "EpisodeGroup";
+            EpisodeGroup.Size = new Size(329, 183);
+            EpisodeGroup.TabIndex = 43;
+            EpisodeGroup.TabStop = false;
+            // 
+            // SynopsisEpisode
+            // 
+            SynopsisEpisode.Location = new Point(0, 30);
+            SynopsisEpisode.Multiline = true;
+            SynopsisEpisode.Name = "SynopsisEpisode";
+            SynopsisEpisode.PlaceholderText = "Add a synopsis";
+            SynopsisEpisode.Size = new Size(323, 99);
+            SynopsisEpisode.TabIndex = 35;
+            // 
+            // RuntimeEpisode
+            // 
+            RuntimeEpisode.Location = new Point(80, 138);
+            RuntimeEpisode.Name = "RuntimeEpisode";
+            RuntimeEpisode.PlaceholderText = "Runtime (em minutos)";
+            RuntimeEpisode.Size = new Size(163, 27);
+            RuntimeEpisode.TabIndex = 37;
+            RuntimeEpisode.TextAlign = HorizontalAlignment.Center;
+            // 
+            // SeasonGroup
+            // 
+            SeasonGroup.Controls.Add(ReleaseDateSeasonLabel);
+            SeasonGroup.Controls.Add(ReleaseDateSeasonPicker);
+            SeasonGroup.Controls.Add(PhotoSeason);
+            SeasonGroup.Controls.Add(TrailerSeason);
+            SeasonGroup.Enabled = false;
+            SeasonGroup.Location = new Point(6, 64);
+            SeasonGroup.Name = "SeasonGroup";
+            SeasonGroup.Size = new Size(329, 164);
+            SeasonGroup.TabIndex = 42;
+            SeasonGroup.TabStop = false;
+            // 
+            // ReleaseDateSeasonLabel
+            // 
+            ReleaseDateSeasonLabel.AutoSize = true;
+            ReleaseDateSeasonLabel.Location = new Point(0, 19);
+            ReleaseDateSeasonLabel.Name = "ReleaseDateSeasonLabel";
+            ReleaseDateSeasonLabel.Size = new Size(107, 20);
+            ReleaseDateSeasonLabel.TabIndex = 34;
+            ReleaseDateSeasonLabel.Text = "Release Date : ";
+            // 
+            // ReleaseDateSeasonPicker
+            // 
+            ReleaseDateSeasonPicker.CustomFormat = "";
+            ReleaseDateSeasonPicker.Location = new Point(117, 16);
+            ReleaseDateSeasonPicker.Name = "ReleaseDateSeasonPicker";
+            ReleaseDateSeasonPicker.Size = new Size(206, 27);
+            ReleaseDateSeasonPicker.TabIndex = 31;
+            ReleaseDateSeasonPicker.Value = new DateTime(2024, 5, 26, 0, 0, 0, 0);
+            // 
+            // PhotoSeason
+            // 
+            PhotoSeason.Location = new Point(0, 109);
+            PhotoSeason.Name = "PhotoSeason";
+            PhotoSeason.PlaceholderText = "Type the URL of the Photo";
+            PhotoSeason.Size = new Size(323, 27);
+            PhotoSeason.TabIndex = 33;
+            // 
+            // TrailerSeason
+            // 
+            TrailerSeason.Location = new Point(0, 67);
+            TrailerSeason.Name = "TrailerSeason";
+            TrailerSeason.PlaceholderText = "Type the URL of the Trailer";
+            TrailerSeason.Size = new Size(323, 27);
+            TrailerSeason.TabIndex = 32;
             // 
             // confirmButton
             // 
             confirmButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            confirmButton.Location = new Point(445, 69);
+            confirmButton.Location = new Point(445, 39);
             confirmButton.Name = "confirmButton";
             confirmButton.Size = new Size(113, 29);
             confirmButton.TabIndex = 21;
@@ -168,7 +328,7 @@
             // 
             cancelButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             cancelButton.BackColor = Color.Transparent;
-            cancelButton.Location = new Point(576, 69);
+            cancelButton.Location = new Point(576, 39);
             cancelButton.Name = "cancelButton";
             cancelButton.Size = new Size(113, 29);
             cancelButton.TabIndex = 22;
@@ -179,7 +339,7 @@
             // 
             // DeleteButton
             // 
-            DeleteButton.Location = new Point(628, 69);
+            DeleteButton.Location = new Point(628, 39);
             DeleteButton.Name = "DeleteButton";
             DeleteButton.Size = new Size(117, 29);
             DeleteButton.TabIndex = 15;
@@ -189,7 +349,7 @@
             // 
             // EditButton
             // 
-            EditButton.Location = new Point(505, 69);
+            EditButton.Location = new Point(505, 39);
             EditButton.Name = "EditButton";
             EditButton.Size = new Size(117, 29);
             EditButton.TabIndex = 14;
@@ -202,9 +362,9 @@
             groupBox1.Controls.Add(avadd);
             groupBox1.Controls.Add(panel1);
             groupBox1.Enabled = false;
-            groupBox1.Location = new Point(386, 104);
+            groupBox1.Location = new Point(386, 83);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(363, 514);
+            groupBox1.Size = new Size(363, 536);
             groupBox1.TabIndex = 13;
             groupBox1.TabStop = false;
             // 
@@ -244,6 +404,9 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(GenresLabel);
+            panel1.Controls.Add(groupBox2);
+            panel1.Controls.Add(GenresChecked);
             panel1.Controls.Add(RuntimeBox);
             panel1.Controls.Add(StateLabel);
             panel1.Controls.Add(StateComboBox);
@@ -258,14 +421,96 @@
             panel1.Controls.Add(AgeRateBox);
             panel1.Controls.Add(NameBox);
             panel1.Controls.Add(SynopsisBox);
-            panel1.Location = new Point(6, 60);
+            panel1.Location = new Point(6, 51);
             panel1.Name = "panel1";
-            panel1.Size = new Size(344, 448);
+            panel1.Size = new Size(344, 479);
             panel1.TabIndex = 14;
+            // 
+            // GenresLabel
+            // 
+            GenresLabel.AutoSize = true;
+            GenresLabel.Location = new Point(3, 313);
+            GenresLabel.Name = "GenresLabel";
+            GenresLabel.Size = new Size(59, 20);
+            GenresLabel.TabIndex = 31;
+            GenresLabel.Text = "Genre : ";
+            // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(label8);
+            groupBox2.Controls.Add(dateTimePicker2);
+            groupBox2.Controls.Add(textBox4);
+            groupBox2.Controls.Add(textBox5);
+            groupBox2.Controls.Add(domainUpDown1);
+            groupBox2.Controls.Add(domainUpDown2);
+            groupBox2.Location = new Point(902, 40);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(335, 590);
+            groupBox2.TabIndex = 36;
+            groupBox2.TabStop = false;
+            groupBox2.Visible = false;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(6, 109);
+            label8.Name = "label8";
+            label8.Size = new Size(107, 20);
+            label8.TabIndex = 34;
+            label8.Text = "Release Date : ";
+            // 
+            // dateTimePicker2
+            // 
+            dateTimePicker2.CustomFormat = "";
+            dateTimePicker2.Location = new Point(123, 106);
+            dateTimePicker2.Name = "dateTimePicker2";
+            dateTimePicker2.Size = new Size(206, 27);
+            dateTimePicker2.TabIndex = 31;
+            dateTimePicker2.Value = new DateTime(2024, 5, 26, 0, 0, 0, 0);
+            // 
+            // textBox4
+            // 
+            textBox4.Location = new Point(6, 199);
+            textBox4.Name = "textBox4";
+            textBox4.PlaceholderText = "Type the URL of the Photo";
+            textBox4.Size = new Size(323, 27);
+            textBox4.TabIndex = 33;
+            // 
+            // textBox5
+            // 
+            textBox5.Location = new Point(6, 157);
+            textBox5.Name = "textBox5";
+            textBox5.PlaceholderText = "Type the URL of the Trailer";
+            textBox5.Size = new Size(323, 27);
+            textBox5.TabIndex = 32;
+            // 
+            // domainUpDown1
+            // 
+            domainUpDown1.Location = new Point(6, 264);
+            domainUpDown1.Name = "domainUpDown1";
+            domainUpDown1.Size = new Size(140, 27);
+            domainUpDown1.TabIndex = 1;
+            domainUpDown1.Text = "Episode 1";
+            // 
+            // domainUpDown2
+            // 
+            domainUpDown2.Location = new Point(6, 26);
+            domainUpDown2.Name = "domainUpDown2";
+            domainUpDown2.Size = new Size(140, 27);
+            domainUpDown2.TabIndex = 0;
+            domainUpDown2.Text = "Season 1";
+            // 
+            // GenresChecked
+            // 
+            GenresChecked.FormattingEnabled = true;
+            GenresChecked.Location = new Point(0, 335);
+            GenresChecked.Name = "GenresChecked";
+            GenresChecked.Size = new Size(125, 136);
+            GenresChecked.TabIndex = 24;
             // 
             // RuntimeBox
             // 
-            RuntimeBox.Location = new Point(91, 356);
+            RuntimeBox.Location = new Point(150, 397);
             RuntimeBox.Name = "RuntimeBox";
             RuntimeBox.PlaceholderText = "Runtime (em minutos)";
             RuntimeBox.Size = new Size(163, 27);
@@ -275,7 +520,7 @@
             // StateLabel
             // 
             StateLabel.AutoSize = true;
-            StateLabel.Location = new Point(53, 343);
+            StateLabel.Location = new Point(131, 366);
             StateLabel.Name = "StateLabel";
             StateLabel.Size = new Size(54, 20);
             StateLabel.TabIndex = 29;
@@ -285,7 +530,7 @@
             // 
             StateComboBox.FormattingEnabled = true;
             StateComboBox.Items.AddRange(new object[] { "Active", "Finished", "Cancelled" });
-            StateComboBox.Location = new Point(131, 340);
+            StateComboBox.Location = new Point(131, 389);
             StateComboBox.Name = "StateComboBox";
             StateComboBox.Size = new Size(182, 28);
             StateComboBox.TabIndex = 28;
@@ -294,7 +539,7 @@
             // FinishDateLabel
             // 
             FinishDateLabel.AutoSize = true;
-            FinishDateLabel.Location = new Point(14, 389);
+            FinishDateLabel.Location = new Point(131, 420);
             FinishDateLabel.Name = "FinishDateLabel";
             FinishDateLabel.Size = new Size(93, 20);
             FinishDateLabel.TabIndex = 27;
@@ -303,16 +548,16 @@
             // FinishDatePicker
             // 
             FinishDatePicker.CustomFormat = "";
-            FinishDatePicker.Location = new Point(113, 389);
+            FinishDatePicker.Location = new Point(131, 443);
             FinishDatePicker.Name = "FinishDatePicker";
-            FinishDatePicker.Size = new Size(221, 27);
+            FinishDatePicker.Size = new Size(206, 27);
             FinishDatePicker.TabIndex = 26;
             FinishDatePicker.Value = new DateTime(2024, 5, 26, 0, 0, 0, 0);
             // 
             // ReleaseLabel
             // 
             ReleaseLabel.AutoSize = true;
-            ReleaseLabel.Location = new Point(0, 287);
+            ReleaseLabel.Location = new Point(131, 313);
             ReleaseLabel.Name = "ReleaseLabel";
             ReleaseLabel.Size = new Size(107, 20);
             ReleaseLabel.TabIndex = 25;
@@ -321,7 +566,7 @@
             // ReleaseDatePicker
             // 
             ReleaseDatePicker.CustomFormat = "";
-            ReleaseDatePicker.Location = new Point(131, 287);
+            ReleaseDatePicker.Location = new Point(131, 336);
             ReleaseDatePicker.Name = "ReleaseDatePicker";
             ReleaseDatePicker.Size = new Size(206, 27);
             ReleaseDatePicker.TabIndex = 15;
@@ -329,23 +574,23 @@
             // 
             // PhotoBox
             // 
-            PhotoBox.Location = new Point(0, 254);
+            PhotoBox.Location = new Point(3, 273);
             PhotoBox.Name = "PhotoBox";
             PhotoBox.PlaceholderText = "Type the URL of the Photo";
-            PhotoBox.Size = new Size(337, 27);
+            PhotoBox.Size = new Size(334, 27);
             PhotoBox.TabIndex = 24;
             // 
             // TrailerBox
             // 
-            TrailerBox.Location = new Point(0, 221);
+            TrailerBox.Location = new Point(0, 230);
             TrailerBox.Name = "TrailerBox";
             TrailerBox.PlaceholderText = "Type the URL of the Trailer";
-            TrailerBox.Size = new Size(337, 27);
+            TrailerBox.Size = new Size(334, 27);
             TrailerBox.TabIndex = 23;
             // 
             // RevenueBox
             // 
-            RevenueBox.Location = new Point(177, 179);
+            RevenueBox.Location = new Point(177, 181);
             RevenueBox.Name = "RevenueBox";
             RevenueBox.PlaceholderText = "Revenue";
             RevenueBox.Size = new Size(160, 27);
@@ -354,7 +599,7 @@
             // 
             // BudgetBox
             // 
-            BudgetBox.Location = new Point(3, 179);
+            BudgetBox.Location = new Point(3, 181);
             BudgetBox.Name = "BudgetBox";
             BudgetBox.PlaceholderText = "Budget";
             BudgetBox.Size = new Size(163, 27);
@@ -367,7 +612,7 @@
             AgeRateBox.Controls.Add(ageRate4);
             AgeRateBox.Controls.Add(ageRate3);
             AgeRateBox.Controls.Add(ageRate2);
-            AgeRateBox.Location = new Point(3, 115);
+            AgeRateBox.Location = new Point(3, 116);
             AgeRateBox.Name = "AgeRateBox";
             AgeRateBox.Size = new Size(334, 58);
             AgeRateBox.TabIndex = 20;
@@ -418,15 +663,15 @@
             // 
             // NameBox
             // 
-            NameBox.Location = new Point(0, 0);
+            NameBox.Location = new Point(3, 6);
             NameBox.Name = "NameBox";
             NameBox.PlaceholderText = "Type the name";
-            NameBox.Size = new Size(337, 27);
+            NameBox.Size = new Size(334, 27);
             NameBox.TabIndex = 13;
             // 
             // SynopsisBox
             // 
-            SynopsisBox.Location = new Point(3, 41);
+            SynopsisBox.Location = new Point(3, 42);
             SynopsisBox.Multiline = true;
             SynopsisBox.Name = "SynopsisBox";
             SynopsisBox.PlaceholderText = "Add a synopsis";
@@ -482,7 +727,7 @@
             // AddButton
             // 
             AddButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            AddButton.Location = new Point(386, 69);
+            AddButton.Location = new Point(386, 39);
             AddButton.Name = "AddButton";
             AddButton.Size = new Size(113, 29);
             AddButton.TabIndex = 12;
@@ -684,12 +929,17 @@
             movies.ResumeLayout(false);
             movies.PerformLayout();
             SeriesGroup.ResumeLayout(false);
-            SeriesGroup.PerformLayout();
+            EpisodeGroup.ResumeLayout(false);
+            EpisodeGroup.PerformLayout();
+            SeasonGroup.ResumeLayout(false);
+            SeasonGroup.PerformLayout();
             groupBox1.ResumeLayout(false);
             avadd.ResumeLayout(false);
             avadd.PerformLayout();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
             AgeRateBox.ResumeLayout(false);
             AgeRateBox.PerformLayout();
             typeBox.ResumeLayout(false);
@@ -754,6 +1004,28 @@
         private Label StateLabel;
         private TextBox RuntimeBox;
         private GroupBox SeriesGroup;
-        private Label test;
+        private CheckedListBox GenresChecked;
+        private Label GenresLabel;
+        private Label ReleaseDateSeasonLabel;
+        private DateTimePicker ReleaseDateSeasonPicker;
+        private TextBox PhotoSeason;
+        private TextBox TrailerSeason;
+        private TextBox SynopsisEpisode;
+        private TextBox RuntimeEpisode;
+        private GroupBox groupBox2;
+        private Label label8;
+        private DateTimePicker dateTimePicker2;
+        private TextBox textBox4;
+        private TextBox textBox5;
+        private DomainUpDown domainUpDown1;
+        private DomainUpDown domainUpDown2;
+        private Button AddEpisode;
+        private Button DeleteEpisode;
+        private Button AddSeason;
+        private Button DeleteSeason;
+        private GroupBox EpisodeGroup;
+        private GroupBox SeasonGroup;
+        private ComboBox EpisodeBox;
+        private ComboBox SeasonBox;
     }
 }

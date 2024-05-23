@@ -1,3 +1,4 @@
+using MovieAdvisor;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
@@ -61,6 +62,7 @@ namespace MovieAdvisor
                 g.Name = reader["Name"].ToString();
 
                 genreComboBox.Items.Add(g);
+                GenresChecked.Items.Add(g);
             }
 
             cn.Close();
@@ -252,23 +254,8 @@ namespace MovieAdvisor
             }
         }
 
-        public void LockControls()
-        {
-            NameBox.ReadOnly = true;
-            SynopsisBox.ReadOnly = true;
-
-        }
-
-        public void UnlockControls()
-        {
-            NameBox.ReadOnly = false;
-            SynopsisBox.ReadOnly = false;
-
-        }
-
         public void ShowButtons()
         {
-            LockControls();
             AddButton.Visible = true;
             EditButton.Visible = true;
             DeleteButton.Visible = true;
@@ -278,7 +265,6 @@ namespace MovieAdvisor
 
         public void HideButtons()
         {
-            UnlockControls();
             AddButton.Visible = false;
             EditButton.Visible = false;
             DeleteButton.Visible = false;
@@ -296,6 +282,7 @@ namespace MovieAdvisor
             BudgetBox.Text = "";
             RevenueBox.Text = "";
             ReleaseDatePicker.Text = "";
+
             ageRate.Checked = true;
             movieRadioDetails.Checked = true;
             StateLabel.Visible = false;
@@ -304,7 +291,19 @@ namespace MovieAdvisor
             FinishDateLabel.Visible = false;
             FinishDatePicker.Visible = false;
             RuntimeBox.Visible = true;
+
             RuntimeBox.Text = "";
+            GenresChecked.ClearSelected();
+
+            SeasonBox.Items.Clear();
+            ReleaseDateSeasonLabel.Text = "";
+            TrailerSeason.Text = "";
+            PhotoSeason.Text = "";
+
+            EpisodeBox.Items.Clear();
+            SynopsisEpisode.Text = "";
+            RuntimeEpisode.Text = "";
+
 
         }
 
@@ -316,6 +315,14 @@ namespace MovieAdvisor
             HideButtons();
             avList.Enabled = false;
             groupBox1.Enabled = true;
+            SeasonGroup.Enabled = true;
+            EpisodeGroup.Enabled = true;
+            AddEpisode.Visible = false;
+            DeleteEpisode.Visible = false;
+            AddSeason.Visible = false;
+            DeleteSeason.Visible = false;
+
+
         }
 
         private void EditButton_Click(object sender, EventArgs e)
@@ -337,24 +344,21 @@ namespace MovieAdvisor
             {
                 try
                 {
-                    DELETEAVContent(((AudiovisualContent)avList.SelectedItem).ID);
+                    AudiovisualContent item = (AudiovisualContent)avList.SelectedItem;
+                    avList.Items.Remove(item);
+                    avList2.Items.Remove(item);
+                    avList.SelectedIndex = -1;
+                    DELETEAVContent(item.ID);
+                    ClearFields();
+                    MessageBox.Show("Item apagado com sucesso!");
+                    groupBox1.Enabled = false;
+                    SeasonGroup.Enabled = false;
+                    EpisodeGroup.Enabled = false;
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                     return;
-                }
-                avList.Items.RemoveAt(avList.SelectedIndex);
-                if (currentAVContent == avList.Items.Count)
-                    currentAVContent = avList.Items.Count - 1;
-                if (currentAVContent == -1)
-                {
-                    ClearFields();
-                    MessageBox.Show("There are no more");
-                }
-                else
-                {
-                    ShowAVContent();
                 }
             }
         }
@@ -402,19 +406,23 @@ namespace MovieAdvisor
         {
             if (SaveAVContent())
             {
-                SaveAVContent();
                 avList.Enabled = true;
                 int idx = avList.FindString(NameBox.Text);
                 avList.SelectedIndex = idx;
                 ShowButtons();
+                groupBox1.Enabled = false;
+                SeasonGroup.Enabled = false;
+                EpisodeGroup.Enabled = false;
             }
         }
 
 
         private void avList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (avList.SelectedIndex > -1)
+            if (avList.SelectedIndex >= 0)
             {
+                SeasonBox.Items.Clear();
+                EpisodeBox.Items.Clear();
                 currentAVContent = avList.SelectedIndex;
                 ShowAVContent();
             }
@@ -445,7 +453,7 @@ namespace MovieAdvisor
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to update Movie in database. \n ERROR MESSAGE: \n" + ex.Message);
+                throw new Exception("Failed to insert Movie in database. \n ERROR MESSAGE: \n" + ex.Message);
             }
             finally
             {
@@ -495,13 +503,13 @@ namespace MovieAdvisor
             }
         }
 
-        private void CreateSerie(TVSeries m)
+        private void CreateSerie(TVSeries m, Season s, Episode e)
         {
             if (!verifyDBConnection())
                 return;
             SqlCommand cmd = new SqlCommand();
 
-            cmd.CommandText = "EXEC CreateSerie @Title, @Synopsis, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate, @State, @FinishDate";
+            cmd.CommandText = "EXEC CreateSerie @Title, @Synopsis, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate, @State, @FinishDate, @SeasonNumber, @SeasonPhoto, @SeasonTrailerURL, @SeasonReleaseDate, @EpisodeNumber, @EpisodeRuntime, @EpisodeSynopsis";
             cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@Title", m.Title);
             cmd.Parameters.AddWithValue("@Synopsis", m.Synopsis);
@@ -513,6 +521,13 @@ namespace MovieAdvisor
             cmd.Parameters.AddWithValue("@ReleaseDate", m.ReleaseDate);
             cmd.Parameters.AddWithValue("@State", m.State);
             cmd.Parameters.AddWithValue("@FinishDate", m.FinishDate);
+            cmd.Parameters.AddWithValue("@SeasonNumber", s.Number);
+            cmd.Parameters.AddWithValue("@SeasonPhoto", s.Photo);
+            cmd.Parameters.AddWithValue("@SeasonTrailerURL", s.TrailerURL);
+            cmd.Parameters.AddWithValue("@SeasonReleaseDate", s.ReleaseDate);
+            cmd.Parameters.AddWithValue("@EpisodeNumber", e.Number);
+            cmd.Parameters.AddWithValue("@EpisodeRuntime", e.Runtime);
+            cmd.Parameters.AddWithValue("@EpisodeSynopsis", e.Synopsis);
 
             cmd.Connection = cn;
 
@@ -522,7 +537,7 @@ namespace MovieAdvisor
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to update TVSerie in database. \n ERROR MESSAGE: \n" + ex.Message);
+                throw new Exception("Failed to create TVSerie in database. \n ERROR MESSAGE: \n" + ex.Message);
             }
             finally
             {
@@ -572,6 +587,39 @@ namespace MovieAdvisor
                 cn.Close();
             }
         }
+        private void CreateSeason(TVSeries m, Season s, Episode e)
+        {
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "EXEC CreateSeason @SerieId, @SeasonNumber, @SeasonPhoto, @SeasonTrailerURL, @SeasonReleaseDate, @EpisodeNumber, @EpisodeRuntime, @EpisodeSynopsis";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@SerieId", m.ID);
+            cmd.Parameters.AddWithValue("@SeasonNumber", s.Number);
+            cmd.Parameters.AddWithValue("@SeasonPhoto", s.Photo);
+            cmd.Parameters.AddWithValue("@SeasonTrailerURL", s.TrailerURL);
+            cmd.Parameters.AddWithValue("@SeasonReleaseDate", s.ReleaseDate);
+            cmd.Parameters.AddWithValue("@EpisodeNumber", e.Number);
+            cmd.Parameters.AddWithValue("@EpisodeRuntime", e.Runtime);
+            cmd.Parameters.AddWithValue("@EpisodeSynopsis", e.Synopsis);
+
+            cmd.Connection = cn;
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to create Season in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+
         public void ShowAVContent()
         {
             StateComboBox.SelectedIndex = -1;
@@ -639,11 +687,11 @@ namespace MovieAdvisor
                     RuntimeBox.Visible = false;
                     m.State = reader["State"].ToString();
                     m.FinishDate = reader["FinishDate"].ToString();
-                    if (m.State == "Active")
+                    if (m.State.Equals("Active"))
                     {
                         StateComboBox.SelectedIndex = 0;
                     }
-                    else if (m.State == "Finished")
+                    else if (m.State.Equals("Finished"))
                     {
                         StateComboBox.SelectedIndex = 1;
                     }
@@ -655,6 +703,26 @@ namespace MovieAdvisor
                     StateComboBox.SelectedItem = m.State;
                     FinishDatePicker.Text = m.FinishDate;
                 }
+                reader.Close();
+
+                cmd = new SqlCommand("SELECT * FROM getAllSeasonsOfSerie(" + av.ID + ") ", cn);
+                reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Season s = new Season();
+
+                    s.Number = reader["Number"].ToString();
+                    s.Photo = reader["Photo"].ToString();
+                    s.TrailerURL = reader["TrailerURL"].ToString();
+                    s.ReleaseDate = reader["ReleaseDate"].ToString();
+
+                    SeasonBox.Items.Add(s);
+                    PhotoSeason.Text = s.Photo;
+                    TrailerSeason.Text = s.TrailerURL;
+                    ReleaseDateSeasonPicker.Text = s.ReleaseDate;
+                }
+                SeasonBox.SelectedIndex = 0;
             }
 
             cn.Close();
@@ -670,8 +738,8 @@ namespace MovieAdvisor
             av.Photo = PhotoBox.Text;
             av.Budget = BudgetBox.Text;
             av.Revenue = RevenueBox.Text;
-            ReleaseDatePicker.CustomFormat = "yyyy-mm-dd";
-            av.ReleaseDate = ReleaseDatePicker.Value.ToString();
+            string date = ReleaseDatePicker.Value.ToString("yyyy-MM-dd");
+            av.ReleaseDate = date;
             if (ageRate.Checked)
             {
                 av.AgeRate = "0";
@@ -698,8 +766,19 @@ namespace MovieAdvisor
                 {
                     try
                     {
+                        if (av.Title == "")
+                        {
+                            MessageBox.Show("Invalid Title!");
+                            return false;
+                        }
+                        if (m.Runtime == "")
+                        {
+                            MessageBox.Show("Invalid Runtime!");
+                            return false;
+                        }
                         CreateMovie(m);
-                        avList.Items.Add(av);
+                        loadAVContents();
+
                     }
                     catch (Exception ex)
                     {
@@ -717,16 +796,46 @@ namespace MovieAdvisor
             else
             {
                 TVSeries m = TVSeries.FromAV(av);
-                m.State = StateComboBox.SelectedText;
-                FinishDatePicker.CustomFormat = "yyyy-mm-dd";
-                m.FinishDate = FinishDatePicker.Value.ToString();
+                if (StateComboBox.SelectedItem == null)
+                {
+                    MessageBox.Show("Invalid State!");
+                    return false;
+                }
+                m.State = StateComboBox.SelectedItem.ToString();
+                string finish = FinishDatePicker.Value.ToString("yyyy-MM-dd");
+                m.FinishDate = finish;
+
+                Season s = new Season();
+
+                s.Number = "1";
+                s.Photo = PhotoSeason.Text;
+                s.TrailerURL = TrailerSeason.Text;
+                string release = ReleaseDateSeasonPicker.Value.ToString("yyyy-MM-dd");
+                s.ReleaseDate = release;
+
+                Episode e = new Episode();
+                e.Number = "1";
+                e.Synopsis = SynopsisEpisode.Text;
+                e.Runtime = RuntimeEpisode.Text;
+
 
                 if (adding)
                 {
                     try
                     {
-                        CreateSerie(m);
-                        avList.Items.Add(av);
+                        if (av.Title == "")
+                        {
+                            MessageBox.Show("Invalid Title!");
+                            return false;
+                        }
+
+                        if (e.Runtime == "")
+                        {
+                            MessageBox.Show("Invalid Runtime!");
+                            return false;
+                        }
+                        CreateSerie(m, s, e);
+                        loadAVContents();
                     }
                     catch (Exception ex)
                     {
@@ -753,6 +862,7 @@ namespace MovieAdvisor
             FinishDatePicker.Visible = true;
             RuntimeBox.Visible = false;
             SeriesGroup.Visible = true;
+
         }
 
         private void movieRadioDetails_CheckedChanged(object sender, EventArgs e)
@@ -768,14 +878,30 @@ namespace MovieAdvisor
 
         private void StateComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if ( StateComboBox.SelectedIndex == 0 | StateComboBox.SelectedIndex == -1) {
+            if (StateComboBox.SelectedIndex == 0 | StateComboBox.SelectedIndex == -1)
+            {
                 FinishDateLabel.Visible = false;
                 FinishDatePicker.Visible = false;
-            } else {
+            }
+            else
+            {
 
                 FinishDateLabel.Visible = true;
                 FinishDatePicker.Visible = true;
             }
+        }
+
+        private void SeasonBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (SeasonBox.SelectedIndex >= 0)
+            {
+                Season s = (Season)SeasonBox.SelectedItem;
+
+                ReleaseDateSeasonPicker.Text = s.ReleaseDate;
+                TrailerSeason.Text = s.TrailerURL;
+                PhotoSeason.Text = s.Photo;
+            }
+
         }
     }
 }

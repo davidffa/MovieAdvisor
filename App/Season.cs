@@ -13,5 +13,10 @@
         public String Photo { get => _photo; set => _photo = value; }
         public String TrailerURL { get => _trailerURL; set => _trailerURL = value; }
         public String ReleaseDate { get => _releaseDate; set => _releaseDate = value; }
+
+        public override string ToString()
+        {
+            return "Season " + _number;
+        }
     }
 }
