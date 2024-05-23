@@ -1,4 +1,5 @@
 using MovieAdvisor;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
@@ -335,7 +336,7 @@ namespace MovieAdvisor
             EpisodeBox.Items.Clear();
 
         }
-        
+
 
         private void EditButton_Click(object sender, EventArgs e)
         {
@@ -749,7 +750,6 @@ namespace MovieAdvisor
             try
             {
                 rows = cmd.ExecuteNonQuery();
-                MessageBox.Show("Update OK");
             }
             catch (Exception ex)
             {
@@ -810,7 +810,6 @@ namespace MovieAdvisor
             try
             {
                 rows = cmd.ExecuteNonQuery();
-                MessageBox.Show("Update OK");
             }
             catch (Exception ex)
             {
@@ -1094,6 +1093,8 @@ namespace MovieAdvisor
                 {
                     m.ID = ((AudiovisualContent)avList.SelectedItem).ID;
                     UpdateSerie(m, genres);
+                    UpdateSeason(m, s, e);
+                    UpdateEpisode(m, s, e);
                     loadAVContents();
                 }
             }
@@ -1156,7 +1157,44 @@ namespace MovieAdvisor
 
         private void AddSeason_Click(object sender, EventArgs e)
         {
+            Season season = new Season();
+            season.Number = (SeasonBox.Items.Count + 1).ToString();
+            SeasonBox.Items.Add(season);
+            adding = true;
 
+            avList.Enabled = false;
+            groupBox1.Enabled = true;
+            AddEpisode.Visible = false;
+            DeleteEpisode.Visible = false;
+            AddSeason.Visible = false;
+            DeleteSeason.Visible = false;
+            SeasonBox.SelectedIndex = SeasonBox.Items.Count - 1;
+            EpisodeBox.Items.Clear();
+            Episode episode = new Episode();
+            episode.Number = "1";
+            EpisodeBox.Items.Add(episode);
+            EpisodeBox.SelectedIndex = 0;
+            SynopsisEpisode.Text = "";
+            RuntimeEpisode.Text = "";
+
+
+        }
+        private void AddEpisode_Click(object sender, EventArgs e)
+        {
+            Episode episode = new Episode();
+
+            episode.Number = (EpisodeBox.Items.Count + 1).ToString();
+            EpisodeBox.Items.Add(episode);
+            adding = true;
+
+            avList.Enabled = false;
+            groupBox1.Enabled = true;
+            AddEpisode.Visible = false;
+            DeleteEpisode.Visible = false;
+            AddSeason.Visible = false;
+            DeleteSeason.Visible = false;
+            EpisodeBox.SelectedIndex = EpisodeBox.Items.Count - 1;
+           
         }
 
         private void DeleteSeason_Click(object sender, EventArgs e)
@@ -1177,7 +1215,7 @@ namespace MovieAdvisor
                 try
                 {
                     AudiovisualContent av = (AudiovisualContent)avList.SelectedItem;
-                   
+
                     Season item = (Season)SeasonBox.SelectedItem;
                     SeasonBox.Items.Remove(item);
                     SeasonBox.SelectedIndex = -1;
@@ -1189,7 +1227,7 @@ namespace MovieAdvisor
                     SynopsisEpisode.Text = "";
                     RuntimeEpisode.Text = "";
                     MessageBox.Show("Item apagado com sucesso!");
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -1225,5 +1263,76 @@ namespace MovieAdvisor
             }
         }
 
+        private void DeleteEpisode_Click(object sender, EventArgs e)
+        {
+            if (EpisodeBox.Items.Count == 1)
+            {
+                MessageBox.Show("It's not possible to remove this episode because its the only one of the season.");
+                return;
+            }
+            currentAVContent = avList.SelectedIndex;
+            if (EpisodeBox.SelectedIndex <= 0)
+            {
+                MessageBox.Show("Please select an episode to delete!");
+                return;
+            }
+            if (SeasonBox.SelectedIndex <= 0)
+            {
+                MessageBox.Show("Please select a season to delete!");
+                return;
+            }
+            if (avList.SelectedIndex > -1)
+            {
+                try
+                {
+                    AudiovisualContent av = (AudiovisualContent)avList.SelectedItem;
+                    Season item = (Season)SeasonBox.SelectedItem;
+                    Episode episode = (Episode)EpisodeBox.SelectedItem;
+                    EpisodeBox.Items.Remove(item);
+                    EpisodeBox.SelectedIndex = -1;
+                    DELETEEpisode(av.ID, item.Number, episode.Number);
+                    SynopsisEpisode.Text = "";
+                    RuntimeEpisode.Text = "";
+
+                    MessageBox.Show("Item apagado com sucesso!");
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return;
+                }
+            }
+        }
+
+        private void DELETEEpisode(string ID, string Number, string episodeNumber)
+        {
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "DELETE Episode WHERE Series_ID=@ID AND Season_ID = @Number AND Number = @episodeNumber";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@Series_ID", ID);
+            cmd.Parameters.AddWithValue("@Season_ID", Number);
+            cmd.Parameters.AddWithValue("@Number", episodeNumber);
+
+            cmd.Connection = cn;
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to delete season in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+
+        
     }
 }

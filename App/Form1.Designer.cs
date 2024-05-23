@@ -204,6 +204,7 @@
             AddEpisode.Text = "Add";
             AddEpisode.UseVisualStyleBackColor = true;
             AddEpisode.Visible = false;
+            AddEpisode.Click += AddEpisode_Click;
             // 
             // DeleteSeason
             // 
@@ -241,6 +242,7 @@
             DeleteEpisode.Text = "Delete";
             DeleteEpisode.UseVisualStyleBackColor = false;
             DeleteEpisode.Visible = false;
+            DeleteEpisode.Click += DeleteEpisode_Click;
             // 
             // EpisodeGroup
             // 
