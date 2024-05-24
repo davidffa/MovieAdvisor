@@ -31,6 +31,10 @@
             tabControl1 = new TabControl();
             movies = new TabPage();
             SeriesGroup = new GroupBox();
+            ConfirmEpisode = new Button();
+            ConfirmSeason = new Button();
+            CancelSeason = new Button();
+            CancelEpisode = new Button();
             EpisodeBox = new ComboBox();
             SeasonBox = new ComboBox();
             AddEpisode = new Button();
@@ -160,6 +164,10 @@
             // 
             // SeriesGroup
             // 
+            SeriesGroup.Controls.Add(ConfirmEpisode);
+            SeriesGroup.Controls.Add(ConfirmSeason);
+            SeriesGroup.Controls.Add(CancelSeason);
+            SeriesGroup.Controls.Add(CancelEpisode);
             SeriesGroup.Controls.Add(EpisodeBox);
             SeriesGroup.Controls.Add(SeasonBox);
             SeriesGroup.Controls.Add(AddEpisode);
@@ -175,6 +183,56 @@
             SeriesGroup.TabStop = false;
             SeriesGroup.Visible = false;
             // 
+            // ConfirmEpisode
+            // 
+            ConfirmEpisode.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            ConfirmEpisode.Location = new Point(33, 549);
+            ConfirmEpisode.Name = "ConfirmEpisode";
+            ConfirmEpisode.Size = new Size(113, 29);
+            ConfirmEpisode.TabIndex = 48;
+            ConfirmEpisode.Text = "Confirm";
+            ConfirmEpisode.UseVisualStyleBackColor = true;
+            ConfirmEpisode.Visible = false;
+            ConfirmEpisode.Click += ConfirmEpisode_Click;
+            // 
+            // ConfirmSeason
+            // 
+            ConfirmSeason.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            ConfirmSeason.Location = new Point(33, 254);
+            ConfirmSeason.Name = "ConfirmSeason";
+            ConfirmSeason.Size = new Size(113, 29);
+            ConfirmSeason.TabIndex = 46;
+            ConfirmSeason.Text = "Confirm";
+            ConfirmSeason.UseVisualStyleBackColor = true;
+            ConfirmSeason.Visible = false;
+            ConfirmSeason.Click += ConfirmSeason_Click;
+            // 
+            // CancelSeason
+            // 
+            CancelSeason.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            CancelSeason.BackColor = Color.Transparent;
+            CancelSeason.Location = new Point(176, 254);
+            CancelSeason.Name = "CancelSeason";
+            CancelSeason.Size = new Size(113, 29);
+            CancelSeason.TabIndex = 47;
+            CancelSeason.Text = "Cancel";
+            CancelSeason.UseVisualStyleBackColor = false;
+            CancelSeason.Visible = false;
+            CancelSeason.Click += CancelSeason_Click;
+            // 
+            // CancelEpisode
+            // 
+            CancelEpisode.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            CancelEpisode.BackColor = Color.Transparent;
+            CancelEpisode.Location = new Point(176, 549);
+            CancelEpisode.Name = "CancelEpisode";
+            CancelEpisode.Size = new Size(113, 29);
+            CancelEpisode.TabIndex = 49;
+            CancelEpisode.Text = "Cancel";
+            CancelEpisode.UseVisualStyleBackColor = false;
+            CancelEpisode.Visible = false;
+            CancelEpisode.Click += CancelEpisode_Click;
+            // 
             // EpisodeBox
             // 
             EpisodeBox.FormattingEnabled = true;
@@ -183,6 +241,7 @@
             EpisodeBox.Size = new Size(171, 28);
             EpisodeBox.TabIndex = 45;
             EpisodeBox.Text = "Episodes";
+            EpisodeBox.SelectedIndexChanged += EpisodeBox_SelectedIndexChanged;
             // 
             // SeasonBox
             // 
@@ -203,7 +262,6 @@
             AddEpisode.TabIndex = 40;
             AddEpisode.Text = "Add";
             AddEpisode.UseVisualStyleBackColor = true;
-            AddEpisode.Visible = false;
             AddEpisode.Click += AddEpisode_Click;
             // 
             // DeleteSeason
@@ -216,7 +274,6 @@
             DeleteSeason.TabIndex = 39;
             DeleteSeason.Text = "Delete";
             DeleteSeason.UseVisualStyleBackColor = false;
-            DeleteSeason.Visible = false;
             DeleteSeason.Click += DeleteSeason_Click;
             // 
             // AddSeason
@@ -228,7 +285,6 @@
             AddSeason.TabIndex = 38;
             AddSeason.Text = "Add";
             AddSeason.UseVisualStyleBackColor = true;
-            AddSeason.Visible = false;
             AddSeason.Click += AddSeason_Click;
             // 
             // DeleteEpisode
@@ -241,7 +297,6 @@
             DeleteEpisode.TabIndex = 41;
             DeleteEpisode.Text = "Delete";
             DeleteEpisode.UseVisualStyleBackColor = false;
-            DeleteEpisode.Visible = false;
             DeleteEpisode.Click += DeleteEpisode_Click;
             // 
             // EpisodeGroup
@@ -1035,5 +1090,9 @@
         private GroupBox SeasonGroup;
         private ComboBox EpisodeBox;
         private ComboBox SeasonBox;
+        private Button ConfirmEpisode;
+        private Button CancelEpisode;
+        private Button ConfirmSeason;
+        private Button CancelSeason;
     }
 }

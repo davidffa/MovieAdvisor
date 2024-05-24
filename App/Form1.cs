@@ -10,6 +10,8 @@ namespace MovieAdvisor
     {
         private SqlConnection cn;
         private bool adding;
+        private bool adding_season;
+        private bool adding_episode;
         private int currentAVContent;
 
         private string avOrderBy = "";
@@ -66,6 +68,7 @@ namespace MovieAdvisor
                 GenresChecked.Items.Add(g);
             }
 
+            reader.Close();
             cn.Close();
         }
 
@@ -107,7 +110,7 @@ namespace MovieAdvisor
 
                 if (first) avList2.Items.Add(m);
             }
-
+            reader.Close();
             cn.Close();
         }
 
@@ -131,7 +134,7 @@ namespace MovieAdvisor
 
                 avList.Items.Add(m);
             }
-
+            reader.Close();
             cn.Close();
         }
 
@@ -158,7 +161,7 @@ namespace MovieAdvisor
 
                 reviewsList.Items.Add(r);
             }
-
+            reader.Close();
             cn.Close();
         }
 
@@ -319,6 +322,8 @@ namespace MovieAdvisor
         {
             avList.SelectedIndex = -1;
             adding = true;
+            adding_season = false;
+            adding_episode = false;
             ClearFields();
             HideButtons();
             avList.Enabled = false;
@@ -347,6 +352,8 @@ namespace MovieAdvisor
                 return;
             }
             adding = false;
+            adding_season = false;
+            adding_episode = false;
             HideButtons();
             avList.Enabled = false;
             avadd.Enabled = false;
@@ -428,12 +435,85 @@ namespace MovieAdvisor
             groupBox1.Enabled = false;
             ageRate.Checked = true;
             adding = false;
+            adding_episode = false;
+            adding_season = false;
             SeasonGroup.Enabled = false;
             EpisodeGroup.Enabled = false;
             AddEpisode.Visible = false;
             DeleteEpisode.Visible = false;
             AddSeason.Visible = false;
             DeleteSeason.Visible = false;
+        }
+
+        private void CancelEpisode_Click(object sender, EventArgs e)
+        {
+            EpisodeBox.SelectedIndex = 0;
+            EpisodeBox.Items.RemoveAt(EpisodeBox.Items.Count - 1);
+            avList.Enabled = true;
+            int idx = avList.FindString(NameBox.Text);
+            avList.SelectedIndex = idx;
+
+            groupBox1.Enabled = false;
+
+            adding = false;
+            adding_episode = false;
+            adding_season = false;
+
+            AddButton.Visible = true;
+            EditButton.Visible = true;
+            DeleteButton.Visible = true;
+            cancelButton.Visible = false;
+            confirmButton.Visible = false;
+            ConfirmSeason.Visible = false;
+            ConfirmEpisode.Visible = false;
+            CancelEpisode.Visible = false;
+            CancelSeason.Visible = false;
+            AddEpisode.Visible = true;
+            AddSeason.Visible = true;
+            DeleteEpisode.Visible = true;
+            DeleteSeason.Visible = true;
+
+            SeasonBox.Enabled = true;
+            SeasonGroup.Enabled = false;
+            EpisodeGroup.Enabled = false;
+        }
+
+        private void CancelSeason_Click(object sender, EventArgs e)
+        {
+            EpisodeBox.SelectedIndex = 0;
+            EpisodeBox.Items.RemoveAt(EpisodeBox.Items.Count - 1);
+            SeasonBox.SelectedIndex = 0;
+            SeasonBox.Items.RemoveAt(SeasonBox.Items.Count - 1);
+            avList.Enabled = true;
+            int idx = avList.FindString(NameBox.Text);
+            avList.SelectedIndex = idx;
+
+            groupBox1.Enabled = false;
+
+            adding = false;
+            adding_episode = false;
+            adding_season = false;
+
+            AddButton.Visible = true;
+            EditButton.Visible = true;
+            DeleteButton.Visible = true;
+            cancelButton.Visible = false;
+            confirmButton.Visible = false;
+
+            ConfirmSeason.Visible = false;
+            ConfirmEpisode.Visible = false;
+            CancelEpisode.Visible = false;
+            CancelSeason.Visible = false;
+
+            AddEpisode.Visible = true;
+            AddSeason.Visible = true;
+            DeleteEpisode.Visible = true;
+            DeleteSeason.Visible = true;
+
+            SeasonBox.Enabled = true;
+            EpisodeBox.Enabled = true;
+            SeasonGroup.Enabled = false;
+            EpisodeGroup.Enabled = false;
         }
 
         private void confirmButton_Click(object sender, EventArgs e)
@@ -447,6 +527,75 @@ namespace MovieAdvisor
                 groupBox1.Enabled = false;
                 SeasonGroup.Enabled = false;
                 EpisodeGroup.Enabled = false;
+            }
+        }
+
+        private void ConfirmSeason_Click(object sender, EventArgs e)
+        {
+            adding = true;
+            adding_season = true;
+            adding_episode = false;
+            if (SaveAVContent())
+            {
+                avList.Enabled = true;
+                int idx = avList.FindString(NameBox.Text);
+                avList.SelectedIndex = idx;
+
+                AddButton.Visible = true;
+                EditButton.Visible = true;
+                DeleteButton.Visible = true;
+                cancelButton.Visible = false;
+                confirmButton.Visible = false;
+                ConfirmSeason.Visible = false;
+                CancelSeason.Visible = false;
+                AddEpisode.Visible = true;
+                AddSeason.Visible = true;
+                DeleteEpisode.Visible = true;
+                DeleteSeason.Visible = true;
+
+                groupBox1.Enabled = false;
+                SeasonGroup.Enabled = false;
+                EpisodeGroup.Enabled = false;
+
+                SeasonBox.Enabled = true;
+                EpisodeBox.Enabled = true;
+            }
+        }
+
+        private void ConfirmEpisode_Click(object sender, EventArgs e)
+        {
+            int id_season = SeasonBox.SelectedIndex;
+            int ep = EpisodeBox.SelectedIndex;
+            adding = true;
+            adding_season = false;
+            adding_episode = true;
+            if (SaveAVContent())
+            {
+                avList.Enabled = true;
+                int idx = avList.FindString(NameBox.Text);
+                avList.SelectedIndex = idx;
+
+                AddButton.Visible = true;
+                EditButton.Visible = true;
+                DeleteButton.Visible = true;
+                cancelButton.Visible = false;
+                confirmButton.Visible = false;
+                ConfirmEpisode.Visible = false;
+                CancelEpisode.Visible = false;
+
+                AddEpisode.Visible = true;
+                AddSeason.Visible = true;
+                DeleteEpisode.Visible = true;
+                DeleteSeason.Visible = true;
+
+                groupBox1.Enabled = false;
+                SeasonGroup.Enabled = false;
+                EpisodeGroup.Enabled = false;
+                SeasonBox.Enabled = true;
+                EpisodeBox.Enabled = true;
+                SeasonBox.SelectedIndex = id_season;
+                EpisodeBox.SelectedIndex = ep;
+
             }
         }
 
@@ -783,7 +932,7 @@ namespace MovieAdvisor
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to create Season in database. \n ERROR MESSAGE: \n" + ex.Message);
+                throw new Exception("Failed to create Episode in database. \n ERROR MESSAGE: \n" + ex.Message);
             }
             finally
             {
@@ -824,7 +973,7 @@ namespace MovieAdvisor
         public void ShowAVContent()
         {
             StateComboBox.SelectedIndex = -1;
-            if (avList.Items.Count == 0 | currentAVContent < 0)
+            if (avList.Items.Count == 0 || currentAVContent < 0)
                 return;
 
             AudiovisualContent av = (AudiovisualContent)avList.SelectedItem;
@@ -852,8 +1001,6 @@ namespace MovieAdvisor
             {
                 ageRate4.Checked = true;
             }
-
-
 
             if (!verifyDBConnection()) return;
 
@@ -941,9 +1088,8 @@ namespace MovieAdvisor
                     TrailerSeason.Text = s.TrailerURL;
                     ReleaseDateSeasonPicker.Text = s.ReleaseDate;
                 }
-                SeasonBox.SelectedIndex = 0;
                 reader.Close();
-                cmd = new SqlCommand("SELECT * FROM getAllEpisodesOfSeason(" + av.ID + "," + ((SeasonBox.SelectedIndex) + 1) + ") ", cn);
+                cmd = new SqlCommand("SELECT * FROM getAllEpisodesOfSeason(" + av.ID + "," + 1 + ") ", cn);
                 reader = cmd.ExecuteReader();
 
                 while (reader.Read())
@@ -958,16 +1104,17 @@ namespace MovieAdvisor
                     SynopsisEpisode.Text = s.Synopsis;
                     RuntimeEpisode.Text = s.Runtime;
                 }
-                EpisodeBox.SelectedIndex = 0;
                 reader.Close();
+                SeasonBox.SelectedIndex = 0;
+                EpisodeBox.SelectedIndex = 0;
             }
-
             cn.Close();
 
         }
 
         private bool SaveAVContent()
         {
+
             AudiovisualContent av = new AudiovisualContent();
             av.Title = NameBox.Text;
             av.Synopsis = SynopsisBox.Text;
@@ -1080,7 +1227,22 @@ namespace MovieAdvisor
                             MessageBox.Show("Invalid Runtime!");
                             return false;
                         }
-                        CreateSerie(m, genres, s, e);
+                        if (adding_episode)
+                        {
+                            m.ID = ((AudiovisualContent)avList.SelectedItem).ID;
+                            s.ID = ((Season)SeasonBox.SelectedItem).ID;
+                            CreateEpisode(m, s, e);
+                        }
+                        else if (adding_season)
+                        {
+                            m.ID = ((AudiovisualContent)avList.SelectedItem).ID;
+                            CreateSeason(m, s, e);
+                        }
+                        else
+                        {
+                            CreateSerie(m, genres, s, e);
+                        }
+
                         loadAVContents();
                     }
                     catch (Exception ex)
@@ -1144,15 +1306,46 @@ namespace MovieAdvisor
 
         private void SeasonBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (SeasonBox.SelectedIndex >= 0)
+            if (SeasonBox.SelectedIndex < 0) return;
+
+            Season s = (Season)SeasonBox.SelectedItem;
+
+            ReleaseDateSeasonPicker.Text = s.ReleaseDate;
+            TrailerSeason.Text = s.TrailerURL;
+            PhotoSeason.Text = s.Photo;
+
+            if (!verifyDBConnection()) return;
+
+            string av_id = ((AudiovisualContent)avList.SelectedItem).ID;
+
+            SqlCommand cmd = new SqlCommand("SELECT * FROM getAllEpisodesOfSeason(" + av_id + "," + s.Number + ") ", cn);
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            EpisodeBox.Items.Clear();
+            while (reader.Read())
             {
-                Season s = (Season)SeasonBox.SelectedItem;
+                Episode ep = new Episode();
 
-                ReleaseDateSeasonPicker.Text = s.ReleaseDate;
-                TrailerSeason.Text = s.TrailerURL;
-                PhotoSeason.Text = s.Photo;
+                ep.Number = reader["Number"].ToString();
+                ep.Runtime = reader["Runtime"].ToString();
+                ep.Synopsis = reader["Synopsis"].ToString();
+
+                EpisodeBox.Items.Add(ep);
+                SynopsisEpisode.Text = ep.Synopsis;
+                RuntimeEpisode.Text = ep.Runtime;
             }
+            cn.Close();
+            EpisodeBox.SelectedIndex = 0;
+        }
 
+        private void EpisodeBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (EpisodeBox.SelectedIndex < 0) return;
+
+            Episode ep = (Episode)EpisodeBox.SelectedItem;
+
+            RuntimeEpisode.Text = ep.Runtime;
+            SynopsisEpisode.Text = ep.Synopsis;
         }
 
         private void AddSeason_Click(object sender, EventArgs e)
@@ -1161,13 +1354,21 @@ namespace MovieAdvisor
             season.Number = (SeasonBox.Items.Count + 1).ToString();
             SeasonBox.Items.Add(season);
             adding = true;
+            adding_episode = false;
+            adding_season = true;
 
             avList.Enabled = false;
-            groupBox1.Enabled = true;
+            groupBox1.Enabled = false;
+            SeasonBox.Enabled = true;
+            EpisodeBox.Enabled = true;
             AddEpisode.Visible = false;
             DeleteEpisode.Visible = false;
             AddSeason.Visible = false;
+            confirmButton.Visible = false;
+            cancelButton.Visible = false;
             DeleteSeason.Visible = false;
+            ConfirmSeason.Visible = true;
+            CancelSeason.Visible = true;
             SeasonBox.SelectedIndex = SeasonBox.Items.Count - 1;
             EpisodeBox.Items.Clear();
             Episode episode = new Episode();
@@ -1176,6 +1377,9 @@ namespace MovieAdvisor
             EpisodeBox.SelectedIndex = 0;
             SynopsisEpisode.Text = "";
             RuntimeEpisode.Text = "";
+            EpisodeGroup.Enabled = true;
+            SeasonGroup.Enabled = true;
+
 
 
         }
@@ -1186,15 +1390,31 @@ namespace MovieAdvisor
             episode.Number = (EpisodeBox.Items.Count + 1).ToString();
             EpisodeBox.Items.Add(episode);
             adding = true;
+            adding_episode = true;
+            adding_season = false;
 
             avList.Enabled = false;
-            groupBox1.Enabled = true;
+            groupBox1.Enabled = false;
+            SeasonBox.Enabled = false;
+            EpisodeBox.Enabled = true;
+            EpisodeGroup.Enabled = true;
+
             AddEpisode.Visible = false;
             DeleteEpisode.Visible = false;
+
             AddSeason.Visible = false;
             DeleteSeason.Visible = false;
+
+            confirmButton.Visible = false;
+            cancelButton.Visible = false;
+
+            ConfirmEpisode.Visible = true;
+            CancelEpisode.Visible = true;
             EpisodeBox.SelectedIndex = EpisodeBox.Items.Count - 1;
-           
+            SynopsisEpisode.Text = "";
+            RuntimeEpisode.Text = "";
+            SeasonGroup.Enabled = false;
+
         }
 
         private void DeleteSeason_Click(object sender, EventArgs e)
@@ -1205,7 +1425,7 @@ namespace MovieAdvisor
                 return;
             }
             currentAVContent = avList.SelectedIndex;
-            if (SeasonBox.SelectedIndex <= 0)
+            if (SeasonBox.SelectedIndex < 0)
             {
                 MessageBox.Show("Please select a season to delete!");
                 return;
@@ -1218,7 +1438,7 @@ namespace MovieAdvisor
 
                     Season item = (Season)SeasonBox.SelectedItem;
                     SeasonBox.Items.Remove(item);
-                    SeasonBox.SelectedIndex = -1;
+                    SeasonBox.SelectedIndex = 0;
                     DELETESeason(av.ID, item.Number);
                     TrailerSeason.Text = "";
                     PhotoSeason.Text = "";
@@ -1227,6 +1447,27 @@ namespace MovieAdvisor
                     SynopsisEpisode.Text = "";
                     RuntimeEpisode.Text = "";
                     MessageBox.Show("Item apagado com sucesso!");
+
+                    if (!verifyDBConnection()) return;
+
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM getAllEpisodesOfSeason(" + av.ID + "," + ((SeasonBox.SelectedIndex) + 1) + ") ", cn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Episode ep = new Episode();
+
+                        ep.Number = reader["Number"].ToString();
+                        ep.Runtime = reader["Runtime"].ToString();
+                        ep.Synopsis = reader["Synopsis"].ToString();
+
+                        EpisodeBox.Items.Add(ep);
+                        SynopsisEpisode.Text = ep.Synopsis;
+                        RuntimeEpisode.Text = ep.Runtime;
+                    }
+                    EpisodeBox.SelectedIndex = 0;
+                    reader.Close();
+                    cn.Close();
 
                 }
                 catch (Exception ex)
@@ -1332,7 +1573,7 @@ namespace MovieAdvisor
                 cn.Close();
             }
         }
-
-        
     }
+
+
 }
