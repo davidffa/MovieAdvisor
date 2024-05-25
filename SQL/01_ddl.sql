@@ -26,7 +26,7 @@ CREATE TABLE Person (
 CREATE TABLE "User" (
 	ID			INT IDENTITY(1, 1) NOT NULL,
 	Email		VARCHAR(64) NOT NULL UNIQUE,
-	Password	VARBINARY(512) NOT NULL,
+	Password	VARBINARY(64) NOT NULL,
 	CreatedAt	DATE DEFAULT (current_timestamp),
 	IsAdmin		BIT DEFAULT 0,
 
