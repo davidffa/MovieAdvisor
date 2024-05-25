@@ -97,31 +97,6 @@ INSERT INTO Person(Name, Biography, BirthDate, Photo) VALUES
 	('Mckenna Grace', 'Mckenna Grace is an American teenage actress who began acting professionally at the age of 6. Her early roles include Jasmine Bernstein on the Disney XD sitcom Crash & Bernstein and Faith Newman on The Young and the Restless.','2006-06-25',''),
 	('Martin Freeman', 'Martin John Christopher Freeman is a British actor. He is mainly known for his roles as Watson in the BBC television series Sherlock, Bilbo Baggins in The Hobbit, Tim in The Office series and as Arthur Dent in the film adaptation of the book The Hitchhikers Guide to the Galaxy.','1971-09-08','');
 
-INSERT INTO "User"(Email, Password, BirthDate, CreatedAt, IsAdmin) VALUES
-	('ana.maria@gmail.com', 'guehmu4ug47er48rjd@oefjismc', '1982-12-02', '2024-04-28', 0),
-	('bernardopinto@gmail.com', 'ecmtw2ij4rc845.qe_', '1945-06-26', '2024-04-28', 0),
-	('carlosperreira@ua.pt', 'irgm5294457', '2000-05-05', '2024-04-28', 0),
-	('diolindasilva@sapo.pt', 'jtfom4om', '1993-02-10', '2024-04-28', 0),
-	('eva.rosa@ua.pt', '1,93s563imegim', '1976-09-12', '2024-04-29', 0),
-	('filipe6743111212@estes.es', 'rfiwi1um', '1953-01-08', '2024-04-30', 0),
-	('guilhermoperez@gvffgh.fr', '8m3mgcug55345', '2004-02-27', '2024-04-30', 1),
-	('hugopoij@gmail.com', '1234567898765', '1999-10-07', '2024-04-30', 0),
-	('igorml8@nl.gr', 'rgfsxywerdr', '1968-11-11', '2024-04-30', 0),
-	('juanluiz@usj.es', 'etgceg,.-.,,.-', '1988-12-12', '2024-04-30', 1),
-	('luana@isuid.br', '3t3io45t3u55', '1982-12-02', '2024-05-01', 0),
-	('maria.ana3.576@xede.com', '3u95utfm39ut4md@3£§§£', '1972-12-11', '2024-05-01', 0),
-	('nora@trj.com', 'wfudnywiuyfh', '1970-10-10', '2024-05-02', 0),
-	('orlandoferreira@tmn.pt', 'fwurfm2342nu3yg43', '2000-12-02', '2024-05-02', 0),
-	('peromartins@djf.com', 'password', '1979-10-08', '2024-05-02', 0),
-	('qutyr@hud.com', 'qwerty', '1992-04-06', '2024-05-02', 0),
-	('renata56739.ana@fid.pt', '1234', '1983-03-02', '2024-05-03', 1),
-	('sonia4583@dfuidh.com', '24umwugtd', '1981-06-11', '2024-05-03', 0),
-	('tulipa6886544333@sapo.pt', '25hu2', '2001-03-08', '2024-05-03', 0),
-	('ulisses_566457fr6r6f@gmail.com', 'nulsuf', '1991-04-07', '2024-05-03', 0),
-	('vasvo.vitor@sapo.pt', 'password', '2002-06-08', '2024-05-04', 1),
-	('xavierbastos@ua.pt', 'querty', '1999-01-01',  '2024-05-04', 0),
-	('zoelima@gmail.com', 'asdfgh', '1970-05-03',  '2024-05-04', 0);
-
 INSERT INTO AudioVisualContent (Title, Synopsis, TrailerURL, Budget, Revenue, Photo, AgeRate, ReleaseDate) VALUES
 	('The Silence of the Lambs', 'A young F.B.I. cadet must receive the help of an incarcerated and manipulative cannibal killer to help catch another serial killer, a madman who skins his victims.', 'https://www.youtube.com/watch?v=ZWCAf-xLV2s', 19000000, 272742922, 'silence_of_the_lambs.jpg', 18, '1991-02-14'),
 	('Se7en', 'Two detectives, a rookie and a veteran, hunt a serial killer who uses the seven deadly sins as his motives.', 'https://www.youtube.com/watch?v=znmZoVkCjpI', 33000000, 327311859, 'se7en.jpg', 18, '1995-09-22'),
@@ -829,44 +804,28 @@ INSERT INTO AVContentPerson (AVIdentifier, PersonID, Role) VALUES
 	(60,58,'Actor');
 	
 
-INSERT INTO Review(UserID, AVIdentifier, Title, Description, Classification, CreatedAt) VALUES
-	(1, 19, 'My favourite movie', 'The best movie ever done! I loved it!', 9.8, '2024-05-19'),
-	(12, 19, 'Não gostei', 'Não gostei do filme, achei a história irrealista', 3.0, '2024-03-23'),
-	(1,12, 'Gostei do filme', 'Filme muito bom', 7.0, '2024-04-13');
+EXEC CreateReview 'anacosta@gmail.com', 'ana2000password', 19, 'My favourite movie', 'The best movie ever done! I loved it!', 9.8;
+EXEC CreateReview 'antonio@gmail.com', 'ant12345', 19, 'Não gostei', 'Não gostei do filme, achei a história irrealista', 3.0;
 
+EXEC CreateReview 'francisco@gmail.com', 'F@312!f', 12, 'Gostei do filme', 'Filme muito bom', 7.0;
+-- User already exists, so test if password works :)
+EXEC CreateReview 'francisco@gmail.com', 'F@312!f', 19, 'Gostei do filme', 'Adorei o Forest Gump!!', 7.0;
 
-INSERT INTO ReviewLikes(ReviewID, UserID, IsLike) VALUES 
-	(1,2,1),
-	(1,3,1),
-	(1,4,1),
-	(1,5,1),
-	(1,6,1),
-	(1,7,1),
-	(1,8,1),
-	(1,9,1),
-	(2,12,1),
-	(2,22,1),
-	(2,13,1),
-	(2,14,1),
-	(2,15,1),
-	(2,16,1),
-	(2,17,1),
-	(2,18,1),
-	(2,19,1),
-	(2,20,1),
-	(2,21,1),
-	(2,23,1),
-	(2,11,1),
-	(3,1,2),
-	(3,2,1),
-	(3,3,1),
-	(3,4,1),
-	(3,5,1),
-	(3,6,1);
+EXEC CreateReviewLike 'john@doe.com', 'abcdef', 1;
+EXEC CreateReviewLike 'john2@doe.com', 'abcdef', 1;
+EXEC CreateReviewLike 'john3@doe.com', 'abcdef', 1;
+EXEC CreateReviewLike 'john4@doe.com', 'abcdef', 1;
+EXEC CreateReviewLike 'john5@doe.com', 'abcdef', 1;
+
+EXEC CreateReviewLike 'john@doe.com', 'abcdef', 2;
+EXEC CreateReviewLike 'john2@doe.com', 'abcdef', 3;
+EXEC CreateReviewLike 'john3@doe.com', 'abcdef', 2;
+EXEC CreateReviewLike 'john4@doe.com', 'abcdef', 3;
+
 
 INSERT INTO Watchlist (Title, UserID, Visibility) VALUES 
 	('Favoritos_Ana', 1, 1), 
-	('Carlos_Best', 2, 0);
+	('Antonio_Best', 2, 0);
 
 
 INSERT INTO WatchlistAV (WLTitle, UserID, AVIdentifier) VALUES
