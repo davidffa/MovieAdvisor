@@ -1629,7 +1629,25 @@ namespace MovieAdvisor
 
         private void ConfirmUserReviews_Click(object sender, EventArgs e)
         {
+            string av_id = ((AudiovisualContent)avList.SelectedItem).ID;
 
+            SqlCommand cmd = new SqlCommand("SELECT * FROM Authenticate(" + av_id + "," + s.Number + ") ", cn);
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            EpisodeBox.Items.Clear();
+            while (reader.Read())
+            {
+                Episode ep = new Episode();
+
+                ep.Number = reader["Number"].ToString();
+                ep.Runtime = reader["Runtime"].ToString();
+                ep.Synopsis = reader["Synopsis"].ToString();
+
+                EpisodeBox.Items.Add(ep);
+                SynopsisEpisode.Text = ep.Synopsis;
+                RuntimeEpisode.Text = ep.Runtime;
+            }
+            cn.Close();
         }
     }
 }
