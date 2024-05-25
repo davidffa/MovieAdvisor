@@ -12,6 +12,6 @@ GO
 CREATE NONCLUSTERED INDEX IX_PersonName ON Person(Name);
 GO
 
--- User lookup is made by email
+-- Authentication, search by email
 CREATE NONCLUSTERED INDEX IX_UserEmail ON "User"(Email);
 GO

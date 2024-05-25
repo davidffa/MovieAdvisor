@@ -237,20 +237,17 @@ AS
     COMMIT TRAN;
 
 GO
-CREATE PROC CreateReview(
-	@Email VARCHAR(64),
+
+-- Creates a new user (if not exist) or authenticates it (raising an error if wrong email/password)
+CREATE PROC Authenticate(
+    @Email VARCHAR(64),
     @Password VARCHAR(128),
 
-	@AVIdentifier INT,
-	@Title VARCHAR(32),
-	@Description VARCHAR(512),
-	@Classification SMALLINT
+    @UserID INT OUTPUT
 )
 AS
     DECLARE @HashedPassword VARBINARY(512) = HASHBYTES('SHA2_512', @Password);
     DECLARE @StoredPassword VARBINARY(512);
-
-    DECLARE @UserID INT;
 
     SELECT @UserID=ID, @StoredPassword=Password FROM "User" WHERE Email=@Email;
 
@@ -266,17 +263,25 @@ AS
         IF @HashedPassword != @StoredPassword
         BEGIN
             RAISERROR('Invalid email or password!', 16, 1);
-            RETURN;
         END
     END
+GO
 
+CREATE PROC CreateReview(
+	@UserID INT,
+
+	@AVIdentifier INT,
+	@Title VARCHAR(32),
+	@Description VARCHAR(512),
+	@Classification SMALLINT
+)
+AS
     INSERT INTO Review(UserID, AVIdentifier, Title, Description, Classification) VALUES
         (@UserID, @AVIdentifier, @Title, @Description, @Classification);
 GO
 
 CREATE PROC UpdateReview(
-	@Email VARCHAR(64),
-    @Password VARCHAR(128),
+	@UserID INT,
 
     @ReviewID INT,
 	@Title VARCHAR(32),
@@ -284,26 +289,10 @@ CREATE PROC UpdateReview(
 	@Classification SMALLINT
 )
 AS
-    DECLARE @HashedPassword VARBINARY(512) = HASHBYTES('SHA2_512', @Password);
-    DECLARE @StoredPassword VARBINARY(512);
-
-    DECLARE @UserID INT;
-
-    SELECT @UserID=ID, @StoredPassword=Password FROM "User" WHERE Email=@Email;
-
-    IF @@ROWCOUNT = 0
+    IF (@UserID != (SELECT UserID FROM Review WHERE ID=@ReviewID))
     BEGIN
-        RAISERROR('Invalid email or password!', 16, 1);
+        RAISERROR('You cannot edit other people''s reviews', 16, 1);
         RETURN;
-    END
-    ELSE
-    BEGIN
-        -- Check if passwords match
-        IF @HashedPassword != @StoredPassword
-        BEGIN
-            RAISERROR('Invalid email or password!', 16, 1);
-            RETURN;
-        END
     END
 
     UPDATE Review
@@ -312,98 +301,37 @@ AS
 GO
 
 CREATE PROC DeleteReview(
-	@Email VARCHAR(64),
-    @Password VARCHAR(128),
-
+	@UserID INT,
     @ReviewID INT
 )
 AS
-    DECLARE @HashedPassword VARBINARY(512) = HASHBYTES('SHA2_512', @Password);
-    DECLARE @StoredPassword VARBINARY(512);
-
-    DECLARE @UserID INT;
-
-    SELECT @UserID=ID, @StoredPassword=Password FROM "User" WHERE Email=@Email;
-
-    IF @@ROWCOUNT = 0
+    IF (@UserID != (SELECT UserID FROM Review WHERE ID=@ReviewID))
     BEGIN
-        RAISERROR('Invalid email or password!', 16, 1);
+        RAISERROR('You cannot delete other people''s reviews', 16, 1);
         RETURN;
-    END
-    ELSE
-    BEGIN
-        -- Check if passwords match
-        IF @HashedPassword != @StoredPassword
-        BEGIN
-            RAISERROR('Invalid email or password!', 16, 1);
-            RETURN;
-        END
     END
 
     DELETE FROM Review WHERE ID=@ReviewID;
 GO
 
 CREATE PROC CreateReviewLike(
-	@Email VARCHAR(64),
-    @Password VARCHAR(128),
-
+	@UserID INT,
     @ReviewID INT
 )
 AS
-    DECLARE @HashedPassword VARBINARY(512) = HASHBYTES('SHA2_512', @Password);
-    DECLARE @StoredPassword VARBINARY(512);
-
-    DECLARE @UserID INT;
-
-    SELECT @UserID=ID, @StoredPassword=Password FROM "User" WHERE Email=@Email;
-
-    IF @@ROWCOUNT = 0
-    BEGIN
-        -- Create a new user
-        INSERT INTO "User" (Email, Password) VALUES (@Email, @HashedPassword);
-        SET @UserID = @@IDENTITY;
-    END
-    ELSE
-    BEGIN
-        -- Check if passwords match
-        IF @HashedPassword != @StoredPassword
-        BEGIN
-            RAISERROR('Invalid email or password!', 16, 1);
-            RETURN;
-        END
-    END
-
     INSERT INTO ReviewLikes VALUES (@ReviewID, @UserID, 1);
 GO
 
 CREATE PROC DeleteReviewLike(
-	@Email VARCHAR(64),
-    @Password VARCHAR(128),
+	@UserID INT,
 
     @ReviewID INT
 )
 AS
-    DECLARE @HashedPassword VARBINARY(512) = HASHBYTES('SHA2_512', @Password);
-    DECLARE @StoredPassword VARBINARY(512);
-
-    DECLARE @UserID INT;
-
-    SELECT @UserID=ID, @StoredPassword=Password FROM "User" WHERE Email=@Email;
-
-    IF @@ROWCOUNT = 0
+    IF (@UserID != (SELECT UserID FROM ReviewLikes WHERE ReviewID=@ReviewID))
     BEGIN
-        -- Create a new user
-        INSERT INTO "User" (Email, Password) VALUES (@Email, @HashedPassword);
-        SET @UserID = @@IDENTITY;
-    END
-    ELSE
-    BEGIN
-        -- Check if passwords match
-        IF @HashedPassword != @StoredPassword
-        BEGIN
-            RAISERROR('Invalid email or password!', 16, 1);
-            RETURN;
-        END
+        RAISERROR('You cannot remove other people''s likes', 16, 1);
+        RETURN;
     END
 
     DELETE FROM ReviewLikes WHERE ReviewID=@ReviewID AND UserID=@UserID;
@@ -463,7 +391,7 @@ BEGIN
     BEGIN
         SELECT @LikeCount=COUNT(IsLike) FROM ReviewLikes WHERE ReviewID = @ReviewID;
 
-        SET @ReviewCount = @ReviewCount + @LikeCount;
+        SET @ReviewCount = @ReviewCount + @LikeCount + 1;
         SET @ScoreSum = @ScoreSum + (@LikeCount + 1) * @Classification;
 
         FETCH ReviewCursor INTO @ReviewID, @Classification;

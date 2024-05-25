@@ -803,25 +803,64 @@ INSERT INTO AVContentPerson (AVIdentifier, PersonID, Role) VALUES
 	(57,64,'Actor'),
 	(60,58,'Actor');
 	
+EXEC Authenticate 'ana.maria@gmail.com', 'guehmu4ug47er48rjd@oefjismc', NULL;
+EXEC Authenticate 'bernardopinto@gmail.com', 'ecmtw2ij4rc845.qe_', NULL;
+EXEC Authenticate 'carlosperreira@ua.pt', 'irgm5294457', NULL;
+EXEC Authenticate 'diolindasilva@sapo.pt', 'jtfom4om', NULL;
+EXEC Authenticate 'eva.rosa@ua.pt', '1,93s563imegim', NULL;
+EXEC Authenticate 'filipe6743111212@estes.es', 'rfiwi1um', NULL;
+EXEC Authenticate 'guilhermoperez@gvffgh.fr', '8m3mgcug55345', NULL;
+EXEC Authenticate 'hugopoij@gmail.com', '1234567898765', NULL;
+EXEC Authenticate 'igorml8@nl.gr', 'rgfsxywerdr', NULL;
+EXEC Authenticate 'juanluiz@usj.es', 'etgceg,.-.,,.-', NULL;
+EXEC Authenticate 'luana@isuid.br', '3t3io45t3u55', NULL;
+EXEC Authenticate 'maria.ana3.576@xede.com', '3u95utfm39ut4md@3£§§£', NULL;
+EXEC Authenticate 'nora@trj.com', 'wfudnywiuyfh', NULL;
+EXEC Authenticate 'orlandoferreira@tmn.pt', 'fwurfm2342nu3yg43', NULL;
+EXEC Authenticate 'peromartins@djf.com', 'password', NULL;
+EXEC Authenticate 'qutyr@hud.com', 'qwerty', NULL;
+EXEC Authenticate 'renata56739.ana@fid.pt', '1234', NULL;
+EXEC Authenticate 'sonia4583@dfuidh.com', '24umwugtd', NULL;
+EXEC Authenticate 'tulipa6886544333@sapo.pt', '25hu2', NULL;
+EXEC Authenticate 'ulisses_566457fr6r6f@gmail.com', 'nulsuf', NULL;
+EXEC Authenticate 'vasvo.vitor@sapo.pt', 'password', NULL;
+EXEC Authenticate 'xavierbastos@ua.pt', 'querty', NULL;
+EXEC Authenticate 'zoelima@gmail.com', 'asdfgh', NULL;
 
-EXEC CreateReview 'anacosta@gmail.com', 'ana2000password', 19, 'My favourite movie', 'The best movie ever done! I loved it!', 9.8;
-EXEC CreateReview 'antonio@gmail.com', 'ant12345', 19, 'Não gostei', 'Não gostei do filme, achei a história irrealista', 3.0;
+INSERT INTO Review(UserID, AVIdentifier, Title, Description, Classification, CreatedAt) VALUES
+	(1, 19, 'My favourite movie', 'The best movie ever done! I loved it!', 9.8, '2024-05-19'),
+	(12, 19, 'Não gostei', 'Não gostei do filme, achei a história irrealista', 3.0, '2024-03-23'),
+	(1,12, 'Gostei do filme', 'Filme muito bom', 7.0, '2024-04-13');
 
-EXEC CreateReview 'francisco@gmail.com', 'F@312!f', 12, 'Gostei do filme', 'Filme muito bom', 7.0;
--- User already exists, so test if password works :)
-EXEC CreateReview 'francisco@gmail.com', 'F@312!f', 19, 'Gostei do filme', 'Adorei o Forest Gump!!', 7.0;
 
-EXEC CreateReviewLike 'john@doe.com', 'abcdef', 1;
-EXEC CreateReviewLike 'john2@doe.com', 'abcdef', 1;
-EXEC CreateReviewLike 'john3@doe.com', 'abcdef', 1;
-EXEC CreateReviewLike 'john4@doe.com', 'abcdef', 1;
-EXEC CreateReviewLike 'john5@doe.com', 'abcdef', 1;
-
-EXEC CreateReviewLike 'john@doe.com', 'abcdef', 2;
-EXEC CreateReviewLike 'john2@doe.com', 'abcdef', 3;
-EXEC CreateReviewLike 'john3@doe.com', 'abcdef', 2;
-EXEC CreateReviewLike 'john4@doe.com', 'abcdef', 3;
-
+INSERT INTO ReviewLikes(ReviewID, UserID, IsLike) VALUES 
+	(1,2,1),
+	(1,3,1),
+	(1,4,1),
+	(1,5,1),
+	(1,6,1),
+	(1,7,1),
+	(1,8,1),
+	(1,9,1),
+	(2,12,1),
+	(2,22,1),
+	(2,13,1),
+	(2,14,1),
+	(2,15,1),
+	(2,16,1),
+	(2,17,1),
+	(2,18,1),
+	(2,19,1),
+	(2,20,1),
+	(2,21,1),
+	(2,23,1),
+	(2,11,1),
+	(3,1,2),
+	(3,2,1),
+	(3,3,1),
+	(3,4,1),
+	(3,5,1),
+	(3,6,1);
 
 INSERT INTO Watchlist (Title, UserID, Visibility) VALUES 
 	('Favoritos_Ana', 1, 1), 
