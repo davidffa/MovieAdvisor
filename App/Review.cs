@@ -1,8 +1,24 @@
-﻿namespace MovieAdvisor
+﻿using System.Data.SqlClient;
+
+namespace MovieAdvisor
 {
     internal class Review
     {
-		private String _id;
+        public static Review FromReader(SqlDataReader reader)
+        {
+            Review r = new Review();
+
+            r.Id = reader["Id"].ToString();
+            r.UserID = reader["UserID"].ToString();
+            r.AvIdentifier = reader["AvIdentifier"].ToString();
+            r.Title = reader["Title"].ToString();
+            r.Description = reader["Description"].ToString();
+            r.Classification = reader["Classification"].ToString();
+            r.CreatedAt = reader["CreatedAt"].ToString();
+            return r;
+        }
+
+        private String _id;
 		private String _userID;
 		private String _avIdentifier;
 		private String _title;

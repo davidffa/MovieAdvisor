@@ -13,6 +13,7 @@ namespace MovieAdvisor
         private bool adding_season;
         private bool adding_episode;
         private int currentAVContent;
+        private string LikeCount;
 
         private string avOrderBy = "";
         private int typeSelector = 0; // 0 -> all 1 -> movies 2 -> series
@@ -435,6 +436,47 @@ namespace MovieAdvisor
             cn.Close();
 
         }
+
+        public void ShowReview()
+        {
+            if (avList2.Items.Count == 0 || avList2.SelectedIndex == -1)
+                return;
+            if (reviewsList.Items.Count == 0 || reviewsList.SelectedIndex == -1)
+                return;
+
+            Review r = (Review)reviewsList.SelectedItem;
+
+            ReviewClassification.Text = r.Classification;
+            ReviewTitle.Text = r.Title;
+            ReviewDescription.Text = r.Description;
+            ReviewCreatedAt.Text = r.CreatedAt;
+
+            if (!verifyDBConnection()) return;
+
+            AudiovisualContent av = (AudiovisualContent)avList2.SelectedItem;
+
+            SqlCommand cmd = new SqlCommand("Select * From getAVContentReviews(" + av.ID + ")", cn);
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            if (reader.Read())
+            {
+                LikeCount = reader["LikeCount"].ToString();
+                CountLikes.Text = LikeCount;
+            }
+            reader.Close();
+
+            ReviewClassification.Visible = true;
+            ReviewCreatedAt.Visible = true;
+            ReviewDescription.Visible = true;
+            ReviewTitle.Visible = true;
+            ReviewAdd.Visible = true;
+            ReviewEdit.Visible = true;
+            ReviewDelete.Visible = true;
+            ReviewLike.Visible = true;
+
+            cn.Close();
+
+        }
         private void searchMoviesBtn_Click(object sender, EventArgs e)
         {
             if (!verifyDBConnection())
@@ -640,7 +682,7 @@ namespace MovieAdvisor
                 RuntimeEpisode.Text = ep.Runtime;
             }
             cn.Close();
-            EpisodeBox.SelectedIndex = 0;
+            //EpisodeBox.SelectedIndex = 0;
         }
         private void EpisodeBox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -650,6 +692,14 @@ namespace MovieAdvisor
 
             RuntimeEpisode.Text = ep.Runtime;
             SynopsisEpisode.Text = ep.Synopsis;
+        }
+
+        private void reviewsList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (reviewsList.SelectedIndex >= 0)
+            {
+                ShowReview();
+            }
         }
 
         //CheckedChanged
@@ -701,6 +751,7 @@ namespace MovieAdvisor
             }
         }
 
+
         // CRUD + Confirm + Delete
 
         private void addButton_Click(object sender, EventArgs e)
@@ -744,11 +795,15 @@ namespace MovieAdvisor
             groupBox1.Enabled = true;
             SeasonGroup.Enabled = true;
             EpisodeGroup.Enabled = true;
-            AddEpisode.Visible = true;
-            DeleteEpisode.Visible = true;
-            AddSeason.Visible = true;
-            DeleteSeason.Visible = true;
-
+            AddEpisode.Visible = false;
+            DeleteEpisode.Visible = false;
+            AddSeason.Visible = false;
+            DeleteSeason.Visible = false;
+            /*ConfirmEpisode.Visible = false;
+            ConfirmSeason.Visible = false;
+            CancelSeason.Visible = false;
+            CancelSeason.Visible = false;
+            */
         }
         private void DeleteButton_Click(object sender, EventArgs e)
         {
@@ -871,8 +926,11 @@ namespace MovieAdvisor
             EpisodeGroup.Enabled = true;
             SeasonGroup.Enabled = true;
 
-
-
+            AddButton.Visible = false;
+            EditButton.Visible = false;
+            DeleteButton.Visible = false;
+            confirmButton.Visible = false;
+            cancelButton.Visible = false;
         }
         private void DeleteSeason_Click(object sender, EventArgs e)
         {
@@ -988,6 +1046,7 @@ namespace MovieAdvisor
 
                 SeasonBox.Enabled = true;
                 EpisodeBox.Enabled = true;
+
             }
         }
         private void CancelSeason_Click(object sender, EventArgs e)
@@ -1061,6 +1120,9 @@ namespace MovieAdvisor
             RuntimeEpisode.Text = "";
             SeasonGroup.Enabled = false;
 
+            AddButton.Visible = false;
+            EditButton.Visible = false;
+            DeleteButton.Visible = false;
         }
         private void DeleteEpisode_Click(object sender, EventArgs e)
         {
@@ -1199,7 +1261,18 @@ namespace MovieAdvisor
             EpisodeGroup.Enabled = false;
         }
 
-
+        //Review
+        private void ReviewLike_Click(object sender, EventArgs e)
+        {
+            if (ReviewLike.BackColor == Color.Transparent)
+            {
+                ReviewLike.BackColor = Color.LightSteelBlue;
+            }
+            else
+            {
+                ReviewLike.BackColor = Color.Transparent;
+            }
+        }
 
         //Create + Update
         private void CreateMovie(Movie m, Genre[] genres)
@@ -1555,6 +1628,4 @@ namespace MovieAdvisor
         }
 
     }
-
-
 }

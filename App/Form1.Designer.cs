@@ -99,6 +99,23 @@
             movieSearchBox = new TextBox();
             avList = new ListBox();
             review = new TabPage();
+            groupBoxReview = new GroupBox();
+            label7 = new Label();
+            CountLikes = new TextBox();
+            ReviewCreatedAtLabel = new Label();
+            ReviewDelete = new Button();
+            ReviewCreatedAt = new DateTimePicker();
+            ReviewEdit = new Button();
+            ReviewLike = new Button();
+            ReviewClassification = new TextBox();
+            ReviewDescription = new TextBox();
+            ReviewTitle = new TextBox();
+            ReviewAdd = new Button();
+            UserPassLabel = new Label();
+            UserEmailLabel = new Label();
+            ConfirmUserReviews = new Button();
+            textBox1 = new TextBox();
+            UserEmail = new TextBox();
             overallScoreLabel = new Label();
             label3 = new Label();
             label2 = new Label();
@@ -120,6 +137,7 @@
             AgeRateBox.SuspendLayout();
             typeBox.SuspendLayout();
             review.SuspendLayout();
+            groupBoxReview.SuspendLayout();
             SuspendLayout();
             // 
             // tabControl1
@@ -882,6 +900,12 @@
             // 
             // review
             // 
+            review.Controls.Add(groupBoxReview);
+            review.Controls.Add(UserPassLabel);
+            review.Controls.Add(UserEmailLabel);
+            review.Controls.Add(ConfirmUserReviews);
+            review.Controls.Add(textBox1);
+            review.Controls.Add(UserEmail);
             review.Controls.Add(overallScoreLabel);
             review.Controls.Add(label3);
             review.Controls.Add(label2);
@@ -897,11 +921,176 @@
             review.Text = "Reviews";
             review.UseVisualStyleBackColor = true;
             // 
+            // groupBoxReview
+            // 
+            groupBoxReview.Controls.Add(label7);
+            groupBoxReview.Controls.Add(CountLikes);
+            groupBoxReview.Controls.Add(ReviewCreatedAtLabel);
+            groupBoxReview.Controls.Add(ReviewDelete);
+            groupBoxReview.Controls.Add(ReviewCreatedAt);
+            groupBoxReview.Controls.Add(ReviewEdit);
+            groupBoxReview.Controls.Add(ReviewLike);
+            groupBoxReview.Controls.Add(ReviewClassification);
+            groupBoxReview.Controls.Add(ReviewDescription);
+            groupBoxReview.Controls.Add(ReviewTitle);
+            groupBoxReview.Controls.Add(ReviewAdd);
+            groupBoxReview.Enabled = false;
+            groupBoxReview.Location = new Point(413, 209);
+            groupBoxReview.Name = "groupBoxReview";
+            groupBoxReview.Size = new Size(624, 407);
+            groupBoxReview.TabIndex = 21;
+            groupBoxReview.TabStop = false;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(328, 185);
+            label7.Name = "label7";
+            label7.Size = new Size(128, 20);
+            label7.TabIndex = 21;
+            label7.Text = "Number of Likes : ";
+            // 
+            // CountLikes
+            // 
+            CountLikes.Enabled = false;
+            CountLikes.Location = new Point(462, 180);
+            CountLikes.Name = "CountLikes";
+            CountLikes.PlaceholderText = "Number of Likes";
+            CountLikes.Size = new Size(146, 27);
+            CountLikes.TabIndex = 16;
+            CountLikes.TextAlign = HorizontalAlignment.Center;
+            // 
+            // ReviewCreatedAtLabel
+            // 
+            ReviewCreatedAtLabel.AutoSize = true;
+            ReviewCreatedAtLabel.Location = new Point(14, 185);
+            ReviewCreatedAtLabel.Name = "ReviewCreatedAtLabel";
+            ReviewCreatedAtLabel.Size = new Size(89, 20);
+            ReviewCreatedAtLabel.TabIndex = 15;
+            ReviewCreatedAtLabel.Text = "Created at : ";
+            // 
+            // ReviewDelete
+            // 
+            ReviewDelete.Location = new Point(324, 30);
+            ReviewDelete.Name = "ReviewDelete";
+            ReviewDelete.Size = new Size(121, 39);
+            ReviewDelete.TabIndex = 14;
+            ReviewDelete.Text = "Delete";
+            ReviewDelete.UseVisualStyleBackColor = true;
+            // 
+            // ReviewCreatedAt
+            // 
+            ReviewCreatedAt.Enabled = false;
+            ReviewCreatedAt.Location = new Point(111, 180);
+            ReviewCreatedAt.Name = "ReviewCreatedAt";
+            ReviewCreatedAt.Size = new Size(202, 27);
+            ReviewCreatedAt.TabIndex = 13;
+            // 
+            // ReviewEdit
+            // 
+            ReviewEdit.Location = new Point(168, 30);
+            ReviewEdit.Name = "ReviewEdit";
+            ReviewEdit.Size = new Size(121, 39);
+            ReviewEdit.TabIndex = 11;
+            ReviewEdit.Text = "Edit";
+            ReviewEdit.UseVisualStyleBackColor = true;
+            // 
+            // ReviewLike
+            // 
+            ReviewLike.BackColor = Color.Transparent;
+            ReviewLike.Location = new Point(487, 30);
+            ReviewLike.Name = "ReviewLike";
+            ReviewLike.Size = new Size(121, 39);
+            ReviewLike.TabIndex = 10;
+            ReviewLike.Text = "Like";
+            ReviewLike.UseVisualStyleBackColor = false;
+            ReviewLike.Click += ReviewLike_Click;
+            // 
+            // ReviewClassification
+            // 
+            ReviewClassification.Location = new Point(462, 110);
+            ReviewClassification.Name = "ReviewClassification";
+            ReviewClassification.PlaceholderText = "Classification";
+            ReviewClassification.Size = new Size(146, 27);
+            ReviewClassification.TabIndex = 9;
+            ReviewClassification.TextAlign = HorizontalAlignment.Center;
+            // 
+            // ReviewDescription
+            // 
+            ReviewDescription.Location = new Point(16, 245);
+            ReviewDescription.Multiline = true;
+            ReviewDescription.Name = "ReviewDescription";
+            ReviewDescription.PlaceholderText = "Add a Description";
+            ReviewDescription.Size = new Size(592, 146);
+            ReviewDescription.TabIndex = 8;
+            // 
+            // ReviewTitle
+            // 
+            ReviewTitle.Location = new Point(14, 110);
+            ReviewTitle.Name = "ReviewTitle";
+            ReviewTitle.PlaceholderText = "Type the title";
+            ReviewTitle.Size = new Size(377, 27);
+            ReviewTitle.TabIndex = 7;
+            // 
+            // ReviewAdd
+            // 
+            ReviewAdd.Location = new Point(16, 30);
+            ReviewAdd.Name = "ReviewAdd";
+            ReviewAdd.Size = new Size(121, 39);
+            ReviewAdd.TabIndex = 6;
+            ReviewAdd.Text = "Add";
+            ReviewAdd.UseVisualStyleBackColor = true;
+            // 
+            // UserPassLabel
+            // 
+            UserPassLabel.AutoSize = true;
+            UserPassLabel.Location = new Point(429, 92);
+            UserPassLabel.Name = "UserPassLabel";
+            UserPassLabel.Size = new Size(114, 20);
+            UserPassLabel.TabIndex = 20;
+            UserPassLabel.Text = "User Password : ";
+            // 
+            // UserEmailLabel
+            // 
+            UserEmailLabel.AutoSize = true;
+            UserEmailLabel.Location = new Point(429, 43);
+            UserEmailLabel.Name = "UserEmailLabel";
+            UserEmailLabel.Size = new Size(90, 20);
+            UserEmailLabel.TabIndex = 19;
+            UserEmailLabel.Text = "User Email : ";
+            // 
+            // ConfirmUserReviews
+            // 
+            ConfirmUserReviews.BackColor = Color.Transparent;
+            ConfirmUserReviews.Location = new Point(900, 58);
+            ConfirmUserReviews.Name = "ConfirmUserReviews";
+            ConfirmUserReviews.Size = new Size(121, 39);
+            ConfirmUserReviews.TabIndex = 18;
+            ConfirmUserReviews.Text = "Confirm";
+            ConfirmUserReviews.UseVisualStyleBackColor = false;
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(559, 89);
+            textBox1.Name = "textBox1";
+            textBox1.PasswordChar = '*';
+            textBox1.PlaceholderText = "Password";
+            textBox1.Size = new Size(297, 27);
+            textBox1.TabIndex = 17;
+            // 
+            // UserEmail
+            // 
+            UserEmail.Location = new Point(559, 40);
+            UserEmail.Name = "UserEmail";
+            UserEmail.PlaceholderText = "User Email";
+            UserEmail.Size = new Size(299, 27);
+            UserEmail.TabIndex = 12;
+            // 
             // overallScoreLabel
             // 
             overallScoreLabel.AutoSize = true;
             overallScoreLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            overallScoreLabel.Location = new Point(658, 48);
+            overallScoreLabel.Location = new Point(717, 156);
             overallScoreLabel.Margin = new Padding(2, 0, 2, 0);
             overallScoreLabel.Name = "overallScoreLabel";
             overallScoreLabel.Size = new Size(57, 20);
@@ -911,7 +1100,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(431, 46);
+            label3.Location = new Point(429, 156);
             label3.Margin = new Padding(2, 0, 2, 0);
             label3.Name = "label3";
             label3.Size = new Size(227, 20);
@@ -946,6 +1135,7 @@
             reviewsList.Name = "reviewsList";
             reviewsList.Size = new Size(362, 344);
             reviewsList.TabIndex = 1;
+            reviewsList.SelectedIndexChanged += reviewsList_SelectedIndexChanged;
             // 
             // avList2
             // 
@@ -1009,6 +1199,8 @@
             typeBox.PerformLayout();
             review.ResumeLayout(false);
             review.PerformLayout();
+            groupBoxReview.ResumeLayout(false);
+            groupBoxReview.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -1094,5 +1286,22 @@
         private Button CancelEpisode;
         private Button ConfirmSeason;
         private Button CancelSeason;
+        private Button ReviewAdd;
+        private TextBox ReviewTitle;
+        private TextBox ReviewDescription;
+        private TextBox ReviewClassification;
+        private Button ReviewEdit;
+        private Button ReviewLike;
+        private TextBox UserEmail;
+        private DateTimePicker ReviewCreatedAt;
+        private Button ReviewDelete;
+        private Label ReviewCreatedAtLabel;
+        private TextBox CountLikes;
+        private TextBox textBox1;
+        private Label UserPassLabel;
+        private Label UserEmailLabel;
+        private Button ConfirmUserReviews;
+        private GroupBox groupBoxReview;
+        private Label label7;
     }
 }
