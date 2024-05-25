@@ -486,7 +486,7 @@ namespace MovieAdvisor
 
             string searchTerm = movieSearchBox.Text;
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM AudioVisualContent WHERE Title LIKE '%" + searchTerm + "%'", cn);
+            SqlCommand cmd = new SqlCommand("SELECT * FROM AudioVisualContent WHERE Title LIKE " + searchTerm + "%'", cn);
             SqlDataReader reader = cmd.ExecuteReader();
             avList.Items.Clear();
             // TODO: Limpar filtragens / sort ( ou nao )
@@ -952,9 +952,9 @@ namespace MovieAdvisor
                     AudiovisualContent av = (AudiovisualContent)avList.SelectedItem;
 
                     Season item = (Season)SeasonBox.SelectedItem;
-                    SeasonBox.Items.Remove(item);
-                    SeasonBox.SelectedIndex = 0;
                     DELETESeason(av.ID, item.Number);
+                    SeasonBox.SelectedIndex = 0;
+                    SeasonBox.Items.Remove(item);
                     TrailerSeason.Text = "";
                     PhotoSeason.Text = "";
                     EpisodeBox.Items.Clear();
@@ -1627,5 +1627,9 @@ namespace MovieAdvisor
             }
         }
 
+        private void ConfirmUserReviews_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

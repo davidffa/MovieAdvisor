@@ -1068,6 +1068,7 @@
             ConfirmUserReviews.TabIndex = 18;
             ConfirmUserReviews.Text = "Confirm";
             ConfirmUserReviews.UseVisualStyleBackColor = false;
+            ConfirmUserReviews.Click += ConfirmUserReviews_Click;
             // 
             // textBox1
             // 
