@@ -77,17 +77,25 @@ AS
     DELETE FROM AudioVisualContent WHERE ID=@Id;
 GO
 
--- Trigger para nao deixar seasons sem eps
+-- Trigger para nao deixar seasons sem eps, nem poder apagar episódio de forma não sequencial (ex: existe 1,2,3,4 e tento apagar o 3, não dá, tenho de apagar o 4 primeiro)
 CREATE TRIGGER DeleteEp ON Episode
 AFTER DELETE
 AS
     DECLARE @SeasonID INT;
+    DECLARE @SerieID INT;
+    DECLARE @Number INT;
 
-    SELECT @SeasonID=Season_ID FROM deleted;
+    SELECT @Number=Number, @SerieID=Series_ID, @SeasonID=Season_ID FROM deleted;
 
-    IF (EXISTS(SELECT * FROM Season WHERE Number=@SeasonID) AND NOT EXISTS(SELECT * FROM Episode WHERE Season_ID=@SeasonID))
+    IF (EXISTS(SELECT * FROM Season WHERE ID=@SerieID AND Number=@SeasonID) AND NOT EXISTS(SELECT * FROM Episode WHERE Series_ID=@SerieID AND Season_ID=@SeasonID))
     BEGIN
         RAISERROR('Cannot delete episode because a season must have at least one episode, delete the season instead', 16, 1);
+        ROLLBACK;
+    END
+
+    IF (EXISTS(SELECT * FROM Episode WHERE Series_ID=@SerieID AND Season_ID=@SeasonID AND Number > @Number))
+    BEGIN
+        RAISERROR('Cannot delete episode non-sequentially', 16, 1);
         ROLLBACK;
     END
 GO
@@ -97,12 +105,19 @@ CREATE TRIGGER DeleteSeason ON Season
 AFTER DELETE
 AS
     DECLARE @SerieID INT;
+    DECLARE @Number INT;
 
-    SELECT @SerieID=ID FROM deleted;
+    SELECT @Number=Number, @SerieID=ID FROM deleted;
 
     IF (EXISTS(SELECT * FROM TVSeries WHERE ID=@SerieID) AND NOT EXISTS(SELECT * FROM Season WHERE ID=@SerieID))
     BEGIN
         RAISERROR('Cannot delete season because a serie must have at least one season, delete the serie instead', 16, 1);
+        ROLLBACK;
+    END
+
+    IF (EXISTS(SELECT * FROM Season WHERE ID=@SerieID AND Number > @Number))
+    BEGIN
+        RAISERROR('Cannot delete seasons non-sequentially', 16, 1);
         ROLLBACK;
     END
 GO
