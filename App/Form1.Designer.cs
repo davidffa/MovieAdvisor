@@ -100,6 +100,8 @@
             avList = new ListBox();
             review = new TabPage();
             groupBoxReview = new GroupBox();
+            ReviewCancel = new Button();
+            ReviewConfirm = new Button();
             label7 = new Label();
             CountLikes = new TextBox();
             ReviewCreatedAtLabel = new Label();
@@ -114,7 +116,7 @@
             UserPassLabel = new Label();
             UserEmailLabel = new Label();
             ConfirmUserReviews = new Button();
-            textBox1 = new TextBox();
+            PasswordReview = new TextBox();
             UserEmail = new TextBox();
             overallScoreLabel = new Label();
             label3 = new Label();
@@ -904,7 +906,7 @@
             review.Controls.Add(UserPassLabel);
             review.Controls.Add(UserEmailLabel);
             review.Controls.Add(ConfirmUserReviews);
-            review.Controls.Add(textBox1);
+            review.Controls.Add(PasswordReview);
             review.Controls.Add(UserEmail);
             review.Controls.Add(overallScoreLabel);
             review.Controls.Add(label3);
@@ -923,6 +925,8 @@
             // 
             // groupBoxReview
             // 
+            groupBoxReview.Controls.Add(ReviewCancel);
+            groupBoxReview.Controls.Add(ReviewConfirm);
             groupBoxReview.Controls.Add(label7);
             groupBoxReview.Controls.Add(CountLikes);
             groupBoxReview.Controls.Add(ReviewCreatedAtLabel);
@@ -940,6 +944,28 @@
             groupBoxReview.Size = new Size(624, 407);
             groupBoxReview.TabIndex = 21;
             groupBoxReview.TabStop = false;
+            // 
+            // ReviewCancel
+            // 
+            ReviewCancel.Location = new Point(240, 30);
+            ReviewCancel.Name = "ReviewCancel";
+            ReviewCancel.Size = new Size(121, 39);
+            ReviewCancel.TabIndex = 23;
+            ReviewCancel.Text = "Cancel";
+            ReviewCancel.UseVisualStyleBackColor = true;
+            ReviewCancel.Visible = false;
+            ReviewCancel.Click += ReviewCancel_Click;
+            // 
+            // ReviewConfirm
+            // 
+            ReviewConfirm.Location = new Point(82, 30);
+            ReviewConfirm.Name = "ReviewConfirm";
+            ReviewConfirm.Size = new Size(121, 39);
+            ReviewConfirm.TabIndex = 22;
+            ReviewConfirm.Text = "Confirm";
+            ReviewConfirm.UseVisualStyleBackColor = true;
+            ReviewConfirm.Visible = false;
+            ReviewConfirm.Click += ReviewConfirm_Click;
             // 
             // label7
             // 
@@ -971,12 +997,13 @@
             // 
             // ReviewDelete
             // 
-            ReviewDelete.Location = new Point(324, 30);
+            ReviewDelete.Location = new Point(322, 30);
             ReviewDelete.Name = "ReviewDelete";
             ReviewDelete.Size = new Size(121, 39);
             ReviewDelete.TabIndex = 14;
             ReviewDelete.Text = "Delete";
             ReviewDelete.UseVisualStyleBackColor = true;
+            ReviewDelete.Click += ReviewDelete_Click;
             // 
             // ReviewCreatedAt
             // 
@@ -994,6 +1021,7 @@
             ReviewEdit.TabIndex = 11;
             ReviewEdit.Text = "Edit";
             ReviewEdit.UseVisualStyleBackColor = true;
+            ReviewEdit.Click += ReviewEdit_Click;
             // 
             // ReviewLike
             // 
@@ -1008,6 +1036,7 @@
             // 
             // ReviewClassification
             // 
+            ReviewClassification.Enabled = false;
             ReviewClassification.Location = new Point(462, 110);
             ReviewClassification.Name = "ReviewClassification";
             ReviewClassification.PlaceholderText = "Classification";
@@ -1017,6 +1046,7 @@
             // 
             // ReviewDescription
             // 
+            ReviewDescription.Enabled = false;
             ReviewDescription.Location = new Point(16, 245);
             ReviewDescription.Multiline = true;
             ReviewDescription.Name = "ReviewDescription";
@@ -1026,6 +1056,7 @@
             // 
             // ReviewTitle
             // 
+            ReviewTitle.Enabled = false;
             ReviewTitle.Location = new Point(14, 110);
             ReviewTitle.Name = "ReviewTitle";
             ReviewTitle.PlaceholderText = "Type the title";
@@ -1040,6 +1071,7 @@
             ReviewAdd.TabIndex = 6;
             ReviewAdd.Text = "Add";
             ReviewAdd.UseVisualStyleBackColor = true;
+            ReviewAdd.Click += ReviewAdd_Click;
             // 
             // UserPassLabel
             // 
@@ -1070,14 +1102,14 @@
             ConfirmUserReviews.UseVisualStyleBackColor = false;
             ConfirmUserReviews.Click += ConfirmUserReviews_Click;
             // 
-            // textBox1
+            // PasswordReview
             // 
-            textBox1.Location = new Point(559, 89);
-            textBox1.Name = "textBox1";
-            textBox1.PasswordChar = '*';
-            textBox1.PlaceholderText = "Password";
-            textBox1.Size = new Size(297, 27);
-            textBox1.TabIndex = 17;
+            PasswordReview.Location = new Point(559, 89);
+            PasswordReview.Name = "PasswordReview";
+            PasswordReview.PasswordChar = '*';
+            PasswordReview.PlaceholderText = "Password";
+            PasswordReview.Size = new Size(297, 27);
+            PasswordReview.TabIndex = 17;
             // 
             // UserEmail
             // 
@@ -1298,11 +1330,13 @@
         private Button ReviewDelete;
         private Label ReviewCreatedAtLabel;
         private TextBox CountLikes;
-        private TextBox textBox1;
+        private TextBox PasswordReview;
         private Label UserPassLabel;
         private Label UserEmailLabel;
         private Button ConfirmUserReviews;
         private GroupBox groupBoxReview;
         private Label label7;
+        private Button ReviewCancel;
+        private Button ReviewConfirm;
     }
 }

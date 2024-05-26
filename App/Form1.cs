@@ -14,6 +14,7 @@ namespace MovieAdvisor
         private bool adding_episode;
         private int currentAVContent;
         private string LikeCount;
+        private string utilizador;
 
         private string avOrderBy = "";
         private int typeSelector = 0; // 0 -> all 1 -> movies 2 -> series
@@ -579,6 +580,10 @@ namespace MovieAdvisor
             if (avList2.SelectedItem != null)
             {
                 AudiovisualContent av = (AudiovisualContent)avList2.SelectedItem;
+                ReviewClassification.Text = "";
+                ReviewDescription.Text = "";
+                ReviewTitle.Text = "";
+                CountLikes.Text = "0";
                 loadReviews(av.ID);
 
                 if (!verifyDBConnection())
@@ -698,7 +703,15 @@ namespace MovieAdvisor
         {
             if (reviewsList.SelectedIndex >= 0)
             {
+                
+                Review r = (Review)reviewsList.SelectedItem;
+                ReviewClassification.Text = "";
+                ReviewDescription.Text = "";
+                ReviewTitle.Text = "";
+                CountLikes.Text = "0";
+
                 ShowReview();
+               
             }
         }
 
@@ -1264,13 +1277,74 @@ namespace MovieAdvisor
         //Review
         private void ReviewLike_Click(object sender, EventArgs e)
         {
-            if (ReviewLike.BackColor == Color.Transparent)
+            if (reviewsList.SelectedIndex >= 0)
             {
-                ReviewLike.BackColor = Color.LightSteelBlue;
+                Review r = ((Review)reviewsList.SelectedItem);
+                if (ReviewLike.BackColor == Color.Transparent)
+                {
+                    ReviewLike.BackColor = Color.LightSteelBlue;
+                    CreateReviewLike(r);
+
+                }
+                else
+                {
+                    ReviewLike.BackColor = Color.Transparent;
+                    DeleteReviewLike(r);
+                }
             }
-            else
+        }
+
+        private void DeleteReviewLike(Review r)
+        {
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "EXEC DeleteReviewLike @UserID, ReviewID";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@UserID", utilizador);
+            cmd.Parameters.AddWithValue("@ReviewID", r.Id);
+
+            cmd.Connection = cn;
+
+            try
             {
-                ReviewLike.BackColor = Color.Transparent;
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to delete Like in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+
+        private void CreateReviewLike(Review r)
+        {
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "EXEC CreateReviewLike @UserID, @ReviewID";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@UserID", utilizador);
+            cmd.Parameters.AddWithValue("@ReviewID",r.Id);
+     
+            cmd.Connection = cn;
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to insert Like in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
             }
         }
 
@@ -1629,25 +1703,348 @@ namespace MovieAdvisor
 
         private void ConfirmUserReviews_Click(object sender, EventArgs e)
         {
-            string av_id = ((AudiovisualContent)avList.SelectedItem).ID;
-
-            SqlCommand cmd = new SqlCommand("SELECT * FROM Authenticate(" + av_id + "," + s.Number + ") ", cn);
-            SqlDataReader reader = cmd.ExecuteReader();
-
-            EpisodeBox.Items.Clear();
-            while (reader.Read())
+            groupBoxReview.Enabled = false;
+           
+             if (Authenticate())
             {
-                Episode ep = new Episode();
+                groupBoxReview.Enabled = true;
+            }
 
-                ep.Number = reader["Number"].ToString();
-                ep.Runtime = reader["Runtime"].ToString();
-                ep.Synopsis = reader["Synopsis"].ToString();
+        }
 
-                EpisodeBox.Items.Add(ep);
-                SynopsisEpisode.Text = ep.Synopsis;
-                RuntimeEpisode.Text = ep.Runtime;
+        private bool Authenticate()
+        {
+            if (!verifyDBConnection())
+                return false;
+            try
+            {
+                SqlConnection con = new SqlConnection();
+                SqlCommand cmd = new SqlCommand("Authenticate", con);
+
+                
+                cmd.CommandType = CommandType.StoredProcedure;
+                
+                cmd.Parameters.Clear();
+
+                cmd.Parameters.AddWithValue("@Email", UserEmail.Text);
+                cmd.Parameters.AddWithValue("@Password", PasswordReview.Text);
+                SqlParameter outputIdParam = new SqlParameter("@UserID", SqlDbType.Int)
+                {
+                    Direction = ParameterDirection.Output
+                };
+                cmd.Parameters.Add(outputIdParam);
+
+                cmd.Connection = cn;
+                cmd.ExecuteNonQuery();
+                utilizador = outputIdParam.Value.ToString();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
             }
             cn.Close();
+            return true;
+        }
+
+        private void CreateReview(Review r)
+        {
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "EXEC CreateReview @UserID, @AVIdentifier, @Title, @Description, @Classification";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@UserID", utilizador);
+            cmd.Parameters.AddWithValue("@AVIdentifier", r.AvIdentifier);
+            cmd.Parameters.AddWithValue("@Title", r.Title);
+            cmd.Parameters.AddWithValue("@Description", r.Description);
+            cmd.Parameters.AddWithValue("@Classification", r.Classification);
+
+            cmd.Connection = cn;
+
+            try
+            {
+                if (r.Title == "")
+                {
+                    return;
+                }
+                if (r.Description == "")
+                {
+                    return;
+                }
+                if (r.Classification == "")
+                {
+                    return;
+                }
+
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to create a Review in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+        private void UpdateReview(Review r)
+        {
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "EXEC UpdateReview @UserID, @AVIdentifier, @Title, @Description, @Classification";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@UserID", utilizador);
+            cmd.Parameters.AddWithValue("@AVIdentifier", ((AudiovisualContent)avList2.SelectedItem).ID);
+            cmd.Parameters.AddWithValue("@Title", r.Title);
+            cmd.Parameters.AddWithValue("@Description", r.Description);
+            cmd.Parameters.AddWithValue("@Classification", r.Classification);
+            cmd.Connection = cn;
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to update a Review in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+
+        private void ReviewAdd_Click(object sender, EventArgs e)
+        {
+            adding = true;
+            if (avList2.SelectedIndex <= 0)
+            {
+                MessageBox.Show("Please select a movie or serie!");
+                return;
+            }
+            ReviewClassification.Text = "";
+            ReviewDescription.Text = "";
+            ReviewTitle.Text = "";
+            CountLikes.Text = "0" ;
+            avList2.Enabled = false;
+            reviewsList.SelectedIndex = -1;
+            reviewsList.Enabled = false;
+            ReviewDelete.Visible = false;
+            ReviewAdd.Visible = false;
+            ReviewEdit.Visible = false;
+            ReviewLike.Visible = false;
+
+            ReviewTitle.Enabled = true;
+            ReviewClassification.Enabled = true;
+            ReviewDescription.Enabled = true;
+
+
+            ReviewCancel.Visible = true;
+            ReviewConfirm.Visible = true;
+
+        }
+
+        private void ReviewEdit_Click(object sender, EventArgs e)
+        {
+            adding = false;
+            if (avList2.SelectedIndex < 0)
+            {
+                MessageBox.Show("Please select a movie or serie!");
+                return;
+            }
+            if (reviewsList.SelectedIndex < 0)
+            {
+                MessageBox.Show("Please select a review to edit!");
+                return;
+            }
+            avList2.Enabled = false;
+            reviewsList.SelectedIndex = -1;
+            reviewsList.Enabled = false;
+            ReviewDelete.Visible = false;
+            ReviewAdd.Visible = false;
+            ReviewEdit.Visible = false;
+            ReviewLike.Visible = false;
+
+            ReviewTitle.Enabled = true;
+            ReviewClassification.Enabled = true;
+            ReviewDescription.Enabled = true;
+
+
+            ReviewCancel.Visible = true;
+            ReviewConfirm.Visible = true;
+        }
+
+        private void ReviewDelete_Click(object sender, EventArgs e)
+        {
+            if (reviewsList.SelectedIndex < 0)
+            {
+                MessageBox.Show("Please select a review to delete!");
+                return;
+            }
+            if (utilizador.Equals(""))
+            {
+                MessageBox.Show("Utilizador vazio!");
+                return;
+            }
+
+            try
+            {
+                Review item = (Review)reviewsList.SelectedItem;
+                reviewsList.Items.Remove(item);
+                reviewsList.SelectedIndex = -1;
+                DELETEReview(item);
+
+
+                MessageBox.Show("Item apagado com sucesso!");
+                ReviewDelete.Visible = true;
+                ReviewAdd.Visible = true;
+                EditButton.Visible = true;
+                ReviewLike.Visible = true;
+
+                ReviewTitle.Enabled = false;
+                ReviewClassification.Enabled = false;
+                ReviewDescription.Enabled = false;
+
+                ReviewCancel.Visible = false;
+                ReviewConfirm.Visible = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+
+        }
+
+
+        private void DELETEReview(Review r)
+        {
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "EXEC DeleteReview @UserID, ReviewID";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@UserID", utilizador);
+            cmd.Parameters.AddWithValue("@ReviewID", r.Id);
+
+            cmd.Connection = cn;
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to delete review in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+
+
+        private bool SaveReview()
+        {
+
+            Review r = new Review();
+            r.UserID = utilizador;
+            r.Title = ReviewTitle.Text;
+            r.Description = ReviewDescription.Text;
+            r.Classification = ReviewClassification.Text;
+            r.AvIdentifier = ((AudiovisualContent)avList2.SelectedItem).ID;
+
+            if (r.Classification == "")
+            {
+                MessageBox.Show("Invalid Title!");
+                return false;
+            }
+            if (r.Title == "")
+            {
+                MessageBox.Show("Invalid Runtime!");
+                return false;
+            }
+            if (r.Description == "")
+            {
+                MessageBox.Show("Invalid Runtime!");
+                return false;
+            }
+            if (adding)
+            {
+                try
+                {
+
+                    CreateReview(r);
+                    loadReviews(r.AvIdentifier);
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return false;
+                }
+            }
+            else
+            {
+                UpdateReview(r);
+                loadReviews(r.AvIdentifier);
+            }
+
+            return true;
+        }
+
+        private void ReviewConfirm_Click(object sender, EventArgs e)
+        {
+            if (SaveReview())
+            {
+                avList2.Enabled = true;
+                reviewsList.Enabled = true;
+                int idx = reviewsList.FindString(ReviewTitle.Text);
+                reviewsList.SelectedIndex = idx;
+
+                ReviewDelete.Visible = true;
+                ReviewAdd.Visible = true;
+                ReviewEdit.Visible = true;
+                ReviewLike.Visible = true;
+                ReviewCancel.Visible = false;
+                ReviewConfirm.Visible = false;
+
+                ReviewTitle.Enabled = false;
+                ReviewClassification.Enabled = false;
+                ReviewDescription.Enabled = false;
+                
+            }
+
+        }
+
+        private void ReviewCancel_Click(object sender, EventArgs e)
+        {
+            if (adding == true)
+            {
+                ReviewTitle.Text = "";
+                ReviewClassification.Text = "";
+                ReviewDescription.Text = "";
+
+            }
+           
+            reviewsList.Enabled = true;
+            avList2.Enabled = true;
+            adding = false;
+            ReviewDelete.Visible = true;
+            ReviewAdd.Visible = true;
+            ReviewEdit.Visible = true;
+            ReviewLike.Visible = true;
+            ReviewCancel.Visible = false;
+            ReviewConfirm.Visible = false;
+
+            ReviewTitle.Enabled = false;
+            ReviewClassification.Enabled = false;
+            ReviewDescription.Enabled = false;
         }
     }
 }
