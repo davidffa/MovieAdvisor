@@ -125,6 +125,25 @@
             reviewsList = new ListBox();
             avList2 = new ListBox();
             watchlists = new TabPage();
+            Password2Label = new Label();
+            UserEmail2Label = new Label();
+            ConfirmAuthetication2 = new Button();
+            PasswordWatchList = new TextBox();
+            UserEmail2 = new TextBox();
+            listBox1 = new ListBox();
+            CancelWatchList = new Button();
+            ConfirmWatchList = new Button();
+            Visibilitygroup = new GroupBox();
+            label10 = new Label();
+            radioNo = new RadioButton();
+            radioYes = new RadioButton();
+            DeleteWatchList = new Button();
+            TitleWatchList = new TextBox();
+            CreateWatchList = new Button();
+            label9 = new Label();
+            PersonalsWatchLists = new ListBox();
+            WathListsLabel = new Label();
+            watchList = new ListBox();
             people = new TabPage();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             tabControl1.SuspendLayout();
@@ -140,6 +159,8 @@
             typeBox.SuspendLayout();
             review.SuspendLayout();
             groupBoxReview.SuspendLayout();
+            watchlists.SuspendLayout();
+            Visibilitygroup.SuspendLayout();
             SuspendLayout();
             // 
             // tabControl1
@@ -1182,6 +1203,22 @@
             // 
             // watchlists
             // 
+            watchlists.Controls.Add(Password2Label);
+            watchlists.Controls.Add(UserEmail2Label);
+            watchlists.Controls.Add(ConfirmAuthetication2);
+            watchlists.Controls.Add(PasswordWatchList);
+            watchlists.Controls.Add(UserEmail2);
+            watchlists.Controls.Add(listBox1);
+            watchlists.Controls.Add(CancelWatchList);
+            watchlists.Controls.Add(ConfirmWatchList);
+            watchlists.Controls.Add(Visibilitygroup);
+            watchlists.Controls.Add(DeleteWatchList);
+            watchlists.Controls.Add(TitleWatchList);
+            watchlists.Controls.Add(CreateWatchList);
+            watchlists.Controls.Add(label9);
+            watchlists.Controls.Add(PersonalsWatchLists);
+            watchlists.Controls.Add(WathListsLabel);
+            watchlists.Controls.Add(watchList);
             watchlists.Location = new Point(4, 29);
             watchlists.Margin = new Padding(2);
             watchlists.Name = "watchlists";
@@ -1190,6 +1227,194 @@
             watchlists.TabIndex = 2;
             watchlists.Text = "WatchLists";
             watchlists.UseVisualStyleBackColor = true;
+            // 
+            // Password2Label
+            // 
+            Password2Label.AutoSize = true;
+            Password2Label.Location = new Point(466, 129);
+            Password2Label.Name = "Password2Label";
+            Password2Label.Size = new Size(114, 20);
+            Password2Label.TabIndex = 26;
+            Password2Label.Text = "User Password : ";
+            // 
+            // UserEmail2Label
+            // 
+            UserEmail2Label.AutoSize = true;
+            UserEmail2Label.Location = new Point(466, 80);
+            UserEmail2Label.Name = "UserEmail2Label";
+            UserEmail2Label.Size = new Size(90, 20);
+            UserEmail2Label.TabIndex = 25;
+            UserEmail2Label.Text = "User Email : ";
+            // 
+            // ConfirmAuthetication2
+            // 
+            ConfirmAuthetication2.BackColor = Color.Transparent;
+            ConfirmAuthetication2.Location = new Point(930, 94);
+            ConfirmAuthetication2.Name = "ConfirmAuthetication2";
+            ConfirmAuthetication2.Size = new Size(121, 39);
+            ConfirmAuthetication2.TabIndex = 24;
+            ConfirmAuthetication2.Text = "Confirm";
+            ConfirmAuthetication2.UseVisualStyleBackColor = false;
+            ConfirmAuthetication2.Click += ConfirmAuthentication2_Click;
+            // 
+            // PasswordWatchList
+            // 
+            PasswordWatchList.Location = new Point(596, 126);
+            PasswordWatchList.Name = "PasswordWatchList";
+            PasswordWatchList.PasswordChar = '*';
+            PasswordWatchList.PlaceholderText = "Password";
+            PasswordWatchList.Size = new Size(297, 27);
+            PasswordWatchList.TabIndex = 23;
+            // 
+            // UserEmail2
+            // 
+            UserEmail2.Location = new Point(596, 77);
+            UserEmail2.Name = "UserEmail2";
+            UserEmail2.PlaceholderText = "User Email";
+            UserEmail2.Size = new Size(299, 27);
+            UserEmail2.TabIndex = 22;
+            // 
+            // listBox1
+            // 
+            listBox1.FormattingEnabled = true;
+            listBox1.Location = new Point(718, 341);
+            listBox1.Margin = new Padding(2);
+            listBox1.Name = "listBox1";
+            listBox1.Size = new Size(362, 264);
+            listBox1.TabIndex = 21;
+            // 
+            // CancelWatchList
+            // 
+            CancelWatchList.Location = new Point(503, 527);
+            CancelWatchList.Name = "CancelWatchList";
+            CancelWatchList.Size = new Size(94, 29);
+            CancelWatchList.TabIndex = 20;
+            CancelWatchList.Text = "Cancel";
+            CancelWatchList.UseVisualStyleBackColor = true;
+            CancelWatchList.Visible = false;
+            // 
+            // ConfirmWatchList
+            // 
+            ConfirmWatchList.Location = new Point(503, 412);
+            ConfirmWatchList.Name = "ConfirmWatchList";
+            ConfirmWatchList.Size = new Size(94, 29);
+            ConfirmWatchList.TabIndex = 19;
+            ConfirmWatchList.Text = "Confirm";
+            ConfirmWatchList.UseVisualStyleBackColor = true;
+            ConfirmWatchList.Visible = false;
+            // 
+            // Visibilitygroup
+            // 
+            Visibilitygroup.Controls.Add(label10);
+            Visibilitygroup.Controls.Add(radioNo);
+            Visibilitygroup.Controls.Add(radioYes);
+            Visibilitygroup.Enabled = false;
+            Visibilitygroup.Location = new Point(718, 263);
+            Visibilitygroup.Name = "Visibilitygroup";
+            Visibilitygroup.Size = new Size(362, 59);
+            Visibilitygroup.TabIndex = 18;
+            Visibilitygroup.TabStop = false;
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(35, 23);
+            label10.Name = "label10";
+            label10.Size = new Size(64, 20);
+            label10.TabIndex = 17;
+            label10.Text = "Visible : ";
+            // 
+            // radioNo
+            // 
+            radioNo.AutoSize = true;
+            radioNo.Location = new Point(255, 21);
+            radioNo.Name = "radioNo";
+            radioNo.Size = new Size(50, 24);
+            radioNo.TabIndex = 15;
+            radioNo.TabStop = true;
+            radioNo.Text = "No";
+            radioNo.UseVisualStyleBackColor = true;
+            // 
+            // radioYes
+            // 
+            radioYes.AutoSize = true;
+            radioYes.Location = new Point(156, 21);
+            radioYes.Name = "radioYes";
+            radioYes.Size = new Size(51, 24);
+            radioYes.TabIndex = 14;
+            radioYes.TabStop = true;
+            radioYes.Text = "Yes";
+            radioYes.UseVisualStyleBackColor = true;
+            // 
+            // DeleteWatchList
+            // 
+            DeleteWatchList.Enabled = false;
+            DeleteWatchList.Location = new Point(503, 469);
+            DeleteWatchList.Name = "DeleteWatchList";
+            DeleteWatchList.Size = new Size(94, 29);
+            DeleteWatchList.TabIndex = 12;
+            DeleteWatchList.Text = "Delete";
+            DeleteWatchList.UseVisualStyleBackColor = true;
+            // 
+            // TitleWatchList
+            // 
+            TitleWatchList.Enabled = false;
+            TitleWatchList.Location = new Point(718, 238);
+            TitleWatchList.Name = "TitleWatchList";
+            TitleWatchList.PlaceholderText = "Type the title";
+            TitleWatchList.Size = new Size(362, 27);
+            TitleWatchList.TabIndex = 11;
+            // 
+            // CreateWatchList
+            // 
+            CreateWatchList.Enabled = false;
+            CreateWatchList.Location = new Point(503, 358);
+            CreateWatchList.Name = "CreateWatchList";
+            CreateWatchList.Size = new Size(94, 29);
+            CreateWatchList.TabIndex = 10;
+            CreateWatchList.Text = "Create";
+            CreateWatchList.UseVisualStyleBackColor = true;
+            CreateWatchList.Click += CreateWatchList_Click;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(24, 319);
+            label9.Margin = new Padding(2, 0, 2, 0);
+            label9.Name = "label9";
+            label9.Size = new Size(78, 20);
+            label9.TabIndex = 9;
+            label9.Text = "WatchLists";
+            // 
+            // PersonalsWatchLists
+            // 
+            PersonalsWatchLists.FormattingEnabled = true;
+            PersonalsWatchLists.Location = new Point(26, 41);
+            PersonalsWatchLists.Margin = new Padding(2);
+            PersonalsWatchLists.Name = "PersonalsWatchLists";
+            PersonalsWatchLists.Size = new Size(362, 264);
+            PersonalsWatchLists.TabIndex = 8;
+            PersonalsWatchLists.SelectedIndexChanged += PersonalsWatchLists_SelectedIndexChanged;
+            // 
+            // WathListsLabel
+            // 
+            WathListsLabel.AutoSize = true;
+            WathListsLabel.Location = new Point(24, 19);
+            WathListsLabel.Margin = new Padding(2, 0, 2, 0);
+            WathListsLabel.Name = "WathListsLabel";
+            WathListsLabel.Size = new Size(78, 20);
+            WathListsLabel.TabIndex = 7;
+            WathListsLabel.Text = "WatchLists";
+            // 
+            // watchList
+            // 
+            watchList.FormattingEnabled = true;
+            watchList.Location = new Point(26, 341);
+            watchList.Margin = new Padding(2);
+            watchList.Name = "watchList";
+            watchList.Size = new Size(362, 264);
+            watchList.TabIndex = 5;
+            watchList.SelectedIndexChanged += watchList_SelectedIndexChanged;
             // 
             // people
             // 
@@ -1234,6 +1459,10 @@
             review.PerformLayout();
             groupBoxReview.ResumeLayout(false);
             groupBoxReview.PerformLayout();
+            watchlists.ResumeLayout(false);
+            watchlists.PerformLayout();
+            Visibilitygroup.ResumeLayout(false);
+            Visibilitygroup.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -1338,5 +1567,24 @@
         private Label label7;
         private Button ReviewCancel;
         private Button ReviewConfirm;
+        private Label WathListsLabel;
+        private ListBox watchList;
+        private Label label9;
+        private ListBox PersonalsWatchLists;
+        private Button CreateWatchList;
+        private TextBox TitleWatchList;
+        private Button DeleteWatchList;
+        private RadioButton radioNo;
+        private RadioButton radioYes;
+        private GroupBox Visibilitygroup;
+        private Label label10;
+        private Button CancelWatchList;
+        private Button ConfirmWatchList;
+        private ListBox listBox1;
+        private Label Password2Label;
+        private Label UserEmail2Label;
+        private Button ConfirmAuthetication2;
+        private TextBox PasswordWatchList;
+        private TextBox UserEmail2;
     }
 }
