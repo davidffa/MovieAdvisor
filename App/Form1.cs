@@ -122,7 +122,7 @@ namespace MovieAdvisor
                 return;
             }
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM Review WHERE AVIdentifier =" + avID, cn);
+            SqlCommand cmd = new SqlCommand("SELECT * FROM getAVContentReviews(" + avID + ")", cn);
             SqlDataReader reader = cmd.ExecuteReader();
             reviewsList.Items.Clear();
 
@@ -135,6 +135,7 @@ namespace MovieAdvisor
                 r.Description = reader["Description"].ToString();
                 r.Classification = reader["Classification"].ToString();
                 r.CreatedAt = reader["CreatedAt"].ToString();
+                r.CountLikes = reader["LikeCount"].ToString();
 
                 reviewsList.Items.Add(r);
             }
@@ -451,21 +452,8 @@ namespace MovieAdvisor
             ReviewTitle.Text = r.Title;
             ReviewDescription.Text = r.Description;
             ReviewCreatedAt.Text = r.CreatedAt;
-
-            if (!verifyDBConnection()) return;
-
-            AudiovisualContent av = (AudiovisualContent)avList2.SelectedItem;
-
-            SqlCommand cmd = new SqlCommand("Select * From getAVContentReviews(" + av.ID + ")", cn);
-            SqlDataReader reader = cmd.ExecuteReader();
-
-            if (reader.Read())
-            {
-                LikeCount = reader["LikeCount"].ToString();
-                CountLikes.Text = LikeCount;
-            }
-            reader.Close();
-
+            CountLikes.Text = r.CountLikes;
+                        
             ReviewClassification.Visible = true;
             ReviewCreatedAt.Visible = true;
             ReviewDescription.Visible = true;
@@ -474,8 +462,6 @@ namespace MovieAdvisor
             ReviewEdit.Visible = true;
             ReviewDelete.Visible = true;
             ReviewLike.Visible = true;
-
-            cn.Close();
 
         }
         private void searchMoviesBtn_Click(object sender, EventArgs e)
@@ -703,8 +689,25 @@ namespace MovieAdvisor
         {
             if (reviewsList.SelectedIndex >= 0)
             {
-                
-                Review r = (Review)reviewsList.SelectedItem;
+                Review r = ((Review)reviewsList.SelectedItem);
+                if (utilizador != null)
+                {
+                    if (!verifyDBConnection())
+                        return;
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM ReviewLikes WHERE UserID=" + utilizador + "AND ReviewID = " + r.Id, cn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        ReviewLike.BackColor = Color.LightSteelBlue;
+
+                    }
+                    else
+                    {
+                        ReviewLike.BackColor = Color.Transparent;
+                    }
+                    cn.Close();
+                }
                 ReviewClassification.Text = "";
                 ReviewDescription.Text = "";
                 ReviewTitle.Text = "";
@@ -1280,27 +1283,45 @@ namespace MovieAdvisor
             if (reviewsList.SelectedIndex >= 0)
             {
                 Review r = ((Review)reviewsList.SelectedItem);
+                if (!verifyDBConnection())
+                    return;
+                SqlCommand cmd = new SqlCommand("SELECT * FROM ReviewLikes WHERE UserID= " + utilizador + " AND ReviewID= " + r.Id , cn);
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    ReviewLike.BackColor = Color.LightSteelBlue;
+
+                }
+                else
+                {
+                    ReviewLike.BackColor = Color.Transparent;
+                }
+                cn.Close();
                 if (ReviewLike.BackColor == Color.Transparent)
                 {
                     ReviewLike.BackColor = Color.LightSteelBlue;
                     CreateReviewLike(r);
+                    ShowReview();
 
                 }
                 else
                 {
                     ReviewLike.BackColor = Color.Transparent;
                     DeleteReviewLike(r);
+                    ShowReview();
                 }
             }
         }
 
         private void DeleteReviewLike(Review r)
         {
+            int rows = 0;
             if (!verifyDBConnection())
                 return;
             SqlCommand cmd = new SqlCommand();
 
-            cmd.CommandText = "EXEC DeleteReviewLike @UserID, ReviewID";
+            cmd.CommandText = "EXEC DeleteReviewLike @UserID, @ReviewID";
             cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@UserID", utilizador);
             cmd.Parameters.AddWithValue("@ReviewID", r.Id);
@@ -1309,7 +1330,7 @@ namespace MovieAdvisor
 
             try
             {
-                cmd.ExecuteNonQuery();
+                rows = cmd.ExecuteNonQuery();
             }
             catch (Exception ex)
             {
@@ -1795,10 +1816,10 @@ namespace MovieAdvisor
                 return;
             SqlCommand cmd = new SqlCommand();
 
-            cmd.CommandText = "EXEC UpdateReview @UserID, @AVIdentifier, @Title, @Description, @Classification";
+            cmd.CommandText = "EXEC UpdateReview @UserID, @ReviewID, @Title, @Description, @Classification";
             cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@UserID", utilizador);
-            cmd.Parameters.AddWithValue("@AVIdentifier", ((AudiovisualContent)avList2.SelectedItem).ID);
+            cmd.Parameters.AddWithValue("@ReviewID", ((Review)reviewsList.SelectedItem).Id);
             cmd.Parameters.AddWithValue("@Title", r.Title);
             cmd.Parameters.AddWithValue("@Description", r.Description);
             cmd.Parameters.AddWithValue("@Classification", r.Classification);
@@ -1810,7 +1831,7 @@ namespace MovieAdvisor
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to update a Review in database. \n ERROR MESSAGE: \n" + ex.Message);
+                MessageBox.Show("Failed to update a Review in database. \n ERROR MESSAGE: \n" + ex.Message);
             }
             finally
             {
@@ -1862,7 +1883,6 @@ namespace MovieAdvisor
                 return;
             }
             avList2.Enabled = false;
-            reviewsList.SelectedIndex = -1;
             reviewsList.Enabled = false;
             ReviewDelete.Visible = false;
             ReviewAdd.Visible = false;
@@ -1894,9 +1914,10 @@ namespace MovieAdvisor
             try
             {
                 Review item = (Review)reviewsList.SelectedItem;
+                DELETEReview(item);
                 reviewsList.Items.Remove(item);
                 reviewsList.SelectedIndex = -1;
-                DELETEReview(item);
+                
 
 
                 MessageBox.Show("Item apagado com sucesso!");
@@ -1927,7 +1948,7 @@ namespace MovieAdvisor
                 return;
             SqlCommand cmd = new SqlCommand();
 
-            cmd.CommandText = "EXEC DeleteReview @UserID, ReviewID";
+            cmd.CommandText = "EXEC DeleteReview @UserID, @ReviewID";
             cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@UserID", utilizador);
             cmd.Parameters.AddWithValue("@ReviewID", r.Id);

@@ -15,6 +15,7 @@ namespace MovieAdvisor
             r.Description = reader["Description"].ToString();
             r.Classification = reader["Classification"].ToString();
             r.CreatedAt = reader["CreatedAt"].ToString();
+            r.CountLikes = reader["CountLikes"].ToString();
             return r;
         }
 
@@ -25,6 +26,7 @@ namespace MovieAdvisor
 		private String _description;
 		private String _classification;
 		private String _createdAt;
+        private String _countLikes;
 
 		public String Id { get => _id; set => _id = value; }
 		public String UserID { get => _userID; set => _userID = value; }
@@ -33,6 +35,7 @@ namespace MovieAdvisor
 		public String Description { get => _description; set => _description = value; }
 		public String Classification { get => _classification; set => _classification = value; }
 		public String CreatedAt { get => _createdAt; set => _createdAt = value; }
+        public String CountLikes { get => _countLikes; set => _countLikes = value; }
 
         public override string ToString()
         {
