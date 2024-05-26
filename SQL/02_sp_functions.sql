@@ -440,7 +440,7 @@ CREATE FUNCTION getAVContentReviews(@ID INT) RETURNS TABLE
 AS
 RETURN (
     SELECT R.*, LikeCount=COUNT(IsLike) 
-    FROM (SELECT * FROM Review WHERE AVIdentifier=@ID) AS R JOIN ReviewLikes ON R.ID = ReviewLikes.ReviewID 
+    FROM (SELECT * FROM Review WHERE AVIdentifier=@ID) AS R LEFT JOIN ReviewLikes ON R.ID = ReviewLikes.ReviewID 
     GROUP BY R.ID, R.UserID, R.AVIdentifier, R.Title, R.Description, R.Classification, R.CreatedAt
 );
 GO
