@@ -328,7 +328,7 @@ CREATE PROC DeleteReviewLike(
     @ReviewID INT
 )
 AS
-    IF (@UserID != (SELECT UserID FROM ReviewLikes WHERE ReviewID=@ReviewID))
+    IF (@UserID NOT IN (SELECT UserID FROM ReviewLikes WHERE ReviewID=@ReviewID))
     BEGIN
         RAISERROR('You cannot remove other people''s likes', 16, 1);
         RETURN;
