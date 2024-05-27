@@ -345,6 +345,7 @@ AS
 GO
 
 CREATE PROC UpdateWatchlist (
+    @OldTitle VARCHAR(32),
     @Title VARCHAR(32),
 	@UserID INT,
 	@Visibility BIT,
@@ -353,7 +354,7 @@ CREATE PROC UpdateWatchlist (
 AS
     BEGIN TRAN;
 
-    UPDATE Watchlist SET Title=@Title, Visibility=@Visibility WHERE Title=@Title AND UserID=@UserID;
+    UPDATE Watchlist SET Title=@Title, Visibility=@Visibility WHERE Title=@OldTitle AND UserID=@UserID;
 
     DELETE FROM WatchlistAV WHERE WLTitle=@Title AND UserID=@UserID AND AVIdentifier NOT IN (SELECT ID FROM @AVList);
 
