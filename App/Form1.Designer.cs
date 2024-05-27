@@ -1297,23 +1297,25 @@
             // 
             // CancelWatchList
             // 
-            CancelWatchList.Location = new Point(503, 527);
+            CancelWatchList.Location = new Point(503, 426);
             CancelWatchList.Name = "CancelWatchList";
             CancelWatchList.Size = new Size(94, 29);
             CancelWatchList.TabIndex = 20;
             CancelWatchList.Text = "Cancel";
             CancelWatchList.UseVisualStyleBackColor = true;
             CancelWatchList.Visible = false;
+            CancelWatchList.Click += CancelWatchList_Click;
             // 
             // ConfirmWatchList
             // 
-            ConfirmWatchList.Location = new Point(503, 412);
+            ConfirmWatchList.Location = new Point(503, 357);
             ConfirmWatchList.Name = "ConfirmWatchList";
             ConfirmWatchList.Size = new Size(94, 29);
             ConfirmWatchList.TabIndex = 19;
             ConfirmWatchList.Text = "Confirm";
             ConfirmWatchList.UseVisualStyleBackColor = true;
             ConfirmWatchList.Visible = false;
+            ConfirmWatchList.Click += ConfirmWatchList_Click;
             // 
             // Visibilitygroup
             // 
@@ -1361,12 +1363,13 @@
             // DeleteWatchList
             // 
             DeleteWatchList.Enabled = false;
-            DeleteWatchList.Location = new Point(503, 469);
+            DeleteWatchList.Location = new Point(573, 391);
             DeleteWatchList.Name = "DeleteWatchList";
             DeleteWatchList.Size = new Size(94, 29);
             DeleteWatchList.TabIndex = 12;
             DeleteWatchList.Text = "Delete";
             DeleteWatchList.UseVisualStyleBackColor = true;
+            DeleteWatchList.Click += DeleteWatchList_Click;
             // 
             // TitleWatchList
             // 
@@ -1380,7 +1383,7 @@
             // CreateWatchList
             // 
             CreateWatchList.Enabled = false;
-            CreateWatchList.Location = new Point(503, 358);
+            CreateWatchList.Location = new Point(433, 391);
             CreateWatchList.Name = "CreateWatchList";
             CreateWatchList.Size = new Size(94, 29);
             CreateWatchList.TabIndex = 10;

@@ -19,6 +19,7 @@ namespace MovieAdvisor
         private string avOrderBy = "";
         private int typeSelector = 0; // 0 -> all 1 -> movies 2 -> series
         private string selectedGenreID = null;
+        private string selectedAVID = null;
 
         public Form1()
         {
@@ -111,8 +112,9 @@ namespace MovieAdvisor
                 AudiovisualContent m = AudiovisualContent.FromReader(reader);
                 avList.Items.Add(m);
 
-                if (first) { 
-                    avList2.Items.Add(m); 
+                if (first)
+                {
+                    avList2.Items.Add(m);
                 }
 
             }
@@ -153,7 +155,7 @@ namespace MovieAdvisor
                 return;
             }
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM getUserWatchlists(" + utilizador +  ")", cn);
+            SqlCommand cmd = new SqlCommand("SELECT * FROM getUserWatchlists(" + utilizador + ")", cn);
             SqlDataReader reader = cmd.ExecuteReader();
             PersonalsWatchLists.Items.Clear();
 
@@ -192,7 +194,6 @@ namespace MovieAdvisor
             reader.Close();
             cn.Close();
         }
-
         private void loadAvCheckList()
         {
             if (!verifyDBConnection())
@@ -207,6 +208,7 @@ namespace MovieAdvisor
             while (reader.Read())
             {
                 AudiovisualContent av = new AudiovisualContent();
+                av.ID = reader["ID"].ToString();
                 av.Title = reader["Title"].ToString();
                 av.Synopsis = reader["Synopsis"].ToString();
                 av.TrailerURL = reader["TrailerURL"].ToString();
@@ -221,7 +223,6 @@ namespace MovieAdvisor
             reader.Close();
             cn.Close();
         }
-
         private void loadAVWatchLists()
         {
             Watchlist w = (Watchlist)watchList.SelectedItem;
@@ -236,7 +237,7 @@ namespace MovieAdvisor
                 return;
             }
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM getAVFromWatchlist('" + w.Title  + "'," + w.UserID + ")", cn); 
+            SqlCommand cmd = new SqlCommand("SELECT * FROM getAVFromWatchlist('" + w.Title + "'," + w.UserID + ")", cn);
             SqlDataReader reader = cmd.ExecuteReader();
             listBox1.Items.Clear();
 
@@ -257,7 +258,6 @@ namespace MovieAdvisor
             reader.Close();
             cn.Close();
         }
-
 
         //save
         private bool SaveAVContent()
@@ -411,6 +411,91 @@ namespace MovieAdvisor
 
             return true;
         }
+        private bool SaveReview()
+        {
+
+            Review r = new Review();
+            r.UserID = utilizador;
+            r.Title = ReviewTitle.Text;
+            r.Description = ReviewDescription.Text;
+            r.Classification = ReviewClassification.Text;
+            r.AvIdentifier = ((AudiovisualContent)avList2.SelectedItem).ID;
+
+            if (r.Classification == "")
+            {
+                MessageBox.Show("Invalid Title!");
+                return false;
+            }
+            if (r.Title == "")
+            {
+                MessageBox.Show("Invalid Runtime!");
+                return false;
+            }
+            if (r.Description == "")
+            {
+                MessageBox.Show("Invalid Runtime!");
+                return false;
+            }
+            if (adding)
+            {
+                try
+                {
+
+                    CreateReview(r);
+                    loadReviews(r.AvIdentifier);
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return false;
+                }
+            }
+            else
+            {
+                UpdateReview(r);
+                loadReviews(r.AvIdentifier);
+            }
+
+            return true;
+        }
+        private bool SaveWatchList()
+        {
+
+            Watchlist w = new Watchlist();
+            w.Title = TitleWatchList.Text;
+            w.UserID = utilizador;
+
+            if (radioYes.Checked)
+            {
+                w.Visibility = "True";
+            }
+            else
+            {
+                w.Visibility = "False";
+            }
+            AudiovisualContent[] wlAV = checkedListBox1.CheckedItems.Cast<AudiovisualContent>().ToArray();
+            if (adding)
+            {
+                try
+                {
+
+                    createWatchList(w, wlAV);
+                    loadUserWatchList();
+                    loadWatchLists();
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return false;
+                }
+            }
+
+
+            return true;
+        }
+
 
         //show + hide + clear
         public void ShowAVContent()
@@ -554,7 +639,6 @@ namespace MovieAdvisor
             cn.Close();
 
         }
-
         public void ShowReview()
         {
             if (avList2.Items.Count == 0 || avList2.SelectedIndex == -1)
@@ -662,7 +746,6 @@ namespace MovieAdvisor
         }
 
         //SelectedIndexChanged
-
         private void avList_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (avList.SelectedIndex >= 0)
@@ -801,7 +884,6 @@ namespace MovieAdvisor
             RuntimeEpisode.Text = ep.Runtime;
             SynopsisEpisode.Text = ep.Synopsis;
         }
-
         private void reviewsList_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (reviewsList.SelectedIndex >= 0)
@@ -832,6 +914,33 @@ namespace MovieAdvisor
 
                 ShowReview();
 
+            }
+        }
+        private void watchList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (watchList.SelectedItem != null)
+            {
+                TitleWatchList.Text = watchList.SelectedItem.ToString();
+                radioYes.Checked = true;
+                loadAVWatchLists();
+            }
+
+        }
+        private void PersonalsWatchLists_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (PersonalsWatchLists.SelectedItem != null)
+            {
+                TitleWatchList.Text = PersonalsWatchLists.SelectedItem.ToString();
+                Watchlist w = (Watchlist)PersonalsWatchLists.SelectedItem;
+                if (w.Visibility.Equals("True"))
+                {
+                    radioYes.Checked = true;
+                }
+                else
+                {
+                    radioNo.Checked = true;
+                }
+                loadAVWatchLists();
             }
         }
 
@@ -886,7 +995,6 @@ namespace MovieAdvisor
 
 
         // CRUD + Confirm + Delete
-
         private void addButton_Click(object sender, EventArgs e)
         {
             avList.SelectedIndex = -1;
@@ -1395,6 +1503,180 @@ namespace MovieAdvisor
         }
 
         //Review
+        private void ReviewAdd_Click(object sender, EventArgs e)
+        {
+            adding = true;
+            if (avList2.SelectedIndex <= 0)
+            {
+                MessageBox.Show("Please select a movie or serie!");
+                return;
+            }
+            ReviewClassification.Text = "";
+            ReviewDescription.Text = "";
+            ReviewTitle.Text = "";
+            CountLikes.Text = "0";
+            avList2.Enabled = false;
+            reviewsList.SelectedIndex = -1;
+            reviewsList.Enabled = false;
+            ReviewDelete.Visible = false;
+            ReviewAdd.Visible = false;
+            ReviewEdit.Visible = false;
+            ReviewLike.Visible = false;
+
+            ReviewTitle.Enabled = true;
+            ReviewClassification.Enabled = true;
+            ReviewDescription.Enabled = true;
+
+
+            ReviewCancel.Visible = true;
+            ReviewConfirm.Visible = true;
+
+        }
+        private void ReviewEdit_Click(object sender, EventArgs e)
+        {
+            adding = false;
+            if (avList2.SelectedIndex < 0)
+            {
+                MessageBox.Show("Please select a movie or serie!");
+                return;
+            }
+            if (reviewsList.SelectedIndex < 0)
+            {
+                MessageBox.Show("Please select a review to edit!");
+                return;
+            }
+            avList2.Enabled = false;
+            reviewsList.Enabled = false;
+            ReviewDelete.Visible = false;
+            ReviewAdd.Visible = false;
+            ReviewEdit.Visible = false;
+            ReviewLike.Visible = false;
+
+            ReviewTitle.Enabled = true;
+            ReviewClassification.Enabled = true;
+            ReviewDescription.Enabled = true;
+
+
+            ReviewCancel.Visible = true;
+            ReviewConfirm.Visible = true;
+        }
+        private void ReviewDelete_Click(object sender, EventArgs e)
+        {
+            if (reviewsList.SelectedIndex < 0)
+            {
+                MessageBox.Show("Please select a review to delete!");
+                return;
+            }
+            if (utilizador.Equals(""))
+            {
+                MessageBox.Show("Utilizador vazio!");
+                return;
+            }
+
+            try
+            {
+                Review item = (Review)reviewsList.SelectedItem;
+                DELETEReview(item);
+                reviewsList.Items.Remove(item);
+                reviewsList.SelectedIndex = -1;
+
+
+
+                MessageBox.Show("Item apagado com sucesso!");
+                ReviewDelete.Visible = true;
+                ReviewAdd.Visible = true;
+                EditButton.Visible = true;
+                ReviewLike.Visible = true;
+
+                ReviewTitle.Enabled = false;
+                ReviewClassification.Enabled = false;
+                ReviewDescription.Enabled = false;
+
+                ReviewCancel.Visible = false;
+                ReviewConfirm.Visible = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+
+        }
+        private void DELETEReview(Review r)
+        {
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "EXEC DeleteReview @UserID, @ReviewID";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@UserID", utilizador);
+            cmd.Parameters.AddWithValue("@ReviewID", r.Id);
+
+            cmd.Connection = cn;
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to delete review in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+        private void ReviewConfirm_Click(object sender, EventArgs e)
+        {
+            if (SaveReview())
+            {
+                avList2.Enabled = true;
+                reviewsList.Enabled = true;
+                int idx = reviewsList.FindString(ReviewTitle.Text);
+                reviewsList.SelectedIndex = idx;
+
+                ReviewDelete.Visible = true;
+                ReviewAdd.Visible = true;
+                ReviewEdit.Visible = true;
+                ReviewLike.Visible = true;
+                ReviewCancel.Visible = false;
+                ReviewConfirm.Visible = false;
+
+                ReviewTitle.Enabled = false;
+                ReviewClassification.Enabled = false;
+                ReviewDescription.Enabled = false;
+
+            }
+
+        }
+        private void ReviewCancel_Click(object sender, EventArgs e)
+        {
+            if (adding == true)
+            {
+                ReviewTitle.Text = "";
+                ReviewClassification.Text = "";
+                ReviewDescription.Text = "";
+
+            }
+
+            reviewsList.Enabled = true;
+            avList2.Enabled = true;
+            adding = false;
+            ReviewDelete.Visible = true;
+            ReviewAdd.Visible = true;
+            ReviewEdit.Visible = true;
+            ReviewLike.Visible = true;
+            ReviewCancel.Visible = false;
+            ReviewConfirm.Visible = false;
+
+            ReviewTitle.Enabled = false;
+            ReviewClassification.Enabled = false;
+            ReviewDescription.Enabled = false;
+        }
+
+        //Review Like
         private void ReviewLike_Click(object sender, EventArgs e)
         {
             if (reviewsList.SelectedIndex >= 0)
@@ -1430,7 +1712,6 @@ namespace MovieAdvisor
                 }
             }
         }
-
         private void DeleteReviewLike(Review r)
         {
             int rows = 0;
@@ -1458,7 +1739,6 @@ namespace MovieAdvisor
                 cn.Close();
             }
         }
-
         private void CreateReviewLike(Review r)
         {
             if (!verifyDBConnection())
@@ -1484,6 +1764,175 @@ namespace MovieAdvisor
             {
                 cn.Close();
             }
+        }
+
+        //WatchList
+
+        private void createWatchList(Watchlist w, AudiovisualContent[] wlAV)
+        {
+
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+
+            cmd.CommandText = "EXEC CreateWatchList @Title, @UserID, @Visibility";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@Title", w.Title);
+            cmd.Parameters.AddWithValue("@UserID", utilizador);
+            cmd.Parameters.AddWithValue("@Visibility", w.Visibility);
+            cmd.Connection = cn;
+
+            try
+            {
+                if (w.Title == "")
+                {
+                    return;
+                }
+                if (w.Visibility == "")
+                {
+                    return;
+                }
+                cmd.ExecuteNonQuery();
+                foreach (AudiovisualContent av in wlAV)
+                {
+                    cmd = new SqlCommand();
+                    cmd.CommandText = "EXEC AddAVContentToWatchlist @WLTitle, @UserID, @AVIdentifier";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@WLTitle", w.Title);
+                    cmd.Parameters.AddWithValue("@UserID", utilizador);
+                    cmd.Parameters.AddWithValue("@AVIdentifier", av.ID);
+                    cmd.Connection = cn;
+                    cmd.ExecuteNonQuery();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to create a Review in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+        private void CreateWatchList_Click(object sender, EventArgs e)
+        {
+            adding = true;
+
+            PersonalsWatchLists.SelectedIndex = -1;
+            watchList.SelectedIndex = -1;
+
+            TitleWatchList.Text = "";
+            radioYes.Checked = true;
+
+            CreateWatchList.Visible = false;
+            DeleteWatchList.Visible = false;
+            ConfirmWatchList.Visible = true;
+            CancelWatchList.Visible = true;
+
+            TitleWatchList.Enabled = true;
+            Visibilitygroup.Enabled = true;
+            checkedListBox1.Visible = true;
+            loadAvCheckList();
+
+        }
+        private void ConfirmWatchList_Click(object sender, EventArgs e)
+        {
+            if (SaveWatchList())
+            {
+                int idx = PersonalsWatchLists.FindString(TitleWatchList.Text);
+                PersonalsWatchLists.SelectedIndex = idx;
+
+                CreateWatchList.Visible = true;
+                DeleteWatchList.Visible = true;
+                ConfirmWatchList.Visible = false;
+                CancelWatchList.Visible = false;
+
+                TitleWatchList.Enabled = false;
+                Visibilitygroup.Enabled = false;
+                checkedListBox1.Visible = false;
+
+                TitleWatchList.Enabled = false;
+                Visibilitygroup.Enabled = false;
+
+            }
+
+        }
+        private void DeleteWatchList_Click(object sender, EventArgs e)
+        {
+            if (PersonalsWatchLists.SelectedIndex < 0)
+            {
+                MessageBox.Show("Please select a personal review to delete!");
+                return;
+            }
+            if (utilizador.Equals(""))
+            {
+                MessageBox.Show("Utilizador vazio!");
+                return;
+            }
+
+            try
+            {
+                Watchlist item = (Watchlist)PersonalsWatchLists.SelectedItem;
+                if (!verifyDBConnection())
+                    return;
+                SqlCommand cmd = new SqlCommand();
+
+                cmd.CommandText = "DELETE Watchlist WHERE Title=@Title AND UserID=@UserID ";
+                cmd.Parameters.Clear();
+                cmd.Parameters.AddWithValue("@Title", item.Title);
+                cmd.Parameters.AddWithValue("@UserID", item.UserID);
+                cmd.Connection = cn;
+
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Failed to delete in database. \n ERROR MESSAGE: \n" + ex.Message);
+                }
+                finally
+                {
+                    cn.Close();
+                }
+
+                TitleWatchList.Text = "";
+                radioYes.Checked = true;
+                listBox1.Items.Clear();
+
+                loadWatchLists();
+                loadUserWatchList();
+
+                MessageBox.Show("Item apagado com sucesso!");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+        }
+        private void CancelWatchList_Click(object sender, EventArgs e)
+        {
+            if (adding == true)
+            {
+                TitleWatchList.Text = "";
+                radioYes.Checked = true;
+                checkedListBox1.Items.Clear();
+            }
+            CreateWatchList.Visible = true;
+            DeleteWatchList.Visible = true;
+            ConfirmWatchList.Visible = false;
+            CancelWatchList.Visible = false;
+
+            TitleWatchList.Enabled = false;
+            Visibilitygroup.Enabled = false;
+            checkedListBox1.Visible = false;
+
+            TitleWatchList.Enabled = false;
+            Visibilitygroup.Enabled = false;
         }
 
         //Create + Update
@@ -1839,52 +2288,6 @@ namespace MovieAdvisor
             }
         }
 
-        private void ConfirmUserReviews_Click(object sender, EventArgs e)
-        {
-            groupBoxReview.Enabled = false;
-
-            if (Authenticate())
-            {
-                groupBoxReview.Enabled = true;
-            }
-
-        }
-
-        private bool Authenticate()
-        {
-            if (!verifyDBConnection())
-                return false;
-            try
-            {
-                SqlConnection con = new SqlConnection();
-                SqlCommand cmd = new SqlCommand("Authenticate", con);
-
-
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.Clear();
-
-                cmd.Parameters.AddWithValue("@Email", UserEmail.Text);
-                cmd.Parameters.AddWithValue("@Password", PasswordReview.Text);
-                SqlParameter outputIdParam = new SqlParameter("@UserID", SqlDbType.Int)
-                {
-                    Direction = ParameterDirection.Output
-                };
-                cmd.Parameters.Add(outputIdParam);
-
-                cmd.Connection = cn;
-                cmd.ExecuteNonQuery();
-                utilizador = outputIdParam.Value.ToString();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                return false;
-            }
-            cn.Close();
-            return true;
-        }
-
         private void CreateReview(Review r)
         {
             if (!verifyDBConnection())
@@ -1956,304 +2359,51 @@ namespace MovieAdvisor
             }
         }
 
-        private void ReviewAdd_Click(object sender, EventArgs e)
+        //Authentication
+        private void ConfirmUserReviews_Click(object sender, EventArgs e)
         {
-            adding = true;
-            if (avList2.SelectedIndex <= 0)
+            groupBoxReview.Enabled = false;
+
+            if (Authenticate())
             {
-                MessageBox.Show("Please select a movie or serie!");
-                return;
+                groupBoxReview.Enabled = true;
             }
-            ReviewClassification.Text = "";
-            ReviewDescription.Text = "";
-            ReviewTitle.Text = "";
-            CountLikes.Text = "0";
-            avList2.Enabled = false;
-            reviewsList.SelectedIndex = -1;
-            reviewsList.Enabled = false;
-            ReviewDelete.Visible = false;
-            ReviewAdd.Visible = false;
-            ReviewEdit.Visible = false;
-            ReviewLike.Visible = false;
-
-            ReviewTitle.Enabled = true;
-            ReviewClassification.Enabled = true;
-            ReviewDescription.Enabled = true;
-
-
-            ReviewCancel.Visible = true;
-            ReviewConfirm.Visible = true;
 
         }
-
-        private void ReviewEdit_Click(object sender, EventArgs e)
+        private bool Authenticate()
         {
-            adding = false;
-            if (avList2.SelectedIndex < 0)
-            {
-                MessageBox.Show("Please select a movie or serie!");
-                return;
-            }
-            if (reviewsList.SelectedIndex < 0)
-            {
-                MessageBox.Show("Please select a review to edit!");
-                return;
-            }
-            avList2.Enabled = false;
-            reviewsList.Enabled = false;
-            ReviewDelete.Visible = false;
-            ReviewAdd.Visible = false;
-            ReviewEdit.Visible = false;
-            ReviewLike.Visible = false;
-
-            ReviewTitle.Enabled = true;
-            ReviewClassification.Enabled = true;
-            ReviewDescription.Enabled = true;
-
-
-            ReviewCancel.Visible = true;
-            ReviewConfirm.Visible = true;
-        }
-
-        private void ReviewDelete_Click(object sender, EventArgs e)
-        {
-            if (reviewsList.SelectedIndex < 0)
-            {
-                MessageBox.Show("Please select a review to delete!");
-                return;
-            }
-            if (utilizador.Equals(""))
-            {
-                MessageBox.Show("Utilizador vazio!");
-                return;
-            }
-
+            if (!verifyDBConnection())
+                return false;
             try
             {
-                Review item = (Review)reviewsList.SelectedItem;
-                DELETEReview(item);
-                reviewsList.Items.Remove(item);
-                reviewsList.SelectedIndex = -1;
+                SqlConnection con = new SqlConnection();
+                SqlCommand cmd = new SqlCommand("Authenticate", con);
 
 
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                MessageBox.Show("Item apagado com sucesso!");
-                ReviewDelete.Visible = true;
-                ReviewAdd.Visible = true;
-                EditButton.Visible = true;
-                ReviewLike.Visible = true;
+                cmd.Parameters.Clear();
 
-                ReviewTitle.Enabled = false;
-                ReviewClassification.Enabled = false;
-                ReviewDescription.Enabled = false;
+                cmd.Parameters.AddWithValue("@Email", UserEmail.Text);
+                cmd.Parameters.AddWithValue("@Password", PasswordReview.Text);
+                SqlParameter outputIdParam = new SqlParameter("@UserID", SqlDbType.Int)
+                {
+                    Direction = ParameterDirection.Output
+                };
+                cmd.Parameters.Add(outputIdParam);
 
-                ReviewCancel.Visible = false;
-                ReviewConfirm.Visible = false;
+                cmd.Connection = cn;
+                cmd.ExecuteNonQuery();
+                utilizador = outputIdParam.Value.ToString();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                return;
-            }
-
-        }
-
-
-        private void DELETEReview(Review r)
-        {
-            if (!verifyDBConnection())
-                return;
-            SqlCommand cmd = new SqlCommand();
-
-            cmd.CommandText = "EXEC DeleteReview @UserID, @ReviewID";
-            cmd.Parameters.Clear();
-            cmd.Parameters.AddWithValue("@UserID", utilizador);
-            cmd.Parameters.AddWithValue("@ReviewID", r.Id);
-
-            cmd.Connection = cn;
-
-            try
-            {
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Failed to delete review in database. \n ERROR MESSAGE: \n" + ex.Message);
-            }
-            finally
-            {
-                cn.Close();
-            }
-        }
-
-
-        private bool SaveReview()
-        {
-
-            Review r = new Review();
-            r.UserID = utilizador;
-            r.Title = ReviewTitle.Text;
-            r.Description = ReviewDescription.Text;
-            r.Classification = ReviewClassification.Text;
-            r.AvIdentifier = ((AudiovisualContent)avList2.SelectedItem).ID;
-
-            if (r.Classification == "")
-            {
-                MessageBox.Show("Invalid Title!");
                 return false;
             }
-            if (r.Title == "")
-            {
-                MessageBox.Show("Invalid Runtime!");
-                return false;
-            }
-            if (r.Description == "")
-            {
-                MessageBox.Show("Invalid Runtime!");
-                return false;
-            }
-            if (adding)
-            {
-                try
-                {
-
-                    CreateReview(r);
-                    loadReviews(r.AvIdentifier);
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                    return false;
-                }
-            }
-            else
-            {
-                UpdateReview(r);
-                loadReviews(r.AvIdentifier);
-            }
-
+            cn.Close();
             return true;
         }
-
-        private void ReviewConfirm_Click(object sender, EventArgs e)
-        {
-            if (SaveReview())
-            {
-                avList2.Enabled = true;
-                reviewsList.Enabled = true;
-                int idx = reviewsList.FindString(ReviewTitle.Text);
-                reviewsList.SelectedIndex = idx;
-
-                ReviewDelete.Visible = true;
-                ReviewAdd.Visible = true;
-                ReviewEdit.Visible = true;
-                ReviewLike.Visible = true;
-                ReviewCancel.Visible = false;
-                ReviewConfirm.Visible = false;
-
-                ReviewTitle.Enabled = false;
-                ReviewClassification.Enabled = false;
-                ReviewDescription.Enabled = false;
-
-            }
-
-        }
-
-        private void ReviewCancel_Click(object sender, EventArgs e)
-        {
-            if (adding == true)
-            {
-                ReviewTitle.Text = "";
-                ReviewClassification.Text = "";
-                ReviewDescription.Text = "";
-
-            }
-
-            reviewsList.Enabled = true;
-            avList2.Enabled = true;
-            adding = false;
-            ReviewDelete.Visible = true;
-            ReviewAdd.Visible = true;
-            ReviewEdit.Visible = true;
-            ReviewLike.Visible = true;
-            ReviewCancel.Visible = false;
-            ReviewConfirm.Visible = false;
-
-            ReviewTitle.Enabled = false;
-            ReviewClassification.Enabled = false;
-            ReviewDescription.Enabled = false;
-        }
-
-        private void watchList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (watchList.SelectedItem != null)
-            {
-                TitleWatchList.Text = watchList.SelectedItem.ToString();
-                radioYes.Checked = true;
-                loadAVWatchLists();
-
-                /*
-                if (!verifyDBConnection())
-                {
-                    return;
-                }
-
-                SqlCommand cmd = new SqlCommand("SELECT dbo.overallScoreByID(" + av.ID + ")", cn);
-                string overallScore = cmd.ExecuteScalar().ToString();
-
-                if (overallScore.Equals("-1,00"))
-                {
-                    overallScoreLabel.Text = "NA/10";
-                }
-                else
-                {
-                    overallScoreLabel.Text = overallScore + "/10";
-                }
-
-                cn.Close();*/
-            }
-            
-        }
-
-        private void PersonalsWatchLists_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (PersonalsWatchLists.SelectedItem != null)
-            {
-                TitleWatchList.Text = PersonalsWatchLists.SelectedItem.ToString();
-                Watchlist w = (Watchlist) PersonalsWatchLists.SelectedItem;
-                if (w.Visibility == "1") {
-                    radioYes.Checked = true;
-                }
-                else
-                {
-                    radioNo.Checked = true;
-                }
-                radioYes.Checked = false;
-                loadAVWatchLists();
-
-                /*
-                if (!verifyDBConnection())
-                {
-                    return;
-                }
-
-                SqlCommand cmd = new SqlCommand("SELECT dbo.overallScoreByID(" + av.ID + ")", cn);
-                string overallScore = cmd.ExecuteScalar().ToString();
-
-                if (overallScore.Equals("-1,00"))
-                {
-                    overallScoreLabel.Text = "NA/10";
-                }
-                else
-                {
-                    overallScoreLabel.Text = overallScore + "/10";
-                }
-
-                cn.Close();*/
-            }
-        }
-
         private void ConfirmAuthentication2_Click(object sender, EventArgs e)
         {
             CreateWatchList.Enabled = false;
@@ -2267,7 +2417,6 @@ namespace MovieAdvisor
             }
 
         }
-
         private bool Authenticate2()
         {
             if (!verifyDBConnection())
@@ -2302,84 +2451,5 @@ namespace MovieAdvisor
             cn.Close();
             return true;
         }
-
-        private void createWatchList(Watchlist w)
-        {
-
-            if (!verifyDBConnection())
-                return;
-            SqlCommand cmd = new SqlCommand();
-
-
-            cmd.CommandText = "EXEC CreateWatchList @Title, @UserID, @Visibility";
-            cmd.Parameters.Clear();
-            cmd.Parameters.AddWithValue("@Title", w.Title);
-            cmd.Parameters.AddWithValue("@UserID", utilizador);
-            cmd.Parameters.AddWithValue("@Visibility", w.Visibility);
-
-            cmd.Connection = cn;
-
-            try
-            {
-                if (w.Title == "")
-                {
-                    return;
-                }
-                if (w.Visibility == "")
-                {
-                    return;
-                }
-
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Failed to create a Review in database. \n ERROR MESSAGE: \n" + ex.Message);
-            }
-            finally
-            {
-                cn.Close();
-            }
-        }
-
-        private void CreateWatchList_Click(object sender, EventArgs e)
-        {
-            adding = true;
-
-            TitleWatchList.Text = "";
-            radioYes.Checked = true;
-
-            CreateWatchList.Visible = false;
-            DeleteWatchList.Visible = false;
-            ConfirmWatchList.Visible = true;
-            CancelWatchList.Visible = true;
-
-            TitleWatchList.Enabled = true;
-            Visibilitygroup.Enabled = true;
-            checkedListBox1.Visible = true;
-            loadAvCheckList();
-
-        }
-
-        private void ConfirmWatchList_Click(object sender, EventArgs e)
-        {
-           // if (SaveWatchList())
-            {
-                int idx = PersonalsWatchLists.FindString(TitleWatchList.Text);
-                PersonalsWatchLists.SelectedIndex = idx;
-
-
-                CreateWatchList.Visible = false;
-                DeleteWatchList.Visible = false;
-                ConfirmWatchList.Visible = true;
-                CancelWatchList.Visible = true;
-
-                TitleWatchList.Enabled = true;
-                Visibilitygroup.Enabled = true;
-
-            }
-
-        }
-
     }
 }
