@@ -864,7 +864,7 @@ INSERT INTO ReviewLikes(ReviewID, UserID, IsLike) VALUES
 
 INSERT INTO Watchlist (Title, UserID, Visibility) VALUES 
 	('Favoritos_Ana', 1, 1),
-	('Privates_Ana', 1, 2),
+	('Privates_Ana', 1, 0),
 	('Antonio_Best', 2, 0);
 
 
