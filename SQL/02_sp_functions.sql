@@ -347,6 +347,15 @@ AS
         (@Title, @UserID, @Visibility)    
 GO
 
+CREATE PROC UpdateWatchlist (
+    @Title VARCHAR(32),
+	@UserID INT,
+	@Visibility BIT
+)
+AS
+    UPDATE Watchlist SET Title=@Title, Visibility=@Visibility WHERE Title=@Title AND UserID=@UserID;
+GO
+
 CREATE PROC AddAVContentToWatchlist (
     @WLTitle VARCHAR(32),
 	@UserID INT,
@@ -355,6 +364,15 @@ CREATE PROC AddAVContentToWatchlist (
 AS
     INSERT INTO WatchlistAV (WLTitle, UserID, AVIdentifier) VALUES
         (@WLTitle, @UserID, @AVIdentifier);
+GO
+
+CREATE PROC RemoveAVContentFromWatchlist (
+    @WLTitle VARCHAR(32),
+	@UserID INT,
+	@AVIdentifier INT
+)
+AS
+    DELETE FROM WatchlistAV WHERE WLTitle=@WLTitle AND UserID=@UserID AND AVIdentifier=@AVIdentifier;
 GO
 
 --------------- UDFs ----------------
