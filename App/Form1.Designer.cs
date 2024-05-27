@@ -146,7 +146,6 @@
             PersonalsWatchLists = new ListBox();
             WathListsLabel = new Label();
             watchList = new ListBox();
-            people = new TabPage();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             tabControl1.SuspendLayout();
             movies.SuspendLayout();
@@ -170,7 +169,6 @@
             tabControl1.Controls.Add(movies);
             tabControl1.Controls.Add(review);
             tabControl1.Controls.Add(watchlists);
-            tabControl1.Controls.Add(people);
             tabControl1.Location = new Point(1, 0);
             tabControl1.Margin = new Padding(2);
             tabControl1.Name = "tabControl1";
@@ -241,7 +239,7 @@
             // ConfirmSeason
             // 
             ConfirmSeason.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ConfirmSeason.Location = new Point(33, 254);
+            ConfirmSeason.Location = new Point(33, 252);
             ConfirmSeason.Name = "ConfirmSeason";
             ConfirmSeason.Size = new Size(113, 29);
             ConfirmSeason.TabIndex = 46;
@@ -254,7 +252,7 @@
             // 
             CancelSeason.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             CancelSeason.BackColor = Color.Transparent;
-            CancelSeason.Location = new Point(176, 254);
+            CancelSeason.Location = new Point(176, 252);
             CancelSeason.Name = "CancelSeason";
             CancelSeason.Size = new Size(113, 29);
             CancelSeason.TabIndex = 47;
@@ -1444,16 +1442,6 @@
             watchList.TabIndex = 5;
             watchList.SelectedIndexChanged += watchList_SelectedIndexChanged;
             // 
-            // people
-            // 
-            people.Location = new Point(4, 29);
-            people.Margin = new Padding(2);
-            people.Name = "people";
-            people.Size = new Size(1108, 706);
-            people.TabIndex = 3;
-            people.Text = "People";
-            people.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -1514,7 +1502,6 @@
         private Label label4;
         private ComboBox genreComboBox;
         private Label label6;
-        private TabPage people;
         private RadioButton movieRadio;
         private RadioButton allRadio;
         private RadioButton seriesRadio;

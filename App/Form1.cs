@@ -1170,10 +1170,10 @@ namespace MovieAdvisor
             adding_season = false;
             SeasonGroup.Enabled = false;
             EpisodeGroup.Enabled = false;
-            AddEpisode.Visible = false;
-            DeleteEpisode.Visible = false;
-            AddSeason.Visible = false;
-            DeleteSeason.Visible = false;
+            AddEpisode.Visible = true;
+            DeleteEpisode.Visible = true;
+            AddSeason.Visible = true;
+            DeleteSeason.Visible = true;
         }
         private void confirmButton_Click(object sender, EventArgs e)
         {
@@ -1186,6 +1186,11 @@ namespace MovieAdvisor
                 groupBox1.Enabled = false;
                 SeasonGroup.Enabled = false;
                 EpisodeGroup.Enabled = false;
+
+                AddEpisode.Visible = true;
+                DeleteEpisode.Visible = true;
+                AddSeason.Visible = true;
+                DeleteSeason.Visible = true;
             }
         }
 
