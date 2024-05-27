@@ -80,6 +80,7 @@ AS
         WHERE (ID=@SerieID AND Number=@SeasonNumber);
 
 GO
+
 CREATE PROC UpdateGenres(
     @ID INT,
     @GenreList GenreList READONLY
@@ -87,10 +88,10 @@ CREATE PROC UpdateGenres(
 AS
     BEGIN TRAN;
 
-    DELETE FROM AVContentGenre WHERE AVIdentifier=@ID AND GenreID NOT IN (SELECT * FROM @GenreList);
+    DELETE FROM AVContentGenre WHERE AVIdentifier=@ID AND GenreID NOT IN (SELECT ID FROM @GenreList);
 
     INSERT INTO AVContentGenre (AVIdentifier, GenreID)
-        SELECT @ID, * FROM @GenreList WHERE ID NOT IN (SELECT GenreID FROM AVContentGenre WHERE ID=@ID);
+        SELECT @ID, * FROM @GenreList WHERE ID NOT IN (SELECT GenreID FROM AVContentGenre WHERE AVIdentifier=@ID);
 
     -- INSERT INTO AVContentGenre (AVIdentifier, GenreID)
     --     SELECT @ID, ID FROM @GenreList LEFT JOIN (
@@ -391,7 +392,7 @@ CREATE PROC UpdateWatchlistAVContents (
 AS
     BEGIN TRAN;
 
-    DELETE FROM WatchlistAV WHERE WLTitle=@WLTitle AND UserID=@UserID AND AVIdentifier NOT IN (SELECT * FROM @AVList);
+    DELETE FROM WatchlistAV WHERE WLTitle=@WLTitle AND UserID=@UserID AND AVIdentifier NOT IN (SELECT ID FROM @AVList);
 
     INSERT INTO WatchlistAV (WLTitle, UserID, AVIdentifier)
         SELECT @WLTitle, @UserID, * FROM @AVList WHERE ID NOT IN (SELECT AVIdentifier FROM WatchlistAV WHERE WLTitle=@WLTitle AND UserID=@UserID);
@@ -506,7 +507,7 @@ GO
 CREATE FUNCTION getAVContentGenres(@ID INT) RETURNS TABLE
 AS
 RETURN (
-    SELECT * FROM Genre 
+    SELECT Genre.* FROM Genre 
     JOIN (SELECT GenreID From AVContentGenre WHERE AVIdentifier=@ID) AS GenreID ON Genre.ID = GenreID
 );
 GO
