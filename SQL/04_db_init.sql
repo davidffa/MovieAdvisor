@@ -863,7 +863,8 @@ INSERT INTO ReviewLikes(ReviewID, UserID, IsLike) VALUES
 	(3,6,1);
 
 INSERT INTO Watchlist (Title, UserID, Visibility) VALUES 
-	('Favoritos_Ana', 1, 1), 
+	('Favoritos_Ana', 1, 1),
+	('Privates_Ana', 1, 2),
 	('Antonio_Best', 2, 0);
 
 
@@ -872,4 +873,10 @@ INSERT INTO WatchlistAV (WLTitle, UserID, AVIdentifier) VALUES
 	('Favoritos_Ana', 1, 2),
 	('Favoritos_Ana', 1, 3),
 	('Favoritos_Ana', 1, 4),
+
+	('Privates_Ana', 1, 6),
+	('Privates_Ana', 1, 7),
+	('Privates_Ana', 1, 8),
+	('Privates_Ana', 1, 9),
+
 	('Favoritos_Ana', 1, 5);
