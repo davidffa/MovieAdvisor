@@ -93,18 +93,6 @@ AS
     INSERT INTO AVContentGenre (AVIdentifier, GenreID)
         SELECT @ID, * FROM @GenreList WHERE ID NOT IN (SELECT GenreID FROM AVContentGenre WHERE AVIdentifier=@ID);
 
-    -- INSERT INTO AVContentGenre (AVIdentifier, GenreID)
-    --     SELECT @ID, ID FROM @GenreList LEFT JOIN (
-    --         SELECT GenreID FROM AVContentGenre WHERE AVIdentifier=@ID
-    --     ) AS C ON ID=C.GenreID WHERE C.GenreID IS NULL;
-    
-
-    -- DELETE FROM AVContentGenre WHERE AVIdentifier=@ID AND GenreID IN (
-    --     SELECT GenreID FROM @GenreList RIGHT JOIN (
-    --         SELECT GenreID FROM AVContentGenre WHERE AVIdentifier=@ID
-    --     ) AS C ON ID=C.GenreID WHERE ID IS NULL
-    -- );
-
     COMMIT TRAN;
 
 GO
@@ -359,10 +347,20 @@ GO
 CREATE PROC UpdateWatchlist (
     @Title VARCHAR(32),
 	@UserID INT,
-	@Visibility BIT
+	@Visibility BIT,
+    @AVList AVList READONLY
 )
 AS
+    BEGIN TRAN;
+
     UPDATE Watchlist SET Title=@Title, Visibility=@Visibility WHERE Title=@Title AND UserID=@UserID;
+
+    DELETE FROM WatchlistAV WHERE WLTitle=@Title AND UserID=@UserID AND AVIdentifier NOT IN (SELECT ID FROM @AVList);
+
+    INSERT INTO WatchlistAV (WLTitle, UserID, AVIdentifier)
+        SELECT @Title, @UserID, * FROM @AVList WHERE ID NOT IN (SELECT AVIdentifier FROM WatchlistAV WHERE WLTitle=@Title AND UserID=@UserID);
+
+    COMMIT TRAN;
 GO
 
 CREATE PROC AddAVContentToWatchlist (
@@ -382,22 +380,6 @@ CREATE PROC RemoveAVContentFromWatchlist (
 )
 AS
     DELETE FROM WatchlistAV WHERE WLTitle=@WLTitle AND UserID=@UserID AND AVIdentifier=@AVIdentifier;
-GO
-
-CREATE PROC UpdateWatchlistAVContents (
-    @WLTitle VARCHAR(32),
-    @UserID INT,
-    @AVList AVList READONLY
-)
-AS
-    BEGIN TRAN;
-
-    DELETE FROM WatchlistAV WHERE WLTitle=@WLTitle AND UserID=@UserID AND AVIdentifier NOT IN (SELECT ID FROM @AVList);
-
-    INSERT INTO WatchlistAV (WLTitle, UserID, AVIdentifier)
-        SELECT @WLTitle, @UserID, * FROM @AVList WHERE ID NOT IN (SELECT AVIdentifier FROM WatchlistAV WHERE WLTitle=@WLTitle AND UserID=@UserID);
-
-    COMMIT TRAN;
 GO
 
 --------------- UDFs ----------------
