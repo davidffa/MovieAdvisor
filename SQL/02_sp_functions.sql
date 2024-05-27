@@ -90,7 +90,7 @@ AS
     DELETE FROM AVContentGenre WHERE AVIdentifier=@ID AND GenreID NOT IN (SELECT * FROM @GenreList);
 
     INSERT INTO AVContentGenre (AVIdentifier, GenreID)
-        SELECT @ID, * FROM @GenreList WHERE ID NOT IN (SELECT * FROM AVContentGenre WHERE ID=@ID);
+        SELECT @ID, * FROM @GenreList WHERE ID NOT IN (SELECT GenreID FROM AVContentGenre WHERE ID=@ID);
 
     -- INSERT INTO AVContentGenre (AVIdentifier, GenreID)
     --     SELECT @ID, ID FROM @GenreList LEFT JOIN (
