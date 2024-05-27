@@ -1414,9 +1414,9 @@
             WathListsLabel.Location = new Point(24, 19);
             WathListsLabel.Margin = new Padding(2, 0, 2, 0);
             WathListsLabel.Name = "WathListsLabel";
-            WathListsLabel.Size = new Size(78, 20);
+            WathListsLabel.Size = new Size(137, 20);
             WathListsLabel.TabIndex = 7;
-            WathListsLabel.Text = "WatchLists";
+            WathListsLabel.Text = "Personal WatchLists";
             // 
             // watchList
             // 

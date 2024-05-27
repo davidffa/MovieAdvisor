@@ -225,6 +225,12 @@ namespace MovieAdvisor
         private void loadAVWatchLists()
         {
             Watchlist w = (Watchlist)watchList.SelectedItem;
+
+            if (PersonalsWatchLists.SelectedIndex != -1)
+            {
+                w = (Watchlist)PersonalsWatchLists.SelectedItem;
+            }
+
             if (!verifyDBConnection())
             {
                 return;
