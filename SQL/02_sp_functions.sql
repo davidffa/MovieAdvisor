@@ -7,7 +7,7 @@ AS SELECT AudioVisualContent.*, Runtime FROM Movie JOIN AudioVisualContent ON Mo
 
 GO
 CREATE VIEW AllSeries
-AS SELECT AudioVisualContent.*, FinishDate, State FROM TVSeries JOIN AudioVisualContent ON TVSeries.ID = AudioVisualContent.ID;
+AS SELECT AudioVisualContent.*, FinishDate, State FROM TVSeries  JOIN AudioVisualContent ON TVSeries.ID = AudioVisualContent.ID;
 
 GO
 CREATE VIEW GetPublicWatchlists
@@ -18,6 +18,8 @@ AS SELECT * FROM Watchlist WHERE Visibility = 1;
 GO
 -- Type for adding multiple genres on movie / serie creation
 CREATE TYPE GenreList AS TABLE (ID INT);
+-- Type for updating audiovisualcontent of watchlists
+CREATE TYPE AVList AS TABLE (ID INT);
 
 GO
 CREATE PROC CreateEpisode(
@@ -85,17 +87,22 @@ CREATE PROC UpdateGenres(
 AS
     BEGIN TRAN;
 
+    DELETE FROM AVContentGenre WHERE AVIdentifier=@ID AND GenreID NOT IN (SELECT * FROM @GenreList);
+
     INSERT INTO AVContentGenre (AVIdentifier, GenreID)
-        SELECT @ID, ID FROM @GenreList LEFT JOIN (
-            SELECT GenreID FROM AVContentGenre WHERE AVIdentifier=@ID
-        ) AS C ON ID=C.GenreID WHERE C.GenreID IS NULL;
+        SELECT @ID, * FROM @GenreList WHERE ID NOT IN (SELECT * FROM AVContentGenre WHERE ID=@ID);
+
+    -- INSERT INTO AVContentGenre (AVIdentifier, GenreID)
+    --     SELECT @ID, ID FROM @GenreList LEFT JOIN (
+    --         SELECT GenreID FROM AVContentGenre WHERE AVIdentifier=@ID
+    --     ) AS C ON ID=C.GenreID WHERE C.GenreID IS NULL;
     
 
-    DELETE FROM AVContentGenre WHERE AVIdentifier=@ID AND GenreID IN (
-        SELECT GenreID FROM @GenreList RIGHT JOIN (
-            SELECT GenreID FROM AVContentGenre WHERE AVIdentifier=@ID
-        ) AS C ON ID=C.GenreID WHERE ID IS NULL
-    );
+    -- DELETE FROM AVContentGenre WHERE AVIdentifier=@ID AND GenreID IN (
+    --     SELECT GenreID FROM @GenreList RIGHT JOIN (
+    --         SELECT GenreID FROM AVContentGenre WHERE AVIdentifier=@ID
+    --     ) AS C ON ID=C.GenreID WHERE ID IS NULL
+    -- );
 
     COMMIT TRAN;
 
@@ -246,8 +253,8 @@ CREATE PROC Authenticate(
     @UserID INT OUTPUT
 )
 AS
-    DECLARE @HashedPassword VARBINARY(512) = HASHBYTES('SHA2_512', @Password);
-    DECLARE @StoredPassword VARBINARY(512);
+    DECLARE @HashedPassword VARBINARY(64) = HASHBYTES('SHA2_512', @Password);
+    DECLARE @StoredPassword VARBINARY(64);
 
     SELECT @UserID=ID, @StoredPassword=Password FROM "User" WHERE Email=@Email;
 
@@ -262,6 +269,7 @@ AS
         -- Check if passwords match
         IF @HashedPassword != @StoredPassword
         BEGIN
+            SET @UserID = NULL;
             RAISERROR('Invalid email or password!', 16, 1);
         END
     END
@@ -373,6 +381,22 @@ CREATE PROC RemoveAVContentFromWatchlist (
 )
 AS
     DELETE FROM WatchlistAV WHERE WLTitle=@WLTitle AND UserID=@UserID AND AVIdentifier=@AVIdentifier;
+GO
+
+CREATE PROC UpdateWatchlistAVContents (
+    @WLTitle VARCHAR(32),
+    @UserID INT,
+    @AVList AVList READONLY
+)
+AS
+    BEGIN TRAN;
+
+    DELETE FROM WatchlistAV WHERE WLTitle=@WLTitle AND UserID=@UserID AND AVIdentifier NOT IN (SELECT * FROM @AVList);
+
+    INSERT INTO WatchlistAV (WLTitle, UserID, AVIdentifier)
+        SELECT @WLTitle, @UserID, * FROM @AVList WHERE ID NOT IN (SELECT AVIdentifier FROM WatchlistAV WHERE WLTitle=@WLTitle AND UserID=@UserID);
+
+    COMMIT TRAN;
 GO
 
 --------------- UDFs ----------------
