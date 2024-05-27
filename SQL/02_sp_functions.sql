@@ -445,6 +445,13 @@ RETURN (
 );
 GO
 
+CREATE FUNCTION getUserWatchlists(@UserID INT) RETURNS TABLE
+AS
+    RETURN (
+        SELECT * FROM Watchlist WHERE UserID=@UserID
+    );
+GO
+
 CREATE FUNCTION getAVFromWatchlist(@Title VARCHAR(32), @UserID INT) RETURNS TABLE
 AS
 RETURN (
