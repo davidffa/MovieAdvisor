@@ -130,7 +130,6 @@
             ConfirmAuthetication2 = new Button();
             PasswordWatchList = new TextBox();
             UserEmail2 = new TextBox();
-            listBox1 = new ListBox();
             CancelWatchList = new Button();
             ConfirmWatchList = new Button();
             Visibilitygroup = new GroupBox();
@@ -146,6 +145,8 @@
             watchList = new ListBox();
             people = new TabPage();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            listBox1 = new ListBox();
+            checkedListBox1 = new CheckedListBox();
             tabControl1.SuspendLayout();
             movies.SuspendLayout();
             SeriesGroup.SuspendLayout();
@@ -1203,6 +1204,7 @@
             // 
             // watchlists
             // 
+            watchlists.Controls.Add(checkedListBox1);
             watchlists.Controls.Add(Password2Label);
             watchlists.Controls.Add(UserEmail2Label);
             watchlists.Controls.Add(ConfirmAuthetication2);
@@ -1273,15 +1275,6 @@
             UserEmail2.PlaceholderText = "User Email";
             UserEmail2.Size = new Size(299, 27);
             UserEmail2.TabIndex = 22;
-            // 
-            // listBox1
-            // 
-            listBox1.FormattingEnabled = true;
-            listBox1.Location = new Point(718, 341);
-            listBox1.Margin = new Padding(2);
-            listBox1.Name = "listBox1";
-            listBox1.Size = new Size(362, 264);
-            listBox1.TabIndex = 21;
             // 
             // CancelWatchList
             // 
@@ -1425,6 +1418,26 @@
             people.TabIndex = 3;
             people.Text = "People";
             people.UseVisualStyleBackColor = true;
+            // 
+            // listBox1
+            // 
+            listBox1.Enabled = false;
+            listBox1.FormattingEnabled = true;
+            listBox1.Location = new Point(902, 341);
+            listBox1.Margin = new Padding(2);
+            listBox1.Name = "listBox1";
+            listBox1.Size = new Size(178, 264);
+            listBox1.TabIndex = 21;
+            // 
+            // checkedListBox1
+            // 
+            checkedListBox1.Enabled = false;
+            checkedListBox1.FormattingEnabled = true;
+            checkedListBox1.Location = new Point(716, 341);
+            checkedListBox1.Name = "checkedListBox1";
+            checkedListBox1.Size = new Size(177, 268);
+            checkedListBox1.TabIndex = 28;
+            checkedListBox1.Visible = false;
             // 
             // Form1
             // 
@@ -1580,11 +1593,12 @@
         private Label label10;
         private Button CancelWatchList;
         private Button ConfirmWatchList;
-        private ListBox listBox1;
         private Label Password2Label;
         private Label UserEmail2Label;
         private Button ConfirmAuthetication2;
         private TextBox PasswordWatchList;
         private TextBox UserEmail2;
+        private CheckedListBox checkedListBox1;
+        private ListBox listBox1;
     }
 }

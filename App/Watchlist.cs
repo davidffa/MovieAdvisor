@@ -9,5 +9,10 @@
         public String Title { get => _title; set => _title = value; }
         public String UserID { get => _userID; set => _userID = value; }
         public String Visibility { get => _visibility; set => _visibility = value; }
+
+        public override string ToString()
+        {
+            return _title;
+        }
     }
 }

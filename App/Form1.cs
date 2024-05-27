@@ -153,7 +153,7 @@ namespace MovieAdvisor
                 return;
             }
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM Watchlist", cn);
+            SqlCommand cmd = new SqlCommand("SELECT * FROM GetPublicWatchlists", cn);
             SqlDataReader reader = cmd.ExecuteReader();
             watchList.Items.Clear();
 
@@ -165,6 +165,36 @@ namespace MovieAdvisor
                 w.Visibility = reader["Visibility"].ToString();
 
                 watchList.Items.Add(w);
+            }
+            reader.Close();
+            cn.Close();
+        }
+
+        private void loadAVWatchLists()
+        {
+            Watchlist w = (Watchlist)watchList.SelectedItem;
+            if (!verifyDBConnection())
+            {
+                return;
+            }
+
+            SqlCommand cmd = new SqlCommand("SELECT * FROM getAVFromWatchlist('" + w.Title  + "'," + w.UserID + ")", cn); //ACABAR
+            SqlDataReader reader = cmd.ExecuteReader();
+            listBox1.Items.Clear();
+
+            while (reader.Read())
+            {
+                AudiovisualContent av = new AudiovisualContent();
+                av.Title = reader["Title"].ToString();
+                av.Synopsis = reader["Synopsis"].ToString();
+                av.TrailerURL = reader["TrailerURL"].ToString();
+                av.Budget = reader["Budget"].ToString();
+                av.Revenue = reader["Revenue"].ToString();
+                av.Photo = reader["Photo"].ToString();
+                av.AgeRate = reader["AgeRate"].ToString();
+                av.ReleaseDate = reader["ReleaseDate"].ToString();
+
+                listBox1.Items.Add(av);
             }
             reader.Close();
             cn.Close();
@@ -2099,7 +2129,33 @@ namespace MovieAdvisor
 
         private void watchList_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (watchList.SelectedItem != null)
+            {
+                TitleWatchList.Text = watchList.SelectedItem.ToString();
+                radioYes.Checked = true;
+                loadAVWatchLists();
 
+                /*
+                if (!verifyDBConnection())
+                {
+                    return;
+                }
+
+                SqlCommand cmd = new SqlCommand("SELECT dbo.overallScoreByID(" + av.ID + ")", cn);
+                string overallScore = cmd.ExecuteScalar().ToString();
+
+                if (overallScore.Equals("-1,00"))
+                {
+                    overallScoreLabel.Text = "NA/10";
+                }
+                else
+                {
+                    overallScoreLabel.Text = overallScore + "/10";
+                }
+
+                cn.Close();*/
+            }
+            
         }
 
         private void PersonalsWatchLists_SelectedIndexChanged(object sender, EventArgs e)
