@@ -20,6 +20,7 @@ namespace MovieAdvisor
         private int typeSelector = 0; // 0 -> all 1 -> movies 2 -> series
         private string selectedGenreID = null;
         private string selectedAVID = null;
+        private string OldTitle;
 
         public Form1()
         {
@@ -259,6 +260,42 @@ namespace MovieAdvisor
             cn.Close();
         }
 
+        private void loadAVWatchListsBox()
+        {
+            Watchlist w = (Watchlist)watchList.SelectedItem;
+
+            if (PersonalsWatchLists.SelectedIndex != -1)
+            {
+                w = (Watchlist)PersonalsWatchLists.SelectedItem;
+            }
+
+            if (!verifyDBConnection())
+            {
+                return;
+            }
+
+            SqlCommand cmd = new SqlCommand("SELECT * FROM getAVFromWatchlist('" + w.Title + "'," + w.UserID + ")", cn);
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                AudiovisualContent av = new AudiovisualContent();
+                av.ID = reader["ID"].ToString();
+                av.Title = reader["Title"].ToString();
+                av.Synopsis = reader["Synopsis"].ToString();
+                av.TrailerURL = reader["TrailerURL"].ToString();
+                av.Budget = reader["Budget"].ToString();
+                av.Revenue = reader["Revenue"].ToString();
+                av.Photo = reader["Photo"].ToString();
+                av.AgeRate = reader["AgeRate"].ToString();
+                av.ReleaseDate = reader["ReleaseDate"].ToString();
+
+                checkedListBox1.SetItemChecked(int.Parse(av.ID)-1, true);
+            }
+            reader.Close();
+            cn.Close();
+        }
+
         //save
         private bool SaveAVContent()
         {
@@ -481,6 +518,22 @@ namespace MovieAdvisor
                 {
 
                     createWatchList(w, wlAV);
+                    loadUserWatchList();
+                    loadWatchLists();
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return false;
+                }
+            }
+            else
+            {
+                try
+                {
+                    updateWatchList(w,wlAV);
+                    loadAVWatchLists();
                     loadUserWatchList();
                     loadWatchLists();
 
@@ -920,6 +973,7 @@ namespace MovieAdvisor
         {
             if (watchList.SelectedItem != null)
             {
+                PersonalsWatchLists.SelectedIndex = -1;
                 TitleWatchList.Text = watchList.SelectedItem.ToString();
                 radioYes.Checked = true;
                 loadAVWatchLists();
@@ -930,6 +984,7 @@ namespace MovieAdvisor
         {
             if (PersonalsWatchLists.SelectedItem != null)
             {
+                watchList.SelectedIndex = -1;
                 TitleWatchList.Text = PersonalsWatchLists.SelectedItem.ToString();
                 Watchlist w = (Watchlist)PersonalsWatchLists.SelectedItem;
                 if (w.Visibility.Equals("True"))
@@ -1021,7 +1076,7 @@ namespace MovieAdvisor
         private void EditButton_Click(object sender, EventArgs e)
         {
             currentAVContent = avList.SelectedIndex;
-            if (currentAVContent <= 0)
+            if (currentAVContent < 0)
             {
                 MessageBox.Show("Please select a movie or serie to edit");
                 return;
@@ -1049,7 +1104,7 @@ namespace MovieAdvisor
         private void DeleteButton_Click(object sender, EventArgs e)
         {
             currentAVContent = avList.SelectedIndex;
-            if (currentAVContent <= 0)
+            if (currentAVContent < 0)
             {
                 MessageBox.Show("Please select a movie or serie to delete!");
                 return;
@@ -1373,12 +1428,12 @@ namespace MovieAdvisor
                 return;
             }
             currentAVContent = avList.SelectedIndex;
-            if (EpisodeBox.SelectedIndex <= 0)
+            if (EpisodeBox.SelectedIndex < 0)
             {
                 MessageBox.Show("Please select an episode to delete!");
                 return;
             }
-            if (SeasonBox.SelectedIndex <= 0)
+            if (SeasonBox.SelectedIndex < 0)
             {
                 MessageBox.Show("Please select a season to delete!");
                 return;
@@ -1506,7 +1561,7 @@ namespace MovieAdvisor
         private void ReviewAdd_Click(object sender, EventArgs e)
         {
             adding = true;
-            if (avList2.SelectedIndex <= 0)
+            if (avList2.SelectedIndex < 0)
             {
                 MessageBox.Show("Please select a movie or serie!");
                 return;
@@ -1768,54 +1823,6 @@ namespace MovieAdvisor
 
         //WatchList
 
-        private void createWatchList(Watchlist w, AudiovisualContent[] wlAV)
-        {
-
-            if (!verifyDBConnection())
-                return;
-            SqlCommand cmd = new SqlCommand();
-
-
-            cmd.CommandText = "EXEC CreateWatchList @Title, @UserID, @Visibility";
-            cmd.Parameters.Clear();
-            cmd.Parameters.AddWithValue("@Title", w.Title);
-            cmd.Parameters.AddWithValue("@UserID", utilizador);
-            cmd.Parameters.AddWithValue("@Visibility", w.Visibility);
-            cmd.Connection = cn;
-
-            try
-            {
-                if (w.Title == "")
-                {
-                    return;
-                }
-                if (w.Visibility == "")
-                {
-                    return;
-                }
-                cmd.ExecuteNonQuery();
-                foreach (AudiovisualContent av in wlAV)
-                {
-                    cmd = new SqlCommand();
-                    cmd.CommandText = "EXEC AddAVContentToWatchlist @WLTitle, @UserID, @AVIdentifier";
-                    cmd.Parameters.Clear();
-                    cmd.Parameters.AddWithValue("@WLTitle", w.Title);
-                    cmd.Parameters.AddWithValue("@UserID", utilizador);
-                    cmd.Parameters.AddWithValue("@AVIdentifier", av.ID);
-                    cmd.Connection = cn;
-                    cmd.ExecuteNonQuery();
-                }
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Failed to create a Review in database. \n ERROR MESSAGE: \n" + ex.Message);
-            }
-            finally
-            {
-                cn.Close();
-            }
-        }
         private void CreateWatchList_Click(object sender, EventArgs e)
         {
             adding = true;
@@ -1827,6 +1834,7 @@ namespace MovieAdvisor
             radioYes.Checked = true;
 
             CreateWatchList.Visible = false;
+            EditWatchList.Visible = false;
             DeleteWatchList.Visible = false;
             ConfirmWatchList.Visible = true;
             CancelWatchList.Visible = true;
@@ -1845,6 +1853,7 @@ namespace MovieAdvisor
                 PersonalsWatchLists.SelectedIndex = idx;
 
                 CreateWatchList.Visible = true;
+                EditWatchList.Visible = true;
                 DeleteWatchList.Visible = true;
                 ConfirmWatchList.Visible = false;
                 CancelWatchList.Visible = false;
@@ -1853,8 +1862,6 @@ namespace MovieAdvisor
                 Visibilitygroup.Enabled = false;
                 checkedListBox1.Visible = false;
 
-                TitleWatchList.Enabled = false;
-                Visibilitygroup.Enabled = false;
 
             }
 
@@ -1922,7 +1929,12 @@ namespace MovieAdvisor
                 radioYes.Checked = true;
                 checkedListBox1.Items.Clear();
             }
+            else
+            {
+                TitleWatchList.Text = OldTitle;
+            }
             CreateWatchList.Visible = true;
+            EditWatchList.Visible = true;
             DeleteWatchList.Visible = true;
             ConfirmWatchList.Visible = false;
             CancelWatchList.Visible = false;
@@ -1930,9 +1942,32 @@ namespace MovieAdvisor
             TitleWatchList.Enabled = false;
             Visibilitygroup.Enabled = false;
             checkedListBox1.Visible = false;
+            
 
-            TitleWatchList.Enabled = false;
-            Visibilitygroup.Enabled = false;
+        }
+        private void EditWatchList_Click(object sender, EventArgs e)
+        {
+            adding = false;
+            if (PersonalsWatchLists.SelectedIndex < 0)
+            {
+                MessageBox.Show("Please select a personal watchlist to edit!");
+                return;
+            }
+            OldTitle = PersonalsWatchLists.Text;
+            CreateWatchList.Visible = false;
+            EditWatchList.Visible = false;
+            DeleteWatchList.Visible = false;
+            ConfirmWatchList.Visible = true;
+            CancelWatchList.Visible = true;
+
+            TitleWatchList.Enabled = true;
+            Visibilitygroup.Enabled = true;
+            checkedListBox1.Visible = true;
+
+            loadAvCheckList();
+            loadAVWatchListsBox();
+
+
         }
 
         //Create + Update
@@ -2359,6 +2394,103 @@ namespace MovieAdvisor
             }
         }
 
+        private void createWatchList(Watchlist w, AudiovisualContent[] wlAV)
+        {
+
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+
+            cmd.CommandText = "EXEC CreateWatchList @Title, @UserID, @Visibility";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@Title", w.Title);
+            cmd.Parameters.AddWithValue("@UserID", utilizador);
+            cmd.Parameters.AddWithValue("@Visibility", w.Visibility);
+            cmd.Connection = cn;
+
+            try
+            {
+                if (w.Title == "")
+                {
+                    return;
+                }
+                if (w.Visibility == "")
+                {
+                    return;
+                }
+                cmd.ExecuteNonQuery();
+                foreach (AudiovisualContent av in wlAV)
+                {
+                    cmd = new SqlCommand();
+                    cmd.CommandText = "EXEC AddAVContentToWatchlist @WLTitle, @UserID, @AVIdentifier";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@WLTitle", w.Title);
+                    cmd.Parameters.AddWithValue("@UserID", utilizador);
+                    cmd.Parameters.AddWithValue("@AVIdentifier", av.ID);
+                    cmd.Connection = cn;
+                    cmd.ExecuteNonQuery();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to create a Review in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+        private void updateWatchList(Watchlist w, AudiovisualContent[] wlAV)
+        {
+            int rows = 0;
+
+            if (!verifyDBConnection())
+                return;
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "DECLARE @AVList AVList;";
+
+            if (wlAV.Length > 0)
+            {
+                cmd.CommandText += "INSERT INTO @AVList VALUES ";
+
+                foreach (AudiovisualContent av in wlAV)
+                {
+                    cmd.CommandText += "(" + av.ID + "),";
+                }
+
+                cmd.CommandText = cmd.CommandText.Substring(0, cmd.CommandText.Length - 1);
+
+                cmd.CommandText += ";";
+            }
+
+            cmd.CommandText += "EXEC UpdateWatchlist @OldTitle, @Title, @UserID, @Visibility, @AVList";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@OldTitle", OldTitle);
+
+            cmd.Parameters.AddWithValue("@Title", w.Title);
+            cmd.Parameters.AddWithValue("@UserID", utilizador);
+            cmd.Parameters.AddWithValue("@Visibility", w.Visibility);
+
+            cmd.Connection = cn;
+
+            try
+            {
+                rows = cmd.ExecuteNonQuery();
+                MessageBox.Show("Update OK");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to update watchList in database. \n ERROR MESSAGE: \n" + ex.Message);
+            }
+            finally
+            {
+                cn.Close();
+            }
+        }
+
         //Authentication
         private void ConfirmUserReviews_Click(object sender, EventArgs e)
         {
@@ -2367,6 +2499,7 @@ namespace MovieAdvisor
             if (Authenticate())
             {
                 groupBoxReview.Enabled = true;
+                MessageBox.Show("Successfully authenticated!");
             }
 
         }
@@ -2407,13 +2540,17 @@ namespace MovieAdvisor
         private void ConfirmAuthentication2_Click(object sender, EventArgs e)
         {
             CreateWatchList.Enabled = false;
+            EditWatchList.Enabled = false;
             DeleteWatchList.Enabled = false;
 
             if (Authenticate2())
             {
                 CreateWatchList.Enabled = true;
+                EditWatchList.Enabled = true;
                 DeleteWatchList.Enabled = true;
                 loadUserWatchList();
+                MessageBox.Show("Successfully authenticated!");
+
             }
 
         }

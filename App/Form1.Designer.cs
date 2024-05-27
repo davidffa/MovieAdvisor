@@ -125,6 +125,7 @@
             reviewsList = new ListBox();
             avList2 = new ListBox();
             watchlists = new TabPage();
+            EditWatchList = new Button();
             checkedListBox1 = new CheckedListBox();
             Password2Label = new Label();
             UserEmail2Label = new Label();
@@ -1204,6 +1205,7 @@
             // 
             // watchlists
             // 
+            watchlists.Controls.Add(EditWatchList);
             watchlists.Controls.Add(checkedListBox1);
             watchlists.Controls.Add(Password2Label);
             watchlists.Controls.Add(UserEmail2Label);
@@ -1229,6 +1231,17 @@
             watchlists.TabIndex = 2;
             watchlists.Text = "WatchLists";
             watchlists.UseVisualStyleBackColor = true;
+            // 
+            // EditWatchList
+            // 
+            EditWatchList.Enabled = false;
+            EditWatchList.Location = new Point(503, 369);
+            EditWatchList.Name = "EditWatchList";
+            EditWatchList.Size = new Size(94, 29);
+            EditWatchList.TabIndex = 29;
+            EditWatchList.Text = "Edit";
+            EditWatchList.UseVisualStyleBackColor = true;
+            EditWatchList.Click += EditWatchList_Click;
             // 
             // checkedListBox1
             // 
@@ -1297,7 +1310,7 @@
             // 
             // CancelWatchList
             // 
-            CancelWatchList.Location = new Point(503, 426);
+            CancelWatchList.Location = new Point(573, 369);
             CancelWatchList.Name = "CancelWatchList";
             CancelWatchList.Size = new Size(94, 29);
             CancelWatchList.TabIndex = 20;
@@ -1308,7 +1321,7 @@
             // 
             // ConfirmWatchList
             // 
-            ConfirmWatchList.Location = new Point(503, 357);
+            ConfirmWatchList.Location = new Point(434, 369);
             ConfirmWatchList.Name = "ConfirmWatchList";
             ConfirmWatchList.Size = new Size(94, 29);
             ConfirmWatchList.TabIndex = 19;
@@ -1363,7 +1376,7 @@
             // DeleteWatchList
             // 
             DeleteWatchList.Enabled = false;
-            DeleteWatchList.Location = new Point(573, 391);
+            DeleteWatchList.Location = new Point(503, 425);
             DeleteWatchList.Name = "DeleteWatchList";
             DeleteWatchList.Size = new Size(94, 29);
             DeleteWatchList.TabIndex = 12;
@@ -1383,7 +1396,7 @@
             // CreateWatchList
             // 
             CreateWatchList.Enabled = false;
-            CreateWatchList.Location = new Point(433, 391);
+            CreateWatchList.Location = new Point(503, 310);
             CreateWatchList.Name = "CreateWatchList";
             CreateWatchList.Size = new Size(94, 29);
             CreateWatchList.TabIndex = 10;
@@ -1602,5 +1615,6 @@
         private TextBox UserEmail2;
         private CheckedListBox checkedListBox1;
         private ListBox listBox1;
+        private Button EditWatchList;
     }
 }
