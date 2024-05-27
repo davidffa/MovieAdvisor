@@ -146,6 +146,29 @@ namespace MovieAdvisor
             reader.Close();
             cn.Close();
         }
+        private void loadUserWatchList()
+        {
+            if (!verifyDBConnection())
+            {
+                return;
+            }
+
+            SqlCommand cmd = new SqlCommand("SELECT * FROM getUserWatchlists(" + utilizador +  ")", cn);
+            SqlDataReader reader = cmd.ExecuteReader();
+            PersonalsWatchLists.Items.Clear();
+
+            while (reader.Read())
+            {
+                Watchlist w = new Watchlist();
+                w.Title = reader["Title"].ToString();
+                w.UserID = reader["UserID"].ToString();
+                w.Visibility = reader["Visibility"].ToString();
+
+                PersonalsWatchLists.Items.Add(w);
+            }
+            reader.Close();
+            cn.Close();
+        }
         private void loadWatchLists()
         {
             if (!verifyDBConnection())
@@ -170,6 +193,35 @@ namespace MovieAdvisor
             cn.Close();
         }
 
+        private void loadAvCheckList()
+        {
+            if (!verifyDBConnection())
+            {
+                return;
+            }
+
+            SqlCommand cmd = new SqlCommand("SELECT * FROM AudioVisualContent", cn);
+            SqlDataReader reader = cmd.ExecuteReader();
+            checkedListBox1.Items.Clear();
+
+            while (reader.Read())
+            {
+                AudiovisualContent av = new AudiovisualContent();
+                av.Title = reader["Title"].ToString();
+                av.Synopsis = reader["Synopsis"].ToString();
+                av.TrailerURL = reader["TrailerURL"].ToString();
+                av.Budget = reader["Budget"].ToString();
+                av.Revenue = reader["Revenue"].ToString();
+                av.Photo = reader["Photo"].ToString();
+                av.AgeRate = reader["AgeRate"].ToString();
+                av.ReleaseDate = reader["ReleaseDate"].ToString();
+
+                checkedListBox1.Items.Add(av);
+            }
+            reader.Close();
+            cn.Close();
+        }
+
         private void loadAVWatchLists()
         {
             Watchlist w = (Watchlist)watchList.SelectedItem;
@@ -178,7 +230,7 @@ namespace MovieAdvisor
                 return;
             }
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM getAVFromWatchlist('" + w.Title  + "'," + w.UserID + ")", cn); //ACABAR
+            SqlCommand cmd = new SqlCommand("SELECT * FROM getAVFromWatchlist('" + w.Title  + "'," + w.UserID + ")", cn); 
             SqlDataReader reader = cmd.ExecuteReader();
             listBox1.Items.Clear();
 
@@ -531,7 +583,7 @@ namespace MovieAdvisor
 
             string searchTerm = movieSearchBox.Text;
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM AudioVisualContent WHERE Title LIKE '%" + searchTerm + "%'", cn);
+            SqlCommand cmd = new SqlCommand("SELECT * FROM AudioVisualContent WHERE Title LIKE '" + searchTerm + "%'", cn);
             SqlDataReader reader = cmd.ExecuteReader();
             avList.Items.Clear();
             // TODO: Limpar filtragens / sort ( ou nao )
@@ -2160,7 +2212,40 @@ namespace MovieAdvisor
 
         private void PersonalsWatchLists_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (PersonalsWatchLists.SelectedItem != null)
+            {
+                TitleWatchList.Text = PersonalsWatchLists.SelectedItem.ToString();
+                Watchlist w = (Watchlist) PersonalsWatchLists.SelectedItem;
+                if (w.Visibility == "1") {
+                    radioYes.Checked = true;
+                }
+                else
+                {
+                    radioNo.Checked = true;
+                }
+                radioYes.Checked = false;
+                loadAVWatchLists();
 
+                /*
+                if (!verifyDBConnection())
+                {
+                    return;
+                }
+
+                SqlCommand cmd = new SqlCommand("SELECT dbo.overallScoreByID(" + av.ID + ")", cn);
+                string overallScore = cmd.ExecuteScalar().ToString();
+
+                if (overallScore.Equals("-1,00"))
+                {
+                    overallScoreLabel.Text = "NA/10";
+                }
+                else
+                {
+                    overallScoreLabel.Text = overallScore + "/10";
+                }
+
+                cn.Close();*/
+            }
         }
 
         private void ConfirmAuthentication2_Click(object sender, EventArgs e)
@@ -2172,6 +2257,7 @@ namespace MovieAdvisor
             {
                 CreateWatchList.Enabled = true;
                 DeleteWatchList.Enabled = true;
+                loadUserWatchList();
             }
 
         }
@@ -2264,6 +2350,8 @@ namespace MovieAdvisor
 
             TitleWatchList.Enabled = true;
             Visibilitygroup.Enabled = true;
+            checkedListBox1.Visible = true;
+            loadAvCheckList();
 
         }
 

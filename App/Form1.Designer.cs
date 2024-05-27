@@ -125,11 +125,13 @@
             reviewsList = new ListBox();
             avList2 = new ListBox();
             watchlists = new TabPage();
+            checkedListBox1 = new CheckedListBox();
             Password2Label = new Label();
             UserEmail2Label = new Label();
             ConfirmAuthetication2 = new Button();
             PasswordWatchList = new TextBox();
             UserEmail2 = new TextBox();
+            listBox1 = new ListBox();
             CancelWatchList = new Button();
             ConfirmWatchList = new Button();
             Visibilitygroup = new GroupBox();
@@ -145,8 +147,6 @@
             watchList = new ListBox();
             people = new TabPage();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            listBox1 = new ListBox();
-            checkedListBox1 = new CheckedListBox();
             tabControl1.SuspendLayout();
             movies.SuspendLayout();
             SeriesGroup.SuspendLayout();
@@ -1230,6 +1230,15 @@
             watchlists.Text = "WatchLists";
             watchlists.UseVisualStyleBackColor = true;
             // 
+            // checkedListBox1
+            // 
+            checkedListBox1.FormattingEnabled = true;
+            checkedListBox1.Location = new Point(716, 341);
+            checkedListBox1.Name = "checkedListBox1";
+            checkedListBox1.Size = new Size(364, 268);
+            checkedListBox1.TabIndex = 28;
+            checkedListBox1.Visible = false;
+            // 
             // Password2Label
             // 
             Password2Label.AutoSize = true;
@@ -1275,6 +1284,16 @@
             UserEmail2.PlaceholderText = "User Email";
             UserEmail2.Size = new Size(299, 27);
             UserEmail2.TabIndex = 22;
+            // 
+            // listBox1
+            // 
+            listBox1.Enabled = false;
+            listBox1.FormattingEnabled = true;
+            listBox1.Location = new Point(718, 341);
+            listBox1.Margin = new Padding(2);
+            listBox1.Name = "listBox1";
+            listBox1.Size = new Size(362, 264);
+            listBox1.TabIndex = 21;
             // 
             // CancelWatchList
             // 
@@ -1418,26 +1437,6 @@
             people.TabIndex = 3;
             people.Text = "People";
             people.UseVisualStyleBackColor = true;
-            // 
-            // listBox1
-            // 
-            listBox1.Enabled = false;
-            listBox1.FormattingEnabled = true;
-            listBox1.Location = new Point(902, 341);
-            listBox1.Margin = new Padding(2);
-            listBox1.Name = "listBox1";
-            listBox1.Size = new Size(178, 264);
-            listBox1.TabIndex = 21;
-            // 
-            // checkedListBox1
-            // 
-            checkedListBox1.Enabled = false;
-            checkedListBox1.FormattingEnabled = true;
-            checkedListBox1.Location = new Point(716, 341);
-            checkedListBox1.Name = "checkedListBox1";
-            checkedListBox1.Size = new Size(177, 268);
-            checkedListBox1.TabIndex = 28;
-            checkedListBox1.Visible = false;
             // 
             // Form1
             // 
