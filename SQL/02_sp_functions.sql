@@ -59,12 +59,17 @@ CREATE PROC CreateSeason(
 )
 AS
     BEGIN TRAN;
+    BEGIN TRY
+        INSERT INTO Season (ID, Number, Photo, TrailerURL, ReleaseDate) VALUES
+            (@SerieID, @SeasonNumber, @SeasonPhoto, @SeasonTrailerURL, @SeasonReleaseDate);
 
-    INSERT INTO Season (ID, Number, Photo, TrailerURL, ReleaseDate) VALUES
-        (@SerieID, @SeasonNumber, @SeasonPhoto, @SeasonTrailerURL, @SeasonReleaseDate);
+        EXEC CreateEpisode @SerieID, @SeasonNumber, @EpNumber, @EpRuntime, @EpSynopsis;
+    END TRY
 
-    EXEC CreateEpisode @SerieID, @SeasonNumber, @EpNumber, @EpRuntime, @EpSynopsis;
-
+    BEGIN CATCH
+        RAISERROR('Failed to create a season', 16, 1);
+        ROLLBACK TRAN;
+    END CATCH
     COMMIT TRAN;
 
 GO
@@ -88,10 +93,17 @@ CREATE PROC UpdateGenres(
 AS
     BEGIN TRAN;
 
-    DELETE FROM AVContentGenre WHERE AVIdentifier=@ID AND GenreID NOT IN (SELECT ID FROM @GenreList);
+    BEGIN TRY
+        DELETE FROM AVContentGenre WHERE AVIdentifier=@ID AND GenreID NOT IN (SELECT ID FROM @GenreList);
 
-    INSERT INTO AVContentGenre (AVIdentifier, GenreID)
+        INSERT INTO AVContentGenre (AVIdentifier, GenreID)
         SELECT @ID, * FROM @GenreList WHERE ID NOT IN (SELECT GenreID FROM AVContentGenre WHERE AVIdentifier=@ID);
+    END TRY
+
+    BEGIN CATCH
+        RAISERROR('Failed to update genres', 16, 1);
+        ROLLBACK TRAN;
+    END CATCH
 
     COMMIT TRAN;
 
@@ -122,21 +134,27 @@ CREATE PROC CreateSerie(
 )
 AS
     BEGIN TRAN;
+    BEGIN TRY
+        INSERT INTO AudioVisualContent (Title, Synopsis, TrailerURL, Budget, Revenue, Photo, AgeRate, ReleaseDate) VALUES
+            (@Title, @Synopsis, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate);
 
-    INSERT INTO AudioVisualContent (Title, Synopsis, TrailerURL, Budget, Revenue, Photo, AgeRate, ReleaseDate) VALUES
-        (@Title, @Synopsis, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate);
+        DECLARE @ID INT;
 
-    DECLARE @ID INT;
+        SET @ID = @@IDENTITY;
 
-    SET @ID = @@IDENTITY;
+        INSERT INTO TVSeries (ID, State, FinishDate) VALUES
+            (@ID, @State, @FinishDate);
 
-    INSERT INTO TVSeries (ID, State, FinishDate) VALUES
-        (@ID, @State, @FinishDate);
+        INSERT INTO AVContentGenre (AVIdentifier, GenreID)
+            SELECT @ID, * FROM @GenreList;
 
-    INSERT INTO AVContentGenre (AVIdentifier, GenreID)
-        SELECT @ID, * FROM @GenreList;
+        EXEC CreateSeason @ID, @SeasonNumber, @SeasonPhoto, @SeasonTrailerURL, @SeasonReleaseDate, @EpNumber, @EpRuntime, @EpSynopsis;
+    END TRY
 
-    EXEC CreateSeason @ID, @SeasonNumber, @SeasonPhoto, @SeasonTrailerURL, @SeasonReleaseDate, @EpNumber, @EpRuntime, @EpSynopsis;
+    BEGIN CATCH
+        RAISERROR('Failed to create a serie', 16, 1);
+        ROLLBACK TRAN;
+    END CATCH
 
     COMMIT TRAN;
 
@@ -160,14 +178,20 @@ CREATE PROC UpdateSerie(
 AS
     BEGIN TRAN;
 
-    UPDATE AudioVisualContent SET Title=@Title, Synopsis=@Synopsis, TrailerURL=@TrailerURL, Budget=@Budget, Revenue=@Revenue, Photo=@Photo, AgeRate=@AgeRate, ReleaseDate=@ReleaseDate
-        WHERE ID=@ID;
+    BEGIN TRY
+        UPDATE AudioVisualContent SET Title=@Title, Synopsis=@Synopsis, TrailerURL=@TrailerURL, Budget=@Budget, Revenue=@Revenue, Photo=@Photo, AgeRate=@AgeRate, ReleaseDate=@ReleaseDate
+            WHERE ID=@ID;
 
-    UPDATE TVSeries SET State=@State, FinishDate=@FinishDate
-        WHERE ID=@ID;
+        UPDATE TVSeries SET State=@State, FinishDate=@FinishDate
+            WHERE ID=@ID;
 
+        EXEC UpdateGenres @ID, @GenreList;
+    END TRY
 
-    EXEC UpdateGenres @ID, @GenreList;
+    BEGIN CATCH
+        RAISERROR('Failed to update serie', 16, 1);
+        ROLLBACK TRAN;
+    END CATCH
 
     COMMIT TRAN;
 
@@ -189,18 +213,25 @@ CREATE PROC CreateMovie(
 AS
     BEGIN TRAN;
 
-    INSERT INTO AudioVisualContent (Title, Synopsis, TrailerURL, Budget, Revenue, Photo, AgeRate, ReleaseDate) VALUES
-        (@Title, @Synopsis, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate);
+    BEGIN TRY
+        INSERT INTO AudioVisualContent (Title, Synopsis, TrailerURL, Budget, Revenue, Photo, AgeRate, ReleaseDate) VALUES
+            (@Title, @Synopsis, @TrailerURL, @Budget, @Revenue, @Photo, @AgeRate, @ReleaseDate);
 
-    DECLARE @ID INT;
+        DECLARE @ID INT;
 
-    SET @ID = @@IDENTITY;
+        SET @ID = @@IDENTITY;
 
-    INSERT INTO Movie (ID, Runtime) VALUES
-        (@ID, @Runtime);
+        INSERT INTO Movie (ID, Runtime) VALUES
+            (@ID, @Runtime);
 
-    INSERT INTO AVContentGenre (AVIdentifier, GenreID)
-        SELECT @ID, * FROM @GenreList;
+        INSERT INTO AVContentGenre (AVIdentifier, GenreID)
+            SELECT @ID, * FROM @GenreList;
+    END TRY
+
+    BEGIN CATCH
+        RAISERROR('Failed to create movie', 16, 1);
+        ROLLBACK TRAN;
+    END CATCH
 
     COMMIT TRAN;
 
@@ -223,12 +254,19 @@ CREATE PROC UpdateMovie(
 AS
     BEGIN TRAN;
 
-    UPDATE AudioVisualContent SET Title=@Title, Synopsis=@Synopsis, TrailerURL=@TrailerURL, Budget=@Budget, Revenue=@Revenue, Photo=@Photo, AgeRate=@AgeRate, ReleaseDate=@ReleaseDate
-        WHERE ID=@ID;
+    BEGIN TRY
+        UPDATE AudioVisualContent SET Title=@Title, Synopsis=@Synopsis, TrailerURL=@TrailerURL, Budget=@Budget, Revenue=@Revenue, Photo=@Photo, AgeRate=@AgeRate, ReleaseDate=@ReleaseDate
+            WHERE ID=@ID;
 
-    UPDATE Movie SET Runtime=@Runtime WHERE ID=@ID;
+        UPDATE Movie SET Runtime=@Runtime WHERE ID=@ID;
 
-    EXEC UpdateGenres @ID, @GenreList;
+        EXEC UpdateGenres @ID, @GenreList;
+    END TRY
+
+    BEGIN CATCH
+        RAISERROR('Failed to update movie', 16, 1);
+        ROLLBACK TRAN;
+    END CATCH
 
     COMMIT TRAN;
 
@@ -354,13 +392,20 @@ CREATE PROC UpdateWatchlist (
 AS
     BEGIN TRAN;
 
-    UPDATE Watchlist SET Title=@Title, Visibility=@Visibility WHERE Title=@OldTitle AND UserID=@UserID;
+    BEGIN TRY
+        UPDATE Watchlist SET Title=@Title, Visibility=@Visibility WHERE Title=@OldTitle AND UserID=@UserID;
 
-    DELETE FROM WatchlistAV WHERE WLTitle=@Title AND UserID=@UserID AND AVIdentifier NOT IN (SELECT ID FROM @AVList);
+        DELETE FROM WatchlistAV WHERE WLTitle=@Title AND UserID=@UserID AND AVIdentifier NOT IN (SELECT ID FROM @AVList);
 
-    INSERT INTO WatchlistAV (WLTitle, UserID, AVIdentifier)
-        SELECT @Title, @UserID, * FROM @AVList WHERE ID NOT IN (SELECT AVIdentifier FROM WatchlistAV WHERE WLTitle=@Title AND UserID=@UserID);
+        INSERT INTO WatchlistAV (WLTitle, UserID, AVIdentifier)
+            SELECT @Title, @UserID, * FROM @AVList WHERE ID NOT IN (SELECT AVIdentifier FROM WatchlistAV WHERE WLTitle=@Title AND UserID=@UserID);
+    END TRY
 
+    BEGIN CATCH
+        RAISERROR('Failed to update watchlist', 16, 1);
+        ROLLBACK TRAN;
+    END CATCH
+    
     COMMIT TRAN;
 GO
 
