@@ -129,7 +129,8 @@ namespace MovieAdvisor
                 return;
             }
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM getAVContentReviews(" + avID + ")", cn);
+            SqlCommand cmd = new SqlCommand("SELECT * FROM getAVContentReviews( @av_id)", cn);
+            cmd.Parameters.AddWithValue("@av_id", avID);
             SqlDataReader reader = cmd.ExecuteReader();
             reviewsList.Items.Clear();
 
@@ -156,7 +157,9 @@ namespace MovieAdvisor
                 return;
             }
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM getUserWatchlists(" + utilizador + ")", cn);
+            SqlCommand cmd = new SqlCommand("SELECT * FROM getUserWatchlists(@utilizador )", cn);
+
+            cmd.Parameters.AddWithValue("@utilizador", utilizador);
             SqlDataReader reader = cmd.ExecuteReader();
             PersonalsWatchLists.Items.Clear();
 
@@ -238,7 +241,9 @@ namespace MovieAdvisor
                 return;
             }
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM getAVFromWatchlist('" + w.Title + "'," + w.UserID + ")", cn);
+            SqlCommand cmd = new SqlCommand("SELECT * FROM getAVFromWatchlist( @w_Title , @w_UserID )", cn);
+            cmd.Parameters.AddWithValue("@w_Title", w.Title);
+            cmd.Parameters.AddWithValue("@w_UserID", w.UserID);
             SqlDataReader reader = cmd.ExecuteReader();
             listBox1.Items.Clear();
 
@@ -274,7 +279,9 @@ namespace MovieAdvisor
                 return;
             }
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM getAVFromWatchlist('" + w.Title + "'," + w.UserID + ")", cn);
+            SqlCommand cmd = new SqlCommand("SELECT * FROM getAVFromWatchlist( @w_Title , @w_UserID )", cn);
+            cmd.Parameters.AddWithValue("@w_Title", w.Title);
+            cmd.Parameters.AddWithValue("@w_UserID", w.UserID);
             SqlDataReader reader = cmd.ExecuteReader();
 
             while (reader.Read())
@@ -598,7 +605,8 @@ namespace MovieAdvisor
             reader.Close();
 
 
-            cmd = new SqlCommand("SELECT * FROM Movie WHERE ID = " + av.ID, cn);
+            cmd = new SqlCommand("SELECT * FROM Movie WHERE ID = @av_ID", cn);
+            cmd.Parameters.AddWithValue("@av_id", av.ID);
             reader = cmd.ExecuteReader();
 
             if (reader.Read())
@@ -619,7 +627,8 @@ namespace MovieAdvisor
             else
             {
                 reader.Close();
-                cmd = new SqlCommand("SELECT * FROM TVSeries WHERE ID = " + av.ID, cn);
+                cmd = new SqlCommand("SELECT * FROM TVSeries WHERE ID = @av_ID", cn);
+                cmd.Parameters.AddWithValue("@av_id", av.ID);
                 reader = cmd.ExecuteReader();
 
                 if (reader.Read())
@@ -652,7 +661,8 @@ namespace MovieAdvisor
                 }
                 reader.Close();
 
-                cmd = new SqlCommand("SELECT * FROM getAllSeasonsOfSerie(" + av.ID + ") ", cn);
+                cmd = new SqlCommand("SELECT * FROM getAllSeasonsOfSerie( @av_ID ) ", cn);
+                cmd.Parameters.AddWithValue("@av_id", av.ID);
                 reader = cmd.ExecuteReader();
 
                 while (reader.Read())
@@ -670,7 +680,9 @@ namespace MovieAdvisor
                     ReleaseDateSeasonPicker.Text = s.ReleaseDate;
                 }
                 reader.Close();
-                cmd = new SqlCommand("SELECT * FROM getAllEpisodesOfSeason(" + av.ID + "," + 1 + ") ", cn);
+                cmd = new SqlCommand("SELECT * FROM getAllEpisodesOfSeason(@av_ID, @number) ", cn);
+                cmd.Parameters.AddWithValue("@av_id", av.ID);
+                cmd.Parameters.AddWithValue("@number", 1);
                 reader = cmd.ExecuteReader();
 
                 while (reader.Read())
@@ -726,7 +738,8 @@ namespace MovieAdvisor
 
             string searchTerm = movieSearchBox.Text;
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM AudioVisualContent WHERE Title LIKE '" + searchTerm + "%'", cn);
+            SqlCommand cmd = new SqlCommand("SELECT * FROM AudioVisualContent WHERE Title LIKE @searchTerm", cn);
+            cmd.Parameters.AddWithValue("@searchTerm", searchTerm + '%');
             SqlDataReader reader = cmd.ExecuteReader();
             avList.Items.Clear();
             // TODO: Limpar filtragens / sort ( ou nao )
@@ -830,7 +843,8 @@ namespace MovieAdvisor
                     return;
                 }
 
-                SqlCommand cmd = new SqlCommand("SELECT dbo.overallScoreByID(" + av.ID + ")", cn);
+                SqlCommand cmd = new SqlCommand("SELECT dbo.overallScoreByID( @av.ID )", cn);
+                cmd.Parameters.AddWithValue("@av_id", av.ID);
                 string overallScore = cmd.ExecuteScalar().ToString();
 
                 if (overallScore.Equals("-1,00"))
@@ -909,7 +923,10 @@ namespace MovieAdvisor
 
             string av_id = ((AudiovisualContent)avList.SelectedItem).ID;
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM getAllEpisodesOfSeason(" + av_id + "," + s.Number + ") ", cn);
+            SqlCommand cmd = new SqlCommand("SELECT * FROM getAllEpisodesOfSeason( @av_id , @sNumber) ", cn);
+            cmd.Parameters.AddWithValue("@av_id", av_id);
+            cmd.Parameters.AddWithValue("@sNumber", s.Number);
+
             SqlDataReader reader = cmd.ExecuteReader();
 
             EpisodeBox.Items.Clear();
@@ -946,7 +963,9 @@ namespace MovieAdvisor
                 {
                     if (!verifyDBConnection())
                         return;
-                    SqlCommand cmd = new SqlCommand("SELECT * FROM ReviewLikes WHERE UserID=" + utilizador + "AND ReviewID = " + r.Id, cn);
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM ReviewLikes WHERE UserID=@utilizador AND ReviewID = @r_Id", cn);
+                    cmd.Parameters.AddWithValue("@utilizador", utilizador);
+                    cmd.Parameters.AddWithValue("@r_Id", r.Id);
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     if (reader.Read())
@@ -1744,7 +1763,9 @@ namespace MovieAdvisor
                 Review r = ((Review)reviewsList.SelectedItem);
                 if (!verifyDBConnection())
                     return;
-                SqlCommand cmd = new SqlCommand("SELECT * FROM ReviewLikes WHERE UserID= " + utilizador + " AND ReviewID= " + r.Id, cn);
+                SqlCommand cmd = new SqlCommand("SELECT * FROM ReviewLikes WHERE UserID= @utilizador AND ReviewID= @r_Id", cn);
+                cmd.Parameters.AddWithValue("@utilizador", utilizador);
+                cmd.Parameters.AddWithValue("@r_Id", r.Id);
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 if (reader.Read())
